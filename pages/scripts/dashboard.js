@@ -102,6 +102,7 @@ const modalSourceName = document.getElementById("modal-source-name");
 const cancelAddBtn = document.getElementById("cancel-add");
 const logoutBtn = document.getElementById("logout-btn");
 const filterBtns = document.querySelectorAll(".filter-btn");
+const userProfile = document.querySelector(".user-profile");
 
 // 初始化
 function init() {
@@ -158,6 +159,9 @@ function bindEvents() {
       renderVideos();
     });
   });
+
+  // 使用者資訊點擊
+  userProfile.addEventListener("click", openSettings);
 }
 
 // 切換影音來源
@@ -469,6 +473,11 @@ function handleLogout() {
     // 關閉當前視窗
     window.close();
   }
+}
+
+// 開啟設定頁面
+function openSettings() {
+  window.location.href = "settings.html";
 }
 
 // 動畫樣式
