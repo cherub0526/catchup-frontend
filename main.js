@@ -6,7 +6,7 @@ let mainWindow;
 function createLoginWindow() {
   mainWindow = new BrowserWindow({
     width: 500,
-    height: 720,
+    height: 780,
     resizable: false,
     webPreferences: {
       nodeIntegration: true,
