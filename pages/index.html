@@ -3,172 +3,212 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Video Assistant - 主頁</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-      }
-
-      .container {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        padding: 60px;
-        text-align: center;
-        max-width: 800px;
-        animation: fadeIn 0.5s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      h1 {
-        font-size: 48px;
-        color: #333;
-        margin-bottom: 20px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .welcome-text {
-        font-size: 24px;
-        color: #666;
-        margin-bottom: 40px;
-      }
-
-      .icon {
-        font-size: 80px;
-        margin-bottom: 30px;
-        animation: wave 2s ease-in-out infinite;
-      }
-
-      @keyframes wave {
-        0%,
-        100% {
-          transform: rotate(0deg);
-        }
-        25% {
-          transform: rotate(20deg);
-        }
-        75% {
-          transform: rotate(-20deg);
-        }
-      }
-
-      .info-box {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 30px;
-        margin-top: 40px;
-        text-align: left;
-      }
-
-      .info-box h2 {
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 24px;
-      }
-
-      .feature-list {
-        list-style: none;
-        padding: 0;
-      }
-
-      .feature-list li {
-        padding: 12px 0;
-        border-bottom: 1px solid #e0e0e0;
-        color: #555;
-        font-size: 16px;
-      }
-
-      .feature-list li:last-child {
-        border-bottom: none;
-      }
-
-      .feature-list li::before {
-        content: "✓";
-        color: #667eea;
-        font-weight: bold;
-        margin-right: 10px;
-        font-size: 18px;
-      }
-
-      .btn {
-        display: inline-block;
-        margin: 10px;
-        padding: 15px 40px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-      }
-
-      .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-      }
-
-      .user-info {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        padding: 15px 30px;
-        border-radius: 50px;
-        display: inline-block;
-        margin-bottom: 30px;
-        color: #667eea;
-        font-weight: 600;
-      }
-    </style>
+    <title>Video Assistant - Dashboard</title>
+    <link rel="stylesheet" href="./styles/dashboard.css" />
   </head>
   <body>
-    <div class="container">
-      <div class="icon">🎬</div>
-      <h1>Video Assistant</h1>
-      <p class="welcome-text">歡迎來到 Video Assistant！</p>
-      <div class="user-info" id="user-info">登入成功</div>
+    <div class="dashboard-container">
+      <!-- 頂部導航欄 -->
+      <header class="header">
+        <div class="header-left">
+          <span class="app-logo">🎬</span>
+          <h1 class="app-title">Video Assistant</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <div class="user-avatar">U</div>
+            <span class="user-name" id="user-name">使用者</span>
+          </div>
+          <button class="logout-btn" id="logout-btn">登出</button>
+        </div>
+      </header>
 
-      <div class="info-box">
-        <h2>應用程式功能</h2>
-        <ul class="feature-list">
-          <li>完整的使用者認證系統</li>
-          <li>帳號密碼登入/註冊</li>
-          <li>Google 社群登入整合</li>
-          <li>Facebook 社群登入整合</li>
-          <li>現代化的使用者介面</li>
-          <li>安全的資料處理</li>
-        </ul>
-      </div>
+      <!-- 主要內容區域 -->
+      <div class="main-content">
+        <!-- 左側邊欄 -->
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-title">影音來源</div>
+          </div>
+          <ul class="source-list" id="source-list">
+            <li class="source-item active" data-source="youtube">
+              <div class="source-icon" style="background: #ff0000">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                  <path
+                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </div>
+              <div class="source-info">
+                <div class="source-name">YouTube</div>
+                <div class="source-count">0 個訂閱</div>
+              </div>
+              <span class="source-badge">0</span>
+            </li>
+            <li class="source-item" data-source="spotify">
+              <div class="source-icon" style="background: #1db954">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                  <path
+                    d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+                </svg>
+              </div>
+              <div class="source-info">
+                <div class="source-name">Spotify</div>
+                <div class="source-count">0 個訂閱</div>
+              </div>
+              <span class="source-badge">0</span>
+            </li>
+            <li class="source-item" data-source="firstory">
+              <div class="source-icon" style="background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%)">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                </svg>
+              </div>
+              <div class="source-info">
+                <div class="source-name">Firstory</div>
+                <div class="source-count">0 個訂閱</div>
+              </div>
+              <span class="source-badge">0</span>
+            </li>
+            <li class="source-item" data-source="podcast">
+              <div class="source-icon" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%)">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                  <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M15 16.5A5.48 5.48 0 0 1 12 18a5.48 5.48 0 0 1-3-1.5V21h6z" />
+                </svg>
+              </div>
+              <div class="source-info">
+                <div class="source-name">Apple Podcasts</div>
+                <div class="source-count">0 個訂閱</div>
+              </div>
+              <span class="source-badge">0</span>
+            </li>
+            <li class="source-item" data-source="soundcloud">
+              <div class="source-icon" style="background: #ff5500">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                  <path
+                    d="M1.175 12.225c-.051 0-.094.046-.101.1l-.233 2.154.233 2.105c.007.058.05.098.101.098.05 0 .09-.04.099-.098l.255-2.105-.27-2.154c0-.057-.045-.1-.09-.1m-.899.828c-.051 0-.09.04-.099.099L0 14.479l.176 1.373c0 .058.048.099.099.099.05 0 .09-.04.099-.099l.215-1.373-.215-1.326c-.009-.059-.05-.1-.099-.1zm1.83-.576c-.05 0-.1.046-.107.097l-.255 2.929.255 2.843c.007.055.057.1.107.1.057 0 .099-.045.107-.1l.282-2.843-.282-2.929c-.008-.051-.05-.097-.107-.097zm.94-.156c-.06 0-.106.046-.106.098l-.231 3.085.231 2.99c0 .051.046.099.106.099.059 0 .105-.048.105-.1l.256-2.989-.256-3.085c0-.052-.046-.098-.105-.098zm.938-.168c-.065 0-.106.052-.106.106l-.213 3.253.213 3.045c0 .057.041.106.106.106.062 0 .107-.049.107-.106l.238-3.045-.238-3.253c0-.054-.045-.106-.107-.106zm.955-.165c-.07 0-.12.052-.12.116l-.193 3.418.193 3.22c0 .065.05.116.12.116.07 0 .12-.051.12-.116l.22-3.22-.22-3.418c0-.064-.05-.116-.12-.116zm.954-.165c-.074 0-.125.053-.125.12l-.176 3.583.176 3.198c0 .068.051.12.125.12.073 0 .125-.052.125-.12l.194-3.198-.194-3.583c0-.067-.052-.12-.125-.12zm.964-.156c-.078 0-.135.053-.135.125l-.157 3.739.157 3.182c0 .071.057.125.135.125.078 0 .139-.054.139-.125l.174-3.182-.174-3.739c0-.072-.061-.125-.139-.125zm.955-.165c-.086 0-.145.056-.145.128l-.139 3.904.139 3.164c0 .075.059.128.145.128.084 0 .143-.053.143-.128l.155-3.164-.155-3.904c0-.072-.059-.128-.143-.128zm1.006-.135c-.09 0-.153.057-.153.134l-.12 4.039.12 3.096c0 .077.063.135.153.135.087 0 .151-.058.151-.135l.133-3.096-.133-4.039c0-.077-.064-.134-.151-.134zm.99-.155c-.094 0-.16.061-.16.14l-.108 4.194.108 3.072c0 .08.066.14.16.14.094 0 .161-.06.161-.14l.117-3.072-.117-4.194c0-.079-.067-.14-.161-.14z" />
+                  <path
+                    d="M23.498 13.291c-.196 0-.387.019-.568.054a5.449 5.449 0 0 0-5.282-4.14c-.095 0-.168.072-.168.166v8.385c0 .088.065.162.158.167h5.845A2.502 2.502 0 0 0 24 15.791a2.502 2.502 0 0 0-2.502-2.5" />
+                </svg>
+              </div>
+              <div class="source-info">
+                <div class="source-name">SoundCloud</div>
+                <div class="source-count">0 個訂閱</div>
+              </div>
+              <span class="source-badge">0</span>
+            </li>
+            <li class="source-item" data-source="vimeo">
+              <div class="source-icon" style="background: #1ab7ea">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+                  <path
+                    d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197a315.065 315.065 0 0 0 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z" />
+                </svg>
+              </div>
+              <div class="source-info">
+                <div class="source-name">Vimeo</div>
+                <div class="source-count">0 個訂閱</div>
+              </div>
+              <span class="source-badge">0</span>
+            </li>
+          </ul>
+        </aside>
 
-      <div style="margin-top: 40px">
-        <button class="btn" onclick="alert('此功能開發中...')">開始使用</button>
-        <button class="btn" onclick="window.close()">關閉應用程式</button>
+        <!-- 內容區域 -->
+        <main class="content-area">
+          <div class="content-header">
+            <div class="content-header-top">
+              <div class="content-title-wrapper">
+                <div class="content-icon" style="background: #ff0000" id="content-icon">
+                  <svg viewBox="0 0 24 24" width="28" height="28" fill="white" id="content-icon-svg">
+                    <path
+                      d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                  </svg>
+                </div>
+                <div class="content-title-text">
+                  <h2 id="content-title">YouTube</h2>
+                  <p id="content-subtitle">管理您的 YouTube 訂閱頻道</p>
+                </div>
+              </div>
+              <button class="manage-btn" id="manage-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="white" style="margin-right: 4px">
+                  <path
+                    d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                </svg>
+                <span>管理訂閱</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="subscriptions-container">
+            <div class="subscriptions-header">
+              <h3>最新影片</h3>
+              <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="today">今天</button>
+                <button class="filter-btn" data-filter="week">本週</button>
+                <button class="filter-btn" data-filter="month">本月</button>
+              </div>
+            </div>
+
+            <!-- 影片內容區域 -->
+            <div id="videos-container">
+              <!-- 空狀態 -->
+              <div class="empty-state" id="empty-state">
+                <div class="empty-icon">📺</div>
+                <h3>尚未新增訂閱</h3>
+                <p>點擊「管理訂閱」按鈕來新增您的第一個訂閱頻道</p>
+                <button class="add-subscription-btn" id="add-subscription-btn-empty">
+                  <span>➕</span>
+                  <span>新增訂閱</span>
+                </button>
+              </div>
+
+              <!-- 影片網格（將由 JavaScript 動態生成） -->
+              <div class="videos-grid" id="videos-grid" style="display: none"></div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
+
+    <!-- 管理訂閱模態視窗 -->
+    <div class="modal" id="manage-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>管理訂閱 - <span id="modal-source-name">YouTube</span></h3>
+          <button class="close-modal" id="close-modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <!-- 新增訂閱表單 -->
+          <form class="subscription-form" id="subscription-form">
+            <div class="form-group">
+              <label for="channel-name">頻道名稱</label>
+              <input type="text" id="channel-name" placeholder="請輸入頻道名稱" required />
+            </div>
+            <div class="form-group">
+              <label for="channel-url">頻道連結</label>
+              <input type="url" id="channel-url" placeholder="請輸入頻道連結" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">新增訂閱</button>
+              <button type="button" class="btn-secondary" id="cancel-add">取消</button>
+            </div>
+          </form>
+
+          <!-- 訂閱列表 -->
+          <div style="margin-top: 30px">
+            <h4 style="margin-bottom: 15px; color: #333; font-size: 16px">目前訂閱</h4>
+            <div class="subscriptions-list" id="subscriptions-list">
+              <!-- 訂閱項目將由 JavaScript 動態生成 -->
+              <p style="text-align: center; color: #999; padding: 20px">尚無訂閱</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./scripts/dashboard.js"></script>
   </body>
 </html>
