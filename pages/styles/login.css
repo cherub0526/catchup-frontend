@@ -316,3 +316,53 @@ body {
   display: block;
   animation: fadeIn 0.3s ease-in;
 }
+
+/* 忘記密碼表單樣式 */
+.back-button-container {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #f0f2ff;
+}
+
+.back-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.back-btn:hover svg {
+  transform: translateX(-3px);
+}
+
+.forgot-password-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.forgot-password-header h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.forgot-password-header p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}

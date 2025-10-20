@@ -4,10 +4,16 @@ const { ipcRenderer } = require("electron");
 const tabButtons = document.querySelectorAll(".tab-btn");
 const loginForm = document.getElementById("login-form");
 const registerForm = document.getElementById("register-form");
+const forgotPasswordForm = document.getElementById("forgot-password-form");
 const loginFormElement = document.getElementById("loginForm");
 const registerFormElement = document.getElementById("registerForm");
+const forgotPasswordFormElement = document.getElementById("forgotPasswordForm");
 const googleLoginBtn = document.getElementById("google-login");
 const facebookLoginBtn = document.getElementById("facebook-login");
+const googleRegisterBtn = document.getElementById("google-register");
+const facebookRegisterBtn = document.getElementById("facebook-register");
+const forgotPasswordLink = document.querySelector(".forgot-password");
+const backToLoginBtn = document.getElementById("back-to-login");
 
 // 標籤切換功能
 tabButtons.forEach((button) => {
@@ -22,9 +28,11 @@ tabButtons.forEach((button) => {
     if (tab === "login") {
       loginForm.classList.add("active");
       registerForm.classList.remove("active");
+      forgotPasswordForm.classList.remove("active");
     } else {
       registerForm.classList.add("active");
       loginForm.classList.remove("active");
+      forgotPasswordForm.classList.remove("active");
     }
   });
 });
@@ -134,6 +142,32 @@ facebookLoginBtn.addEventListener("click", async () => {
   }
 });
 
+// Google 註冊（使用相同的 OAuth 流程）
+googleRegisterBtn.addEventListener("click", async () => {
+  try {
+    console.log("開始 Google 註冊流程");
+    removeMessage();
+
+    // 通知主程序開始 OAuth 流程
+    ipcRenderer.send("oauth-login", { provider: "google" });
+  } catch (error) {
+    showMessage("Google 註冊失敗：" + error.message, "error");
+  }
+});
+
+// Facebook 註冊（使用相同的 OAuth 流程）
+facebookRegisterBtn.addEventListener("click", async () => {
+  try {
+    console.log("開始 Facebook 註冊流程");
+    removeMessage();
+
+    // 通知主程序開始 OAuth 流程
+    ipcRenderer.send("oauth-login", { provider: "facebook" });
+  } catch (error) {
+    showMessage("Facebook 註冊失敗：" + error.message, "error");
+  }
+});
+
 // 監聽來自主程序的 OAuth 結果
 ipcRenderer.on("oauth-result", (event, result) => {
   if (result.success) {
@@ -174,7 +208,66 @@ function simulateApiCall() {
 }
 
 // 忘記密碼連結
-document.querySelector(".forgot-password").addEventListener("click", (e) => {
+forgotPasswordLink.addEventListener("click", (e) => {
   e.preventDefault();
-  showMessage("重設密碼連結已發送到您的信箱", "success");
+
+  // 隱藏所有表單
+  loginForm.classList.remove("active");
+  registerForm.classList.remove("active");
+  forgotPasswordForm.classList.add("active");
+
+  // 移除標籤按鈕的 active 狀態
+  tabButtons.forEach((btn) => btn.classList.remove("active"));
+
+  // 清除訊息
+  removeMessage();
+});
+
+// 返回登入按鈕
+backToLoginBtn.addEventListener("click", () => {
+  // 顯示登入表單
+  forgotPasswordForm.classList.remove("active");
+  loginForm.classList.add("active");
+
+  // 恢復登入標籤的 active 狀態
+  document.querySelector('.tab-btn[data-tab="login"]').classList.add("active");
+
+  // 清除訊息和表單
+  removeMessage();
+  forgotPasswordFormElement.reset();
+});
+
+// 忘記密碼表單提交
+forgotPasswordFormElement.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("forgot-email").value;
+
+  // 清除之前的錯誤訊息
+  removeMessage();
+
+  // 驗證電子郵件格式
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showMessage("請輸入有效的電子郵件地址", "error");
+    return;
+  }
+
+  try {
+    // 這裡應該呼叫後端 API 發送重設密碼郵件
+    console.log("發送重設密碼連結到:", email);
+
+    // 模擬 API 呼叫
+    await simulateApiCall();
+
+    // 成功訊息
+    showMessage("重設密碼連結已發送到您的信箱，請檢查您的電子郵件", "success");
+
+    // 清空表單
+    setTimeout(() => {
+      forgotPasswordFormElement.reset();
+    }, 2000);
+  } catch (error) {
+    showMessage("發送失敗：" + error.message, "error");
+  }
 });
