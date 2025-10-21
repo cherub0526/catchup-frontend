@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Assistant - 播放器</title>
+    <link rel="stylesheet" href="./styles/player.css" />
+  </head>
+  <body>
+    <div class="player-container">
+      <!-- 頂部導航欄 -->
+      <header class="header">
+        <div class="header-left">
+          <button class="back-btn" id="back-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path
+                d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" />
+            </svg>
+            <span>返回</span>
+          </button>
+          <h1 class="video-title" id="video-title">載入中...</h1>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" id="download-btn">
+            <span>⬇️</span>
+            <span>下載</span>
+          </button>
+          <button class="header-btn" id="share-btn">
+            <span>🔗</span>
+            <span>分享</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 主要內容區域 -->
+      <div class="main-content">
+        <!-- 左側區域 -->
+        <div class="left-section">
+          <!-- 播放器區域 -->
+          <div class="player-wrapper" id="player-wrapper">
+            <!-- 影片播放器 (實際使用時會替換為真實的影片元素) -->
+            <div class="player-placeholder">
+              <div class="player-placeholder-icon">🎬</div>
+              <div class="player-placeholder-text">正在載入影片...</div>
+            </div>
+
+            <!-- 播放控制條 -->
+            <div class="player-controls" id="player-controls">
+              <div class="progress-bar" id="progress-bar">
+                <div class="progress-filled" id="progress-filled"></div>
+              </div>
+              <div class="controls-row">
+                <button class="control-btn" id="play-btn">▶️</button>
+                <button class="control-btn" id="rewind-btn">⏪</button>
+                <button class="control-btn" id="forward-btn">⏩</button>
+                <span class="time-display" id="time-display">00:00 / 00:00</span>
+                <div class="spacer"></div>
+                <button class="control-btn" id="volume-btn">🔊</button>
+                <button class="control-btn" id="fullscreen-btn">⛶</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 聊天區域 -->
+          <div class="chat-wrapper">
+            <div class="chat-header">
+              <h3>AI 助手</h3>
+              <div class="chat-status">
+                <span class="status-dot"></span>
+                <span>線上</span>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+              <!-- 歡迎訊息 -->
+              <div class="message">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">您好！我是 AI 助手，我可以回答您關於這部影片的任何問題。請隨時提問！</div>
+              </div>
+            </div>
+
+            <div class="chat-input-wrapper">
+              <form class="chat-input-form" id="chat-form">
+                <input
+                  type="text"
+                  class="chat-input"
+                  id="chat-input"
+                  placeholder="詢問關於影片的問題..."
+                  autocomplete="off" />
+                <button type="submit" class="send-btn" id="send-btn">發送</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右側區域 -->
+        <div class="right-section">
+          <div class="summary-wrapper">
+            <div class="summary-header">
+              <div class="summary-icon">✨</div>
+              <div class="summary-header-text">
+                <h3>AI 總結</h3>
+                <p>由 AI 自動生成</p>
+              </div>
+            </div>
+
+            <div class="summary-content">
+              <!-- 摘要 -->
+              <div class="summary-section">
+                <h4><span class="summary-section-icon">📝</span>內容摘要</h4>
+                <p class="summary-text" id="summary-overview">載入中...</p>
+              </div>
+
+              <!-- 重點 -->
+              <div class="summary-section">
+                <h4><span class="summary-section-icon">⭐</span>重點整理</h4>
+                <ul class="summary-list" id="summary-keypoints">
+                  <li>載入中...</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./scripts/player.js"></script>
+  </body>
+</html>

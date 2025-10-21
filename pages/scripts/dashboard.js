@@ -412,9 +412,29 @@ function updateSourceCounts() {
 
 // 開啟影片
 function openVideo(url) {
-  console.log("開啟影片:", url);
-  // 這裡可以整合實際的影片播放功能
-  alert("影片功能開發中...");
+  // 獲取影片資訊（這裡使用模擬資料）
+  const videoInfo = getVideoInfo(url);
+
+  // 導航到播放器頁面，帶上影片資訊
+  const params = new URLSearchParams({
+    title: videoInfo.title,
+    source: currentSource,
+    url: url,
+  });
+
+  window.location.href = `player.html?${params.toString()}`;
+}
+
+// 獲取影片資訊（模擬函數）
+function getVideoInfo(url) {
+  // 從 videosData 中尋找對應的影片
+  const videos = videosData[currentSource];
+  const video = videos.find((v) => v.url === url) || videos[0];
+
+  return {
+    title: video ? video.title : "未知影片",
+    channel: video ? video.channel : "未知頻道",
+  };
 }
 
 // 顯示通知
