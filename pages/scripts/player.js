@@ -6,6 +6,10 @@ let videoData = {
   isPlaying: false,
 };
 
+// 時間軸語言狀態
+let currentTimelineLanguage = "zh-TW";
+let timelineData = [];
+
 // AI 總結資料
 const aiSummary = {
   overview:
@@ -16,12 +20,6 @@ const aiSummary = {
     "深入探討了狀態管理的不同解決方案",
     "展示了實際專案中的最佳實踐案例",
     "提供了性能優化的實用技巧",
-  ],
-  timeline: [
-    { time: 30, label: "前端框架簡介", description: "概述現代前端開發趨勢" },
-    { time: 180, label: "組件化開發", description: "如何設計可重用的組件" },
-    { time: 360, label: "狀態管理", description: "狀態管理的最佳實踐" },
-    { time: 480, label: "性能優化", description: "提升應用性能的技巧" },
   ],
 };
 
@@ -48,6 +46,7 @@ const shareBtn = document.getElementById("share-btn");
 const summaryOverview = document.getElementById("summary-overview");
 const summaryKeypoints = document.getElementById("summary-keypoints");
 const summaryTimeline = document.getElementById("summary-timeline");
+const timelineLanguageSelect = document.getElementById("timeline-language");
 
 // 初始化
 function init() {
@@ -60,6 +59,9 @@ function init() {
 
   // 載入 AI 總結
   loadAISummary();
+
+  // 載入時間軸
+  loadTimeline(currentTimelineLanguage);
 
   // 綁定事件
   bindEvents();
@@ -93,6 +95,15 @@ function bindEvents() {
     });
   }
 
+  // Tab 切換
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetTab = button.getAttribute("data-tab");
+      switchTab(targetTab);
+    });
+  });
+
   // 播放控制
   if (playBtn) playBtn.addEventListener("click", togglePlay);
   if (rewindBtn) rewindBtn.addEventListener("click", () => seek(-10));
@@ -110,8 +121,34 @@ function bindEvents() {
   if (downloadBtn) downloadBtn.addEventListener("click", handleDownload);
   if (shareBtn) shareBtn.addEventListener("click", handleShare);
 
+  // 時間軸語言切換
+  if (timelineLanguageSelect) {
+    timelineLanguageSelect.addEventListener("change", (e) => {
+      currentTimelineLanguage = e.target.value;
+      loadTimeline(currentTimelineLanguage);
+    });
+  }
+
   // 模擬播放進度
   setInterval(updateProgress, 1000);
+}
+
+// Tab 切換功能
+function switchTab(tabName) {
+  // 移除所有按鈕的 active 狀態
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  tabButtons.forEach((btn) => btn.classList.remove("active"));
+
+  // 移除所有內容的 active 狀態
+  const tabContents = document.querySelectorAll(".tab-content");
+  tabContents.forEach((content) => content.classList.remove("active"));
+
+  // 啟動選中的按鈕和內容
+  const activeButton = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+  const activeContent = document.getElementById(`${tabName}-tab`);
+
+  if (activeButton) activeButton.classList.add("active");
+  if (activeContent) activeContent.classList.add("active");
 }
 
 // 載入 AI 總結
@@ -125,24 +162,46 @@ function loadAISummary() {
   if (summaryKeypoints) {
     summaryKeypoints.innerHTML = aiSummary.keypoints.map((point) => `<li>${point}</li>`).join("");
   }
+}
 
-  // 載入時間軸
-  if (summaryTimeline) {
-    summaryTimeline.innerHTML = aiSummary.timeline
-      .map(
-        (item) => `
+// 載入時間軸
+async function loadTimeline(language) {
+  if (!summaryTimeline) return;
+
+  try {
+    summaryTimeline.innerHTML = '<p class="summary-text">載入中...</p>';
+
+    const response = await fetch(`./timelines/${language}.json`);
+    if (!response.ok) {
+      throw new Error(`Failed to load timeline for ${language}`);
+    }
+
+    timelineData = await response.json();
+    renderTimeline();
+  } catch (error) {
+    console.error("Error loading timeline:", error);
+    summaryTimeline.innerHTML = '<p class="summary-text" style="color: #ef4444;">無法載入時間軸</p>';
+  }
+}
+
+// 渲染時間軸
+function renderTimeline() {
+  if (!summaryTimeline || !timelineData.length) return;
+
+  summaryTimeline.innerHTML = timelineData
+    .map(
+      (item) => `
+    <div class="timeline-item">
       <div class="timestamp-link" onclick="seekToTime(${item.time})">
         <span>⏱️</span>
         <span>${formatTime(item.time)}</span>
         <span> - ${item.label}</span>
       </div>
-      <p class="summary-text" style="margin-left: 28px; margin-top: 4px; margin-bottom: 12px; font-size: 13px; color: #9ca3af;">
-        ${item.description}
-      </p>
-    `
-      )
-      .join("");
-  }
+      <p class="timeline-description">${item.description}</p>
+    </div>
+  `
+    )
+    .join("");
 }
 
 // 播放/暫停
