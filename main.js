@@ -1,4 +1,8 @@
+// 載入環境變數
+require("dotenv").config();
+
 const { app, BrowserWindow, ipcMain, shell } = require("electron");
+const api = require("./api");
 
 let mainWindow;
 
@@ -17,7 +21,7 @@ function createLoginWindow() {
   mainWindow.loadFile("pages/login.html");
 
   // 開發時開啟 DevTools（可選）
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 }
 
 // 建立主視窗

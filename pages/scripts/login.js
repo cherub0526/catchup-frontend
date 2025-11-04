@@ -1,4 +1,5 @@
 const { ipcRenderer } = require("electron");
+const api = require("../api");
 
 // DOM 元素
 const tabButtons = document.querySelectorAll(".tab-btn");
@@ -41,7 +42,7 @@ tabButtons.forEach((button) => {
 loginFormElement.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("login-email").value;
+  const account = document.getElementById("login-account").value;
   const password = document.getElementById("login-password").value;
   const rememberMe = document.getElementById("remember-me").checked;
 
@@ -50,10 +51,10 @@ loginFormElement.addEventListener("submit", async (e) => {
 
   try {
     // 這裡應該呼叫後端 API 進行登入驗證
-    console.log("登入資訊:", { email, password, rememberMe });
+    console.log("登入資訊:", { account, password, rememberMe });
 
-    // 模擬 API 呼叫
-    await simulateApiCall();
+    // 呼叫 API 進行登入
+    await api.auth.login(account, password);
 
     // 登入成功
     showMessage("登入成功！", "success");
@@ -63,7 +64,8 @@ loginFormElement.addEventListener("submit", async (e) => {
       ipcRenderer.send("login-success");
     }, 1000);
   } catch (error) {
-    showMessage("登入失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage(errorMessage, "error");
   }
 });
 
@@ -71,7 +73,7 @@ loginFormElement.addEventListener("submit", async (e) => {
 registerFormElement.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("register-name").value;
+  const account = document.getElementById("register-account").value;
   const email = document.getElementById("register-email").value;
   const password = document.getElementById("register-password").value;
   const confirmPassword = document.getElementById("register-confirm-password").value;
@@ -98,10 +100,10 @@ registerFormElement.addEventListener("submit", async (e) => {
 
   try {
     // 這裡應該呼叫後端 API 進行註冊
-    console.log("註冊資訊:", { name, email, password });
+    console.log("註冊資訊:", { account, email, password });
 
-    // 模擬 API 呼叫
-    await simulateApiCall();
+    // 呼叫 API 進行註冊
+    await api.auth.register({ account, email, password, password_confirmation: confirmPassword });
 
     // 註冊成功
     showMessage("註冊成功！請登入", "success");
@@ -109,10 +111,11 @@ registerFormElement.addEventListener("submit", async (e) => {
     // 切換到登入頁面
     setTimeout(() => {
       document.querySelector('.tab-btn[data-tab="login"]').click();
-      document.getElementById("login-email").value = email;
+      document.getElementById("login-account").value = account;
     }, 1500);
   } catch (error) {
-    showMessage("註冊失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage(errorMessage, "error");
   }
 });
 
@@ -125,7 +128,8 @@ googleLoginBtn.addEventListener("click", async () => {
     // 通知主程序開始 OAuth 流程
     ipcRenderer.send("oauth-login", { provider: "google" });
   } catch (error) {
-    showMessage("Google 登入失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage("Google 登入失敗：" + errorMessage, "error");
   }
 });
 
@@ -138,7 +142,8 @@ facebookLoginBtn.addEventListener("click", async () => {
     // 通知主程序開始 OAuth 流程
     ipcRenderer.send("oauth-login", { provider: "facebook" });
   } catch (error) {
-    showMessage("Facebook 登入失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage("Facebook 登入失敗：" + errorMessage, "error");
   }
 });
 
@@ -151,7 +156,8 @@ googleRegisterBtn.addEventListener("click", async () => {
     // 通知主程序開始 OAuth 流程
     ipcRenderer.send("oauth-login", { provider: "google" });
   } catch (error) {
-    showMessage("Google 註冊失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage("Google 註冊失敗：" + errorMessage, "error");
   }
 });
 
@@ -164,7 +170,8 @@ facebookRegisterBtn.addEventListener("click", async () => {
     // 通知主程序開始 OAuth 流程
     ipcRenderer.send("oauth-login", { provider: "facebook" });
   } catch (error) {
-    showMessage("Facebook 註冊失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage("Facebook 註冊失敗：" + errorMessage, "error");
   }
 });
 
@@ -196,6 +203,36 @@ function showMessage(message, type) {
 function removeMessage() {
   const messages = document.querySelectorAll(".error-message, .success-message");
   messages.forEach((msg) => msg.remove());
+}
+
+// 從 API 錯誤中提取錯誤訊息
+// 錯誤格式: { messages: { "account": ["error message"], "email": ["error message"] } }
+function getApiErrorMessage(error) {
+  // 檢查是否有 response 和 data
+  if (error.data) {
+    const data = error.data;
+
+    // 檢查是否有 messages 物件
+    if (data.messages && typeof data.messages === "object") {
+      // 取得第一個 key
+      const firstKey = Object.keys(data.messages)[0];
+      if (firstKey && Array.isArray(data.messages[firstKey]) && data.messages[firstKey].length > 0) {
+        // 返回第一個 key 的第一個錯誤訊息
+        return data.messages[firstKey][0];
+      }
+    }
+
+    // 如果沒有 messages，檢查是否有 message 或 error 字段
+    if (data.message) {
+      return data.message;
+    }
+    if (data.error) {
+      return data.error;
+    }
+  }
+
+  // 如果都沒有，返回原始錯誤訊息
+  return error.message || "發生未知錯誤";
 }
 
 // 模擬 API 呼叫（僅供示範）
@@ -257,7 +294,10 @@ forgotPasswordFormElement.addEventListener("submit", async (e) => {
     // 這裡應該呼叫後端 API 發送重設密碼郵件
     console.log("發送重設密碼連結到:", email);
 
-    // 模擬 API 呼叫
+    // 呼叫 API 發送重設密碼郵件
+    // await api.auth.forgotPassword(email);
+
+    // 暫時使用模擬 API 呼叫
     await simulateApiCall();
 
     // 成功訊息
@@ -268,6 +308,7 @@ forgotPasswordFormElement.addEventListener("submit", async (e) => {
       forgotPasswordFormElement.reset();
     }, 2000);
   } catch (error) {
-    showMessage("發送失敗：" + error.message, "error");
+    const errorMessage = getApiErrorMessage(error);
+    showMessage("發送失敗：" + errorMessage, "error");
   }
 });
