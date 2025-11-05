@@ -30,14 +30,15 @@
       <div class="left-section">
         <!-- 播放器區域 -->
         <div class="player-wrapper" ref="playerWrapperRef">
-          <!-- 影片播放器 -->
+          <!-- YouTube iframe 播放器 -->
           <div v-if="!videoLoaded" class="player-placeholder">
             <div class="player-placeholder-icon">🎬</div>
             <div class="player-placeholder-text">正在載入影片...</div>
           </div>
+          <div v-else id="youtube-player" class="youtube-player"></div>
 
           <!-- 播放控制條 -->
-          <div class="player-controls">
+          <div class="player-controls" v-if="videoLoaded">
             <div class="progress-bar" @click="handleProgressClick">
               <div class="progress-filled" :style="{ width: progressPercent + '%' }"></div>
             </div>
@@ -164,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
@@ -174,9 +175,15 @@ const router = useRouter();
 const playerWrapperRef = ref(null);
 const chatMessagesRef = ref(null);
 
+// YouTube Player
+let youtubePlayer = null;
+let playerCheckInterval = null;
+
 // 影片資料
 const videoData = ref({
   title: "載入中...",
+  videoId: "",
+  url: "",
   duration: 600,
   currentTime: 0,
   isPlaying: false,
@@ -224,23 +231,133 @@ const progressPercent = computed(() => {
 onMounted(() => {
   // 從 URL 參數獲取影片資訊
   const title = route.query.title || "範例影片";
-  videoData.value.title = title;
+  const url = route.query.url || "";
 
-  // 模擬影片載入
-  setTimeout(() => {
-    videoLoaded.value = true;
-  }, 1000);
+  videoData.value.title = title;
+  videoData.value.url = url;
+
+  // 從 URL 中提取 YouTube 影片 ID
+  const videoId = extractYouTubeVideoId(url);
+  videoData.value.videoId = videoId;
 
   // 載入時間軸
   loadTimeline();
 
-  // 模擬播放進度
-  setInterval(() => {
-    if (isPlaying.value) {
-      currentTime.value = Math.min(currentTime.value + 1, duration.value);
-    }
-  }, 1000);
+  // 載入 YouTube iframe API
+  loadYouTubeAPI();
 });
+
+onBeforeUnmount(() => {
+  // 清理播放器
+  if (youtubePlayer) {
+    youtubePlayer.destroy();
+  }
+  if (playerCheckInterval) {
+    clearInterval(playerCheckInterval);
+  }
+});
+
+// 載入 YouTube iframe API
+const loadYouTubeAPI = () => {
+  // 檢查 API 是否已載入
+  if (window.YT && window.YT.Player) {
+    initYouTubePlayer();
+    return;
+  }
+
+  // 載入 YouTube iframe API
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/embed/LlcdBguL3hA?si=H3gDXhJWORSyOWjV";
+  const firstScriptTag = document.getElementsByTagName("script")[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // 設定 API 就緒回調
+  window.onYouTubeIframeAPIReady = () => {
+    initYouTubePlayer();
+  };
+};
+
+// 初始化 YouTube 播放器
+const initYouTubePlayer = () => {
+  if (!videoData.value.videoId) {
+    console.error("No video ID found");
+    showNotification("無法載入影片：缺少影片 ID");
+    return;
+  }
+
+  youtubePlayer = new window.YT.Player("youtube-player", {
+    height: "100%",
+    width: "100%",
+    videoId: videoData.value.videoId,
+    playerVars: {
+      autoplay: 0,
+      controls: 0, // 隱藏 YouTube 控制條，使用自訂控制條
+      modestbranding: 1,
+      rel: 0,
+      showinfo: 0,
+      fs: 1,
+      cc_load_policy: 0,
+      iv_load_policy: 3,
+    },
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange,
+    },
+  });
+};
+
+// 播放器就緒
+const onPlayerReady = (event) => {
+  videoLoaded.value = true;
+  duration.value = youtubePlayer.getDuration();
+
+  // 開始更新播放進度
+  playerCheckInterval = setInterval(() => {
+    if (youtubePlayer && youtubePlayer.getCurrentTime) {
+      currentTime.value = youtubePlayer.getCurrentTime();
+
+      // 更新播放狀態
+      const state = youtubePlayer.getPlayerState();
+      isPlaying.value = state === window.YT.PlayerState.PLAYING;
+    }
+  }, 100);
+
+  showNotification("影片載入完成");
+};
+
+// 播放器狀態變化
+const onPlayerStateChange = (event) => {
+  const state = event.data;
+
+  if (state === window.YT.PlayerState.PLAYING) {
+    isPlaying.value = true;
+  } else if (state === window.YT.PlayerState.PAUSED) {
+    isPlaying.value = false;
+  } else if (state === window.YT.PlayerState.ENDED) {
+    isPlaying.value = false;
+    showNotification("影片播放完畢");
+  }
+};
+
+// 從 URL 提取 YouTube 影片 ID
+const extractYouTubeVideoId = (url) => {
+  if (!url) return "";
+
+  // 支援多種 YouTube URL 格式
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+    /^([a-zA-Z0-9_-]{11})$/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+
+  return "";
+};
 
 // 方法
 const goBack = () => {
@@ -248,19 +365,37 @@ const goBack = () => {
 };
 
 const togglePlay = () => {
-  isPlaying.value = !isPlaying.value;
+  if (!youtubePlayer) return;
+
+  if (isPlaying.value) {
+    youtubePlayer.pauseVideo();
+  } else {
+    youtubePlayer.playVideo();
+  }
 };
 
 const seek = (seconds) => {
-  currentTime.value = Math.max(0, Math.min(duration.value, currentTime.value + seconds));
+  if (!youtubePlayer) return;
+
+  const newTime = Math.max(0, Math.min(duration.value, currentTime.value + seconds));
+  youtubePlayer.seekTo(newTime, true);
 };
 
 const seekToTime = (seconds) => {
-  currentTime.value = seconds;
+  if (!youtubePlayer) return;
+
+  youtubePlayer.seekTo(seconds, true);
   showNotification(`已跳轉至 ${formatTime(seconds)}`);
 };
 
 const toggleMute = () => {
+  if (!youtubePlayer) return;
+
+  if (isMuted.value) {
+    youtubePlayer.unMute();
+  } else {
+    youtubePlayer.mute();
+  }
   isMuted.value = !isMuted.value;
 };
 
@@ -273,9 +408,12 @@ const toggleFullscreen = () => {
 };
 
 const handleProgressClick = (e) => {
+  if (!youtubePlayer) return;
+
   const rect = e.currentTarget.getBoundingClientRect();
   const percent = (e.clientX - rect.left) / rect.width;
-  currentTime.value = percent * duration.value;
+  const newTime = percent * duration.value;
+  youtubePlayer.seekTo(newTime, true);
 };
 
 const handleDownload = () => {
@@ -527,6 +665,16 @@ window.seekToTime = seekToTime;
   align-items: center;
   justify-content: center;
   position: relative;
+}
+
+.youtube-player {
+  width: 100%;
+  height: 100%;
+}
+
+.youtube-player :deep(iframe) {
+  width: 100%;
+  height: 100%;
 }
 
 .player-placeholder {
