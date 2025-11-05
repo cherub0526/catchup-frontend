@@ -4,8 +4,27 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    // 包含 dist 目錄（Vite 建構輸出）
+    extraResource: [
+      'dist'
+    ],
+    ignore: [
+      /^\/src/,
+      /^\/pages/,
+      /^\/node_modules/,
+      /(.eslintrc|.gitignore|.vscode|.idea)/,
+      /^\/vite.config.js/,
+    ],
   },
   rebuildConfig: {},
+  hooks: {
+    // 在打包前先建構 Vue 應用
+    prePackage: async () => {
+      const { execSync } = require('child_process');
+      console.log('Building Vue app with Vite...');
+      execSync('npm run build', { stdio: 'inherit' });
+    },
+  },
   makers: [
     {
       name: '@electron-forge/maker-squirrel',

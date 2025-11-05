@@ -1,9 +1,14 @@
 {
   "name": "video-assistant",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "electron/main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron:dev": "NODE_ENV=development electron .",
+    "electron:build": "vite build && electron-builder",
+    "start": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && npm run electron:dev\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
     "make": "electron-forge make"
@@ -20,11 +25,21 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
     "@electron-forge/plugin-fuses": "^7.10.2",
     "@electron/fuses": "^1.8.0",
-    "electron": "^38.3.0"
+    "concurrently": "^9.2.1",
+    "electron": "^38.3.0",
+    "electron-builder": "^26.0.12",
+    "wait-on": "^8.0.5"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "axios": "^1.7.2",
     "dotenv": "^16.4.5",
-    "axios": "^1.7.2"
+    "electron-squirrel-startup": "^1.0.1",
+    "pinia": "^3.0.3",
+    "vite": "^6.4.1",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
   }
 }
