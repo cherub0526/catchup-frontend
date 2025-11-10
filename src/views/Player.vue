@@ -171,12 +171,14 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { usePlansStore } from "@/stores/plans";
 import api from "@/api";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
 
 const route = useRoute();
 const router = useRouter();
+const plansStore = usePlansStore();
 
 // Refs
 const playerWrapperRef = ref(null);
@@ -267,6 +269,9 @@ onMounted(async () => {
       initPlyrPlayer();
     }
   }
+
+  // 更新使用情況
+  await plansStore.updateUsage();
 });
 
 onBeforeUnmount(() => {

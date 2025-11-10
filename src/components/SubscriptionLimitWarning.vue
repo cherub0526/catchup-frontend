@@ -29,7 +29,7 @@ import { storeToRefs } from 'pinia';
 const props = defineProps({
   type: {
     type: String,
-    default: 'both', // 'channel', 'video', or 'both'
+    default: 'both', // 'channel', 'media', or 'both'
   },
   showAlways: {
     type: Boolean,
@@ -38,7 +38,7 @@ const props = defineProps({
 });
 
 const plansStore = usePlansStore();
-const { usage, currentLimits, isChannelLimitReached, isVideoLimitReached } = storeToRefs(plansStore);
+const { usage, currentLimits, isChannelLimitReached, isMediaLimitReached } = storeToRefs(plansStore);
 
 const isDismissed = ref(false);
 
@@ -47,19 +47,19 @@ const shouldShowWarning = computed(() => {
   
   if (props.type === 'channel') {
     return isChannelLimitReached.value;
-  } else if (props.type === 'video') {
-    return isVideoLimitReached.value;
+  } else if (props.type === 'media') {
+    return isMediaLimitReached.value;
   } else {
-    return isChannelLimitReached.value || isVideoLimitReached.value;
+    return isChannelLimitReached.value || isMediaLimitReached.value;
   }
 });
 
 const warningTitle = computed(() => {
-  if (isChannelLimitReached.value && isVideoLimitReached.value) {
+  if (isChannelLimitReached.value && isMediaLimitReached.value) {
     return '已達到訂閱限制';
   } else if (isChannelLimitReached.value) {
     return '已達到頻道訂閱上限';
-  } else if (isVideoLimitReached.value) {
+  } else if (isMediaLimitReached.value) {
     return '已達到影音數量上限';
   }
   return '';
@@ -72,8 +72,8 @@ const warningMessage = computed(() => {
     messages.push(`頻道訂閱數：${usage.value.channels}/${currentLimits.value.channels}`);
   }
   
-  if (isVideoLimitReached.value) {
-    messages.push(`影音數量：${usage.value.videos}/${currentLimits.value.videos}`);
+  if (isMediaLimitReached.value) {
+    messages.push(`影音數量：${usage.value.media}/${currentLimits.value.media}`);
   }
   
   return messages.join(' | ') + '。升級方案以獲得更多容量。';
@@ -84,7 +84,7 @@ const dismiss = () => {
 };
 
 // 當限制狀態改變時，重置 dismiss 狀態
-watch([isChannelLimitReached, isVideoLimitReached], () => {
+watch([isChannelLimitReached, isMediaLimitReached], () => {
   isDismissed.value = false;
 });
 </script>

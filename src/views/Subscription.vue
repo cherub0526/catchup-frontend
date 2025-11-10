@@ -49,12 +49,12 @@
           </div>
           <div class="usage-item">
             <span class="usage-label">影音數量</span>
-            <span class="usage-value">{{ usage.videos }} / {{ currentLimits.videos }}</span>
+            <span class="usage-value">{{ usage.media }} / {{ currentLimits.media }}</span>
             <div class="usage-bar">
               <div 
                 class="usage-progress" 
-                :style="{ width: `${(usage.videos / currentLimits.videos) * 100}%` }"
-                :class="{ 'limit-reached': isVideoLimitReached }"
+                :style="{ width: `${(usage.media / currentLimits.media) * 100}%` }"
+                :class="{ 'limit-reached': isMediaLimitReached }"
               ></div>
             </div>
           </div>
@@ -100,7 +100,7 @@
               <polygon points="23 7 16 12 23 17 23 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               <rect x="1" y="5" width="15" height="14" rx="2" ry="2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span>最多 {{ plan.limits.videos }} 隻影音</span>
+            <span>最多 {{ plan.limits.media }} 隻影音</span>
           </div>
         </div>
 
@@ -274,7 +274,7 @@ const {
   usage,
   currentLimits,
   isChannelLimitReached,
-  isVideoLimitReached,
+  isMediaLimitReached,
 } = storeToRefs(plansStore);
 
 const {
@@ -322,6 +322,8 @@ const goBack = () => {
 // 初始化
 onMounted(async () => {
   await initialize();
+  // 更新使用情況
+  await plansStore.updateUsage();
 });
 </script>
 

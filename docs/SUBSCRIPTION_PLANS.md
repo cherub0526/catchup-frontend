@@ -86,12 +86,34 @@
 
 ### 獲取當前訂閱
 ```javascript
-GET /v1/subscription
+GET /v1/subscriptions
+
+// 返回格式
+{
+  "data": {
+    "planId": "basic",
+    "billingCycle": "monthly",
+    "plan": {
+      "channels": 3,
+      "media": 50
+    },
+    "usage": {
+      "channels": 1,
+      "media": 10
+    }
+  }
+}
 ```
+
+**說明：**
+- `plan.channels`: 方案限制的頻道數量上限
+- `plan.media`: 方案限制的影音數量上限
+- `usage.channels`: 目前訂閱的頻道數量
+- `usage.media`: 目前的影片數量
 
 ### 更新訂閱方案
 ```javascript
-POST /v1/subscription
+POST /v1/subscriptions
 {
   "planId": "basic",
   "billingCycle": "monthly" | "yearly"
@@ -100,22 +122,38 @@ POST /v1/subscription
 
 ### 取消訂閱
 ```javascript
-DELETE /v1/subscription
+DELETE /v1/subscriptions
 ```
 
 ### 獲取使用情況
 ```javascript
-GET /v1/subscription/usage
+GET /v1/subscriptions/usage
+
+// 返回格式
+{
+  "plan": {
+    "channels": 3,
+    "media": 50
+  },
+  "usage": {
+    "channels": 1,
+    "media": 10
+  }
+}
 ```
+
+**說明：**
+- `plan`: 當前方案的限制
+- `usage`: 目前的使用情況
 
 ### 獲取所有方案
 ```javascript
-GET /v1/subscription/plans
+GET /v1/subscriptions/plans
 ```
 
 ### 創建支付會話（Stripe 集成）
 ```javascript
-POST /v1/subscription/checkout
+POST /v1/subscriptions/checkout
 {
   "planId": "basic",
   "billingCycle": "monthly"

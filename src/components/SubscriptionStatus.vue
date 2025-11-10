@@ -2,21 +2,23 @@
   <div class="subscription-status">
     <div class="status-header">
       <div class="plan-badge" :class="planBadgeClass">
-        {{ currentPlan?.name || 'Free' }}
+        {{ currentPlan?.name || "Free" }}
       </div>
-      <router-link to="/subscription" class="manage-link">
-        管理方案
-      </router-link>
+      <router-link to="/subscription" class="manage-link"> 管理方案 </router-link>
     </div>
-    
+
     <div class="usage-grid">
       <div class="usage-card">
         <div class="usage-header">
           <svg class="usage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="7" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+            <circle cx="9" cy="7" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
           <span class="usage-label">訂閱頻道</span>
         </div>
@@ -26,19 +28,27 @@
           <span class="usage-limit">{{ currentLimits.channels }}</span>
         </div>
         <div class="usage-bar">
-          <div 
-            class="usage-fill" 
+          <div
+            class="usage-fill"
             :class="{ 'near-limit': channelUsagePercentage >= 80, 'at-limit': isChannelLimitReached }"
-            :style="{ width: `${Math.min(channelUsagePercentage, 100)}%` }"
-          ></div>
+            :style="{ width: `${Math.min(channelUsagePercentage, 100)}%` }"></div>
         </div>
       </div>
-      
+
       <div class="usage-card">
         <div class="usage-header">
           <svg class="usage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polygon points="23 7 16 12 23 17 23 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="23 7 16 12 23 17 23 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <rect
+              x="1"
+              y="5"
+              width="15"
+              height="14"
+              rx="2"
+              ry="2"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
           <span class="usage-label">影音數量</span>
         </div>
@@ -48,11 +58,10 @@
           <span class="usage-limit">{{ currentLimits.videos }}</span>
         </div>
         <div class="usage-bar">
-          <div 
-            class="usage-fill" 
+          <div
+            class="usage-fill"
             :class="{ 'near-limit': videoUsagePercentage >= 80, 'at-limit': isVideoLimitReached }"
-            :style="{ width: `${Math.min(videoUsagePercentage, 100)}%` }"
-          ></div>
+            :style="{ width: `${Math.min(videoUsagePercentage, 100)}%` }"></div>
         </div>
       </div>
     </div>
@@ -60,21 +69,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { usePlansStore } from '@/stores/plans';
-import { storeToRefs } from 'pinia';
+import { computed } from "vue";
+import { usePlansStore } from "@/stores/plans";
+import { storeToRefs } from "pinia";
 
 const plansStore = usePlansStore();
-const { 
-  currentPlan, 
-  usage, 
-  currentLimits, 
-  isChannelLimitReached, 
-  isVideoLimitReached 
-} = storeToRefs(plansStore);
+const { currentPlan, usage, currentLimits, isChannelLimitReached, isVideoLimitReached } = storeToRefs(plansStore);
 
 const planBadgeClass = computed(() => {
-  const planId = currentPlan.value?.id || 'free';
+  const planId = currentPlan.value?.id || "free";
   return `plan-${planId}`;
 });
 
@@ -145,31 +148,33 @@ const videoUsagePercentage = computed(() => {
 }
 
 .usage-grid {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .usage-card {
   background: #f9fafb;
   border-radius: 8px;
-  padding: 16px;
+  padding: 14px 16px;
 }
 
 .usage-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .usage-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: #6b7280;
+  flex-shrink: 0;
 }
 
 .usage-label {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #6b7280;
   font-weight: 600;
 }
@@ -182,33 +187,33 @@ const videoUsagePercentage = computed(() => {
 }
 
 .usage-current {
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 700;
   color: #1f2937;
 }
 
 .usage-separator {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   color: #9ca3af;
 }
 
 .usage-limit {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   color: #6b7280;
   font-weight: 600;
 }
 
 .usage-bar {
   background: #e5e7eb;
-  height: 8px;
-  border-radius: 4px;
+  height: 6px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .usage-fill {
   height: 100%;
   background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-  border-radius: 4px;
+  border-radius: 3px;
   transition: all 0.3s ease;
 }
 
@@ -219,11 +224,4 @@ const videoUsagePercentage = computed(() => {
 .usage-fill.at-limit {
   background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
 }
-
-@media (min-width: 768px) {
-  .usage-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 </style>
-

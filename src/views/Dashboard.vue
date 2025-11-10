@@ -14,10 +14,96 @@
           </svg>
           <span>訂閱方案</span>
         </button>
-        <div class="user-profile" @click="openSettings">
-          <div class="user-avatar">{{ userInitial }}</div>
-          <span class="user-name" id="user-name">{{ userName }}</span>
+
+        <!-- 使用者資料區 with popup -->
+        <div class="user-profile-container">
+          <div class="user-profile" @click="openSettings">
+            <div class="user-avatar">{{ userInitial }}</div>
+            <span class="user-name" id="user-name">{{ userName }}</span>
+          </div>
+
+          <!-- Subscription Info Popup -->
+          <div class="subscription-popup">
+            <div class="popup-header">
+              <div class="plan-badge" :class="`plan-${currentPlan?.id || 'free'}`">
+                {{ currentPlan?.name || "Free" }}
+              </div>
+              <router-link to="/subscription" class="popup-manage-link"> 管理方案 </router-link>
+            </div>
+
+            <div class="popup-usage">
+              <div class="popup-usage-item">
+                <div class="popup-usage-header">
+                  <svg class="popup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path
+                      d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <circle cx="9" cy="7" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                      d="M23 21v-2a4 4 0 0 0-3-3.87"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <path
+                      d="M16 3.13a4 4 0 0 1 0 7.75"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  <span class="popup-label">訂閱頻道</span>
+                </div>
+                <div class="popup-stats">
+                  <span class="popup-current">{{ usage.channels }}</span>
+                  <span class="popup-separator">/</span>
+                  <span class="popup-limit">{{ currentLimits.channels }}</span>
+                </div>
+                <div class="popup-bar">
+                  <div
+                    class="popup-fill"
+                    :class="{ 'near-limit': channelUsagePercentage >= 80, 'at-limit': isChannelLimitReached }"
+                    :style="{ width: `${Math.min(channelUsagePercentage, 100)}%` }"></div>
+                </div>
+              </div>
+
+              <div class="popup-usage-item">
+                <div class="popup-usage-header">
+                  <svg class="popup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polygon
+                      points="23 7 16 12 23 17 23 7"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <rect
+                      x="1"
+                      y="5"
+                      width="15"
+                      height="14"
+                      rx="2"
+                      ry="2"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  <span class="popup-label">影音數量</span>
+                </div>
+                <div class="popup-stats">
+                  <span class="popup-current">{{ usage.media }}</span>
+                  <span class="popup-separator">/</span>
+                  <span class="popup-limit">{{ currentLimits.media }}</span>
+                </div>
+                <div class="popup-bar">
+                  <div
+                    class="popup-fill"
+                    :class="{ 'near-limit': mediaUsagePercentage >= 80, 'at-limit': isMediaLimitReached }"
+                    :style="{ width: `${Math.min(mediaUsagePercentage, 100)}%` }"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
         <button class="logout-btn" @click="handleLogout">登出</button>
       </div>
     </header>
@@ -28,11 +114,6 @@
       <aside class="sidebar">
         <div class="sidebar-header">
           <div class="sidebar-title">影音來源</div>
-        </div>
-
-        <!-- 訂閱方案狀態 -->
-        <div style="padding: 0 15px 20px">
-          <SubscriptionStatus />
         </div>
 
         <ul class="source-list">
@@ -226,12 +307,12 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import { useMediaStore } from "@/stores/media";
+import { usePlansStore } from "@/stores/plans";
 import { storeToRefs } from "pinia";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
 import SubscriptionLimitWarning from "@/components/SubscriptionLimitWarning.vue";
-import SubscriptionStatus from "@/components/SubscriptionStatus.vue";
 
 // 配置 dayjs
 dayjs.extend(relativeTime);
@@ -241,9 +322,22 @@ const router = useRouter();
 const authStore = useAuthStore();
 const subscriptionsStore = useSubscriptionsStore();
 const mediaStore = useMediaStore();
+const plansStore = usePlansStore();
 
 const { currentSource, subscriptionsData } = storeToRefs(subscriptionsStore);
 const { mediaData, currentPagination, isLoading } = storeToRefs(mediaStore);
+const { currentPlan, usage, currentLimits, isChannelLimitReached, isMediaLimitReached } = storeToRefs(plansStore);
+
+// 計算使用百分比
+const channelUsagePercentage = computed(() => {
+  if (currentLimits.value.channels === 0) return 0;
+  return (usage.value.channels / currentLimits.value.channels) * 100;
+});
+
+const mediaUsagePercentage = computed(() => {
+  if (currentLimits.value.media === 0) return 0;
+  return (usage.value.media / currentLimits.value.media) * 100;
+});
 
 const isModalOpen = ref(false);
 const currentFilter = ref("all");
@@ -358,6 +452,8 @@ const switchSource = async (sourceId) => {
   // 同時切換兩個 store 的來源
   subscriptionsStore.currentSource = sourceId;
   await mediaStore.switchSource(sourceId);
+  // 更新使用情況
+  await plansStore.updateUsage();
 };
 
 const openManageModal = async () => {
@@ -495,13 +591,16 @@ const handleScroll = async (event) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   // 獲取 content-area 元素並添加滾動監聽器
   const contentArea = document.querySelector(".content-area");
   if (contentArea) {
     contentAreaRef.value = contentArea;
     contentArea.addEventListener("scroll", handleScroll);
   }
+
+  // 更新使用情況
+  await plansStore.updateUsage();
 });
 
 onUnmounted(() => {
@@ -580,6 +679,10 @@ onUnmounted(() => {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
+.user-profile-container {
+  position: relative;
+}
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -612,6 +715,168 @@ onUnmounted(() => {
   font-size: 14px;
   font-weight: 600;
   color: #333;
+}
+
+/* Subscription Popup */
+.subscription-popup {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.user-profile-container:hover .subscription-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.subscription-popup::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 24px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.plan-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.plan-badge.plan-free {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.plan-badge.plan-basic {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.plan-badge.plan-advance {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.popup-manage-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.popup-manage-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.popup-usage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.popup-usage-item {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.popup-usage-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.popup-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.popup-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.popup-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.popup-current {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.popup-separator {
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.popup-limit {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.popup-bar {
+  background: #e5e7eb;
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.popup-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.popup-fill.near-limit {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.popup-fill.at-limit {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
 }
 
 .logout-btn {
