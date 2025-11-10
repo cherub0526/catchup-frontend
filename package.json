@@ -37,6 +37,7 @@
     "dotenv": "^16.4.5",
     "electron-squirrel-startup": "^1.0.1",
     "pinia": "^3.0.3",
+    "plyr": "^3.8.3",
     "vite": "^6.4.1",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",

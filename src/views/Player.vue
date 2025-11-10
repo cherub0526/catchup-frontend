@@ -30,8 +30,18 @@
       <div class="left-section">
         <!-- 播放器區域 -->
         <div class="player-wrapper" ref="playerWrapperRef">
-          <!-- YouTube iframe 播放器容器 - 始終存在 -->
-          <div id="youtube-player" class="youtube-player"></div>
+          <!-- Plyr 播放器容器 -->
+          <div class="plyr-container">
+            <div
+              v-if="videoData.type === 'youtube' && videoData.videoId"
+              id="player"
+              data-plyr-provider="youtube"
+              :data-plyr-embed-id="videoData.videoId"></div>
+            <video v-else id="player" playsinline controls>
+              <source v-if="videoData.url" :src="videoData.url" type="video/mp4" />
+              <track kind="captions" label="繁體中文" srclang="zh-TW" default />
+            </video>
+          </div>
 
           <!-- 載入狀態覆蓋層 -->
           <div v-if="isLoadingMedia" class="player-placeholder overlay">
@@ -162,6 +172,8 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api";
+import Plyr from "plyr";
+import "plyr/dist/plyr.css";
 
 const route = useRoute();
 const router = useRouter();
@@ -170,8 +182,8 @@ const router = useRouter();
 const playerWrapperRef = ref(null);
 const chatMessagesRef = ref(null);
 
-// YouTube Player
-let youtubePlayer = null;
+// Plyr Player
+let player = null;
 let playerCheckInterval = null;
 
 // 影片資料
@@ -244,21 +256,23 @@ onMounted(async () => {
     // 如果沒有 mediaId，使用 URL 參數的資料
     const videoId = extractYouTubeVideoId(url);
     videoData.value.videoId = videoId;
+    videoData.value.type = videoId ? "youtube" : "video";
 
     // 載入時間軸
     loadTimeline();
 
-    // 載入 YouTube iframe API
-    if (videoId) {
-      loadYouTubeAPI();
+    // 初始化 Plyr 播放器
+    if (videoId || url) {
+      await nextTick();
+      initPlyrPlayer();
     }
   }
 });
 
 onBeforeUnmount(() => {
   // 清理播放器
-  if (youtubePlayer) {
-    youtubePlayer.destroy();
+  if (player) {
+    player.destroy();
   }
   if (playerCheckInterval) {
     clearInterval(playerCheckInterval);
@@ -290,15 +304,17 @@ const fetchMediaDetails = async (mediaId) => {
           // 載入時間軸
           loadTimeline();
 
-          // 載入 YouTube iframe API
-          loadYouTubeAPI();
+          // 初始化 Plyr 播放器
+          await nextTick();
+          initPlyrPlayer();
         } else {
           mediaLoadError.value = "無法從 URL 中提取 YouTube 影片 ID";
           showNotification("無法載入影片：缺少有效的 YouTube URL");
         }
       } else {
-        // 其他類型的媒體（未來可以擴展支援）
-        showNotification(`暫不支援 ${videoData.value.type} 類型的播放`);
+        // 其他類型的媒體
+        await nextTick();
+        initPlyrPlayer();
       }
     }
   } catch (error) {
@@ -310,152 +326,92 @@ const fetchMediaDetails = async (mediaId) => {
   }
 };
 
-// 載入 YouTube iframe API
-const loadYouTubeAPI = async () => {
-  // 等待 DOM 更新
-  await nextTick();
-
-  // 檢查 API 是否已載入
-  if (window.YT && window.YT.Player) {
-    initYouTubePlayer();
-    return;
-  }
-
-  // 檢查是否已經在載入中
-  if (document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-    // API 正在載入中，設置回調等待
-    window.onYouTubeIframeAPIReady = () => {
-      initYouTubePlayer();
-    };
-    return;
-  }
-
-  // 載入 YouTube iframe API
-  const tag = document.createElement("script");
-  tag.src = "https://www.youtube.com/iframe_api";
-  const firstScriptTag = document.getElementsByTagName("script")[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-  // 設定 API 就緒回調
-  window.onYouTubeIframeAPIReady = () => {
-    initYouTubePlayer();
-  };
-};
-
-// 初始化 YouTube 播放器
-const initYouTubePlayer = () => {
-  // 檢查影片 ID
-  if (!videoData.value.videoId) {
-    console.error("No video ID found");
-    showNotification("無法載入影片：缺少影片 ID");
-    return;
-  }
-
-  // 檢查 DOM 元素是否存在
-  const playerElement = document.getElementById("youtube-player");
-  if (!playerElement) {
-    console.error("Player element not found");
-    showNotification("無法載入影片：播放器元素不存在");
-    return;
-  }
-
-  // 檢查 YouTube API 是否可用
-  if (!window.YT || !window.YT.Player) {
-    console.error("YouTube API not loaded");
-    showNotification("無法載入影片：YouTube API 未就緒");
-    return;
-  }
-
+// 初始化 Plyr 播放器
+const initPlyrPlayer = () => {
   try {
-    console.log("初始化 YouTube 播放器，影片 ID:", videoData.value.videoId);
+    console.log("初始化 Plyr 播放器");
 
-    youtubePlayer = new window.YT.Player("youtube-player", {
-      height: "100%",
-      width: "100%",
-      videoId: videoData.value.videoId,
-      playerVars: {
-        autoplay: 0,
-        controls: 1, // 顯示 YouTube 控制條
-        modestbranding: 1, // 簡化 YouTube logo
-        rel: 0, // 播放完畢不顯示相關影片
-        fs: 1, // 允許全螢幕
-        cc_load_policy: 0, // 預設不顯示字幕
-        iv_load_policy: 3, // 不顯示影片註解
-        enablejsapi: 1, // 啟用 JavaScript API
+    // 檢查 DOM 元素是否存在
+    const playerElement = document.getElementById("player");
+    if (!playerElement) {
+      console.error("Player element not found");
+      showNotification("無法載入影片：播放器元素不存在");
+      return;
+    }
+
+    // 如果已經有播放器實例，先銷毀
+    if (player) {
+      player.destroy();
+    }
+
+    // Plyr 配置選項
+    const options = {
+      controls: [
+        "play-large",
+        "play",
+        "progress",
+        "current-time",
+        "duration",
+        "mute",
+        "volume",
+        "settings",
+        "pip",
+        "airplay",
+        "fullscreen",
+      ],
+      settings: ["quality", "speed"],
+      youtube: {
+        noCookie: false,
+        rel: 0,
+        showinfo: 0,
+        iv_load_policy: 3,
+        modestbranding: 1,
       },
-      events: {
-        onReady: onPlayerReady,
-        onStateChange: onPlayerStateChange,
-        onError: onPlayerError,
-      },
+      ratio: "16:9",
+      autoplay: false,
+    };
+
+    // 創建 Plyr 實例
+    player = new Plyr("#player", options);
+
+    // 綁定事件
+    player.on("ready", () => {
+      console.log("Plyr 播放器就緒");
+      videoLoaded.value = true;
+      duration.value = player.duration || 0;
+      showNotification("影片載入完成");
     });
 
-    console.log("YouTube 播放器已創建:", youtubePlayer);
+    player.on("play", () => {
+      isPlaying.value = true;
+    });
+
+    player.on("pause", () => {
+      isPlaying.value = false;
+    });
+
+    player.on("ended", () => {
+      isPlaying.value = false;
+      showNotification("影片播放完畢");
+    });
+
+    player.on("timeupdate", () => {
+      currentTime.value = player.currentTime || 0;
+      duration.value = player.duration || 0;
+    });
+
+    player.on("error", (event) => {
+      console.error("Plyr 播放器錯誤:", event);
+      mediaLoadError.value = "播放器發生錯誤";
+      showNotification("播放器發生錯誤，請稍後再試");
+    });
+
+    console.log("Plyr 播放器已創建:", player);
   } catch (error) {
-    console.error("初始化 YouTube 播放器失敗:", error);
+    console.error("初始化 Plyr 播放器失敗:", error);
     mediaLoadError.value = "初始化播放器失敗";
     showNotification("初始化播放器失敗，請重新整理頁面");
   }
-};
-
-// 播放器就緒
-const onPlayerReady = (event) => {
-  videoLoaded.value = true;
-  duration.value = youtubePlayer.getDuration();
-
-  // 開始更新播放進度
-  playerCheckInterval = setInterval(() => {
-    if (youtubePlayer && youtubePlayer.getCurrentTime) {
-      currentTime.value = youtubePlayer.getCurrentTime();
-
-      // 更新播放狀態
-      const state = youtubePlayer.getPlayerState();
-      isPlaying.value = state === window.YT.PlayerState.PLAYING;
-    }
-  }, 100);
-
-  showNotification("影片載入完成");
-};
-
-// 播放器狀態變化
-const onPlayerStateChange = (event) => {
-  const state = event.data;
-
-  if (state === window.YT.PlayerState.PLAYING) {
-    isPlaying.value = true;
-  } else if (state === window.YT.PlayerState.PAUSED) {
-    isPlaying.value = false;
-  } else if (state === window.YT.PlayerState.ENDED) {
-    isPlaying.value = false;
-    showNotification("影片播放完畢");
-  }
-};
-
-// 播放器錯誤處理
-const onPlayerError = (event) => {
-  console.error("YouTube 播放器錯誤:", event.data);
-
-  let errorMessage;
-  switch (event.data) {
-    case 2:
-      errorMessage = "無效的影片 ID";
-      break;
-    case 5:
-      errorMessage = "HTML5 播放器錯誤";
-      break;
-    case 100:
-      errorMessage = "影片不存在或已被刪除";
-      break;
-    case 101:
-    case 150:
-      errorMessage = "影片所有者不允許嵌入播放";
-      break;
-    default:
-      errorMessage = `播放器錯誤 (代碼: ${event.data})`;
-  }
-
-  mediaLoadError.value = errorMessage;
-  showNotification(errorMessage);
 };
 
 // 從 URL 提取 YouTube 影片 ID
@@ -484,55 +440,49 @@ const goBack = () => {
 };
 
 const togglePlay = () => {
-  if (!youtubePlayer) return;
+  if (!player) return;
 
   if (isPlaying.value) {
-    youtubePlayer.pauseVideo();
+    player.pause();
   } else {
-    youtubePlayer.playVideo();
+    player.play();
   }
 };
 
 const seek = (seconds) => {
-  if (!youtubePlayer) return;
+  if (!player) return;
 
   const newTime = Math.max(0, Math.min(duration.value, currentTime.value + seconds));
-  youtubePlayer.seekTo(newTime, true);
+  player.currentTime = newTime;
 };
 
 const seekToTime = (seconds) => {
-  if (!youtubePlayer) return;
+  if (!player) return;
 
-  youtubePlayer.seekTo(seconds, true);
+  player.currentTime = seconds;
   showNotification(`已跳轉至 ${formatTime(seconds)}`);
 };
 
 const toggleMute = () => {
-  if (!youtubePlayer) return;
+  if (!player) return;
 
-  if (isMuted.value) {
-    youtubePlayer.unMute();
-  } else {
-    youtubePlayer.mute();
-  }
-  isMuted.value = !isMuted.value;
+  player.muted = !player.muted;
+  isMuted.value = player.muted;
 };
 
 const toggleFullscreen = () => {
-  if (!document.fullscreenElement && playerWrapperRef.value) {
-    playerWrapperRef.value.requestFullscreen();
-  } else {
-    document.exitFullscreen();
+  if (player) {
+    player.fullscreen.toggle();
   }
 };
 
 const handleProgressClick = (e) => {
-  if (!youtubePlayer) return;
+  if (!player) return;
 
   const rect = e.currentTarget.getBoundingClientRect();
   const percent = (e.clientX - rect.left) / rect.width;
   const newTime = percent * duration.value;
-  youtubePlayer.seekTo(newTime, true);
+  player.currentTime = newTime;
 };
 
 const handleDownload = () => {
@@ -785,14 +735,21 @@ window.seekToTime = seekToTime;
   position: relative;
 }
 
-.youtube-player {
+.plyr-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plyr-container :deep(.plyr) {
   width: 100%;
   height: 100%;
 }
 
-.youtube-player :deep(iframe) {
-  width: 100%;
-  height: 100%;
+.plyr-container :deep(.plyr__video-wrapper) {
+  background: #000;
 }
 
 .player-placeholder {
