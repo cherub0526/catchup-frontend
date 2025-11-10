@@ -84,6 +84,11 @@ const api = {
       return client.get("/v1/videos", { params: { type } });
     },
   },
+  media: {
+    getMediaByType: (type, page = 1) => {
+      return client.get("/v1/media", { params: { type, page } });
+    },
+  },
 };
 
 export default api;

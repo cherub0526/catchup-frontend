@@ -5,7 +5,6 @@ import api from "@/api";
 export const useSubscriptionsStore = defineStore("subscriptions", () => {
   const currentSource = ref("youtube");
   const isLoading = ref(false);
-  const isLoadingVideos = ref(false);
   const error = ref(null);
 
   const subscriptionsData = ref({
@@ -17,23 +16,13 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
     vimeo: [],
   });
 
-  const videosData = ref({
-    youtube: [],
-    spotify: [],
-    firstory: [],
-    podcast: [],
-    soundcloud: [],
-    vimeo: [],
-  });
-
   // Computed
   const currentSubscriptions = computed(() => subscriptionsData.value[currentSource.value]);
-  const currentVideos = computed(() => videosData.value[currentSource.value]);
 
   const switchSource = async (source) => {
     currentSource.value = source;
-    // 切換來源時自動獲取該來源的訂閱和影片
-    await Promise.all([fetchSubscriptions(source), fetchVideos(source)]);
+    // 切換來源時自動獲取該來源的訂閱
+    await fetchSubscriptions(source);
   };
 
   const addSubscription = async (subscription) => {
@@ -47,8 +36,8 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
         type: currentSource.value,
       });
 
-      // 新增成功後重新獲取訂閱列表和影片列表
-      await Promise.all([fetchSubscriptions(currentSource.value), fetchVideos(currentSource.value)]);
+      // 新增成功後重新獲取訂閱列表
+      await fetchSubscriptions(currentSource.value);
 
       return response;
     } catch (err) {
@@ -74,8 +63,8 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
       // 調用 API 刪除訂閱
       await api.rss.deleteSubscription(subscription.id);
 
-      // 刪除成功後重新獲取訂閱列表和影片列表
-      await Promise.all([fetchSubscriptions(currentSource.value), fetchVideos(currentSource.value)]);
+      // 刪除成功後重新獲取訂閱列表
+      await fetchSubscriptions(currentSource.value);
     } catch (err) {
       error.value = err.message || "刪除訂閱失敗";
       console.error("刪除訂閱失敗:", err);
@@ -110,34 +99,9 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
     }
   };
 
-  // 從 API 獲取影片列表
-  const fetchVideos = async (type) => {
-    isLoadingVideos.value = true;
-    error.value = null;
-
-    try {
-      const response = await api.videos.getBySource(type);
-
-      // 更新對應來源的影片數據
-      if (response?.data) {
-        videosData.value[type] = response.data;
-      }
-
-      return response;
-    } catch (err) {
-      error.value = err.message || "獲取影片列表失敗";
-      console.error("獲取影片失敗:", err);
-      // 如果 API 失敗，清空該來源的數據
-      videosData.value[type] = [];
-      throw err;
-    } finally {
-      isLoadingVideos.value = false;
-    }
-  };
-
   // 初始化時載入當前來源的數據
   const initialize = async () => {
-    await Promise.all([fetchSubscriptions(currentSource.value), fetchVideos(currentSource.value)]);
+    await fetchSubscriptions(currentSource.value);
   };
 
   // 初始化
@@ -146,17 +110,13 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
   return {
     currentSource,
     subscriptionsData,
-    videosData,
     currentSubscriptions,
-    currentVideos,
     isLoading,
-    isLoadingVideos,
     error,
     switchSource,
     addSubscription,
     deleteSubscription,
     fetchSubscriptions,
-    fetchVideos,
     initialize,
   };
 });

@@ -36,7 +36,7 @@
               <div class="source-name">{{ source.name }}</div>
               <div class="source-count">{{ subscriptionsData[source.id].length }} 個訂閱</div>
             </div>
-            <span class="source-badge">{{ videosData[source.id].length }}</span>
+            <span class="source-badge">{{ mediaData[source.id].length }}</span>
           </li>
         </ul>
       </aside>
@@ -99,23 +99,40 @@
               <p>您訂閱的頻道尚未有新的內容發佈</p>
             </div>
 
-            <div v-else class="videos-grid">
-              <div v-for="video in currentVideos" :key="video.url" class="video-card" @click="openVideo(video)">
-                <div class="video-thumbnail" :style="{ background: currentSourceConfig.color }">
-                  <div v-html="currentSourceConfig.iconLarge"></div>
-                  <span v-if="video.duration" class="video-duration">{{ video.duration }}</span>
-                </div>
-                <div class="video-info">
-                  <div class="video-title">{{ video.title }}</div>
-                  <div class="channel-info">
-                    <div class="channel-avatar">{{ video.channel.charAt(0).toUpperCase() }}</div>
-                    <div class="channel-name">{{ video.channel }}</div>
+            <div v-else>
+              <div class="videos-grid">
+                <div v-for="video in currentVideos" :key="video.url" class="video-card" @click="openVideo(video)">
+                  <div
+                    class="video-thumbnail"
+                    :style="{
+                      backgroundImage: `url(${video.thumbnail})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }">
+                    <span v-if="video.duration" class="video-duration">{{ video.duration }}</span>
                   </div>
-                  <div class="video-meta">
-                    <span>{{ video.views || "0" }} 次觀看</span>
-                    <span>{{ video.date }}</span>
+                  <div class="video-info">
+                    <div class="video-title">{{ video.title }}</div>
+                    <div class="channel-info">
+                      <!-- <div class="channel-avatar">{{ video.channel.charAt(0).toUpperCase() }}</div> -->
+                      <!-- <div class="channel-name">{{ video.channel }}</div> -->
+                    </div>
+                    <div class="video-meta">
+                      <span>{{ video.published_at }}</span>
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              <!-- 載入更多提示 -->
+              <div v-if="isLoading" class="loading-more">
+                <div class="loading-spinner"></div>
+                <p>載入更多內容...</p>
+              </div>
+
+              <!-- 沒有更多內容提示 -->
+              <div v-else-if="!currentPagination.hasNextPage && currentVideos.length > 0" class="no-more-content">
+                <p>已經載入所有內容（共 {{ currentPagination.total }} 項）</p>
               </div>
             </div>
           </div>
@@ -186,17 +203,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
+import { useMediaStore } from "@/stores/media";
 import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const subscriptionsStore = useSubscriptionsStore();
+const mediaStore = useMediaStore();
 
-const { currentSource, subscriptionsData, videosData } = storeToRefs(subscriptionsStore);
+const { currentSource, subscriptionsData } = storeToRefs(subscriptionsStore);
+const { mediaData, currentPagination, isLoading } = storeToRefs(mediaStore);
 
 const isModalOpen = ref(false);
 const currentFilter = ref("all");
@@ -286,7 +306,7 @@ const currentSourceConfig = computed(() => {
 });
 
 const currentSubscriptions = computed(() => subscriptionsStore.currentSubscriptions);
-const currentVideos = computed(() => subscriptionsStore.currentVideos);
+const currentVideos = computed(() => mediaStore.currentMedia);
 
 // 計算使用者顯示資訊
 const userName = computed(() => {
@@ -301,8 +321,10 @@ const userInitial = computed(() => {
   return name.charAt(0).toUpperCase();
 });
 
-const switchSource = (sourceId) => {
-  subscriptionsStore.switchSource(sourceId);
+const switchSource = async (sourceId) => {
+  // 同時切換兩個 store 的來源
+  subscriptionsStore.currentSource = sourceId;
+  await mediaStore.switchSource(sourceId);
 };
 
 const openManageModal = async () => {
@@ -343,6 +365,8 @@ const handleAddSubscription = async () => {
 
   try {
     await subscriptionsStore.addSubscription(subscriptionForm.value);
+    // 重新載入影片列表（重置為第一頁）
+    await mediaStore.fetchMedia(currentSource.value, true);
     showNotification("訂閱新增成功！");
     resetForm();
   } catch (error) {
@@ -358,6 +382,8 @@ const deleteSubscription = async (index) => {
   if (confirm(`確定要取消訂閱「${subscriptionName}」嗎？`)) {
     try {
       await subscriptionsStore.deleteSubscription(index);
+      // 重新載入影片列表（重置為第一頁）
+      await mediaStore.fetchMedia(currentSource.value, true);
       showNotification("已取消訂閱");
     } catch (error) {
       console.error("刪除訂閱失敗:", error);
@@ -412,6 +438,44 @@ const showNotification = (message) => {
     }, 300);
   }, 3000);
 };
+
+// 滾動監聽器
+const contentAreaRef = ref(null);
+
+const handleScroll = async (event) => {
+  const element = event.target;
+  const scrollTop = element.scrollTop;
+  const scrollHeight = element.scrollHeight;
+  const clientHeight = element.clientHeight;
+
+  // 計算距離底部的距離
+  const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+
+  // 當距離底部小於 20px 且有下一頁時，載入下一頁
+  if (distanceFromBottom < 20 && currentPagination.value.hasNextPage && !isLoading.value) {
+    console.log("接近底部，載入下一頁...");
+    console.log("目前頁碼:", currentPagination.value.currentPage);
+    console.log("總頁數:", currentPagination.value.totalPages);
+    console.log("總項目數:", currentPagination.value.total);
+    await mediaStore.fetchNextPage(currentSource.value);
+  }
+};
+
+onMounted(() => {
+  // 獲取 content-area 元素並添加滾動監聽器
+  const contentArea = document.querySelector(".content-area");
+  if (contentArea) {
+    contentAreaRef.value = contentArea;
+    contentArea.addEventListener("scroll", handleScroll);
+  }
+});
+
+onUnmounted(() => {
+  // 移除滾動監聽器
+  if (contentAreaRef.value) {
+    contentAreaRef.value.removeEventListener("scroll", handleScroll);
+  }
+});
 </script>
 
 <style scoped>
@@ -1144,6 +1208,42 @@ const showNotification = (message) => {
 .loading-state p {
   font-size: 14px;
   color: #666;
+}
+
+.loading-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.loading-more .loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+.loading-more p {
+  font-size: 14px;
+  color: #666;
+}
+
+.no-more-content {
+  text-align: center;
+  padding: 30px 20px;
+  color: #999;
+}
+
+.no-more-content p {
+  font-size: 14px;
+  color: #999;
+  opacity: 0.7;
 }
 
 @media (max-width: 1024px) {
