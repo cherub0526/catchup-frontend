@@ -6,20 +6,16 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = ref(false);
   const user = ref(null);
   const token = ref(localStorage.getItem("token") || null);
-
-  // 初始化時檢查 token
-  if (token.value) {
-    isAuthenticated.value = true;
-  }
+  const isInitialized = ref(false);
 
   const login = async (account, password) => {
     try {
       const response = await api.auth.login(account, password);
-      token.value = response.token;
-      user.value = response.user;
+      token.value = response.access_token;
       isAuthenticated.value = true;
 
       if (token.value) {
+        console.log("token", token.value);
         localStorage.setItem("token", token.value);
       }
 
@@ -40,7 +36,6 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = () => {
     token.value = null;
-    user.value = null;
     isAuthenticated.value = false;
     localStorage.removeItem("token");
   };
@@ -64,13 +59,39 @@ export const useAuthStore = defineStore("auth", () => {
     });
   };
 
+  // 初始化認證狀態 - 檢查 localStorage 的 token 並驗證
+  const initAuth = async () => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      token.value = storedToken;
+      try {
+        // 發送請求到 /v1/users 驗證 token 並獲取使用者資料
+        const userData = await api.user.getCurrentUser();
+        user.value = userData;
+        isAuthenticated.value = true;
+      } catch (error) {
+        // Token 無效，清除本地儲存
+        console.error("Token 驗證失敗:", error);
+        token.value = null;
+        user.value = null;
+        isAuthenticated.value = false;
+        localStorage.removeItem("token");
+      }
+    }
+
+    isInitialized.value = true;
+  };
+
   return {
     isAuthenticated,
     user,
     token,
+    isInitialized,
     login,
     register,
     logout,
     oauthLogin,
+    initAuth,
   };
 });

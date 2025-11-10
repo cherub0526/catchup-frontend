@@ -35,14 +35,25 @@ const router = createRouter({
 })
 
 // 路由守衛
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
+  // 等待初始化完成
+  if (!authStore.isInitialized) {
+    // 如果還沒初始化，先讓路由通過，App.vue 會處理跳轉
+    next()
+    return
+  }
+  
+  // 需要認證的路由
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
-  } else if (to.path === '/login' && authStore.isAuthenticated) {
+  } 
+  // 已登入使用者訪問登入頁面，重定向到 dashboard
+  else if (to.path === '/login' && authStore.isAuthenticated) {
     next('/dashboard')
-  } else {
+  } 
+  else {
     next()
   }
 })

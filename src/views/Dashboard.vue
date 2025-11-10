@@ -8,8 +8,8 @@
       </div>
       <div class="header-right">
         <div class="user-profile" @click="openSettings">
-          <div class="user-avatar">U</div>
-          <span class="user-name" id="user-name">使用者</span>
+          <div class="user-avatar">{{ userInitial }}</div>
+          <span class="user-name" id="user-name">{{ userName }}</span>
         </div>
         <button class="logout-btn" @click="handleLogout">登出</button>
       </div>
@@ -292,6 +292,19 @@ const currentSourceConfig = computed(() => {
 
 const currentSubscriptions = computed(() => subscriptionsStore.currentSubscriptions)
 const currentVideos = computed(() => subscriptionsStore.currentVideos)
+
+// 計算使用者顯示資訊
+const userName = computed(() => {
+  if (authStore.user) {
+    return authStore.user.name || authStore.user.email || authStore.user.account || '使用者'
+  }
+  return '使用者'
+})
+
+const userInitial = computed(() => {
+  const name = userName.value
+  return name.charAt(0).toUpperCase()
+})
 
 const switchSource = (sourceId) => {
   subscriptionsStore.switchSource(sourceId)

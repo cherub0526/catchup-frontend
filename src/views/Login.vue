@@ -266,6 +266,7 @@ const handleLogin = async () => {
 
   try {
     await authStore.login(loginForm.value.account, loginForm.value.password);
+    await authStore.initAuth();
     showMessage("登入成功！", "success");
 
     setTimeout(() => {

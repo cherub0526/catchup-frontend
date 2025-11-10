@@ -52,6 +52,9 @@ const api = {
     },
   },
   user: {
+    getCurrentUser: () => {
+      return client.get("/v1/users");
+    },
     getProfile: () => {
       return client.get("/user/profile");
     },
