@@ -62,12 +62,26 @@ const api = {
       return client.put("/user/profile", data);
     },
   },
+  rss: {
+    getSubscriptions: (type) => {
+      return client.get("/v1/rss", { params: { type } });
+    },
+    addSubscription: (data) => {
+      return client.post("/v1/rss", data);
+    },
+    deleteSubscription: (id) => {
+      return client.delete(`/v1/rss/${id}`);
+    },
+  },
   videos: {
     getAll: () => {
       return client.get("/videos");
     },
     getById: (id) => {
       return client.get(`/videos/${id}`);
+    },
+    getBySource: (type) => {
+      return client.get("/v1/videos", { params: { type } });
     },
   },
 };
