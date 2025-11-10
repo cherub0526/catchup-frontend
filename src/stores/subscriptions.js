@@ -26,6 +26,15 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
   };
 
   const addSubscription = async (subscription) => {
+    // 檢查訂閱限制
+    const { usePlansStore } = await import("./plans");
+    const plansStore = usePlansStore();
+
+    if (!plansStore.canAddChannel()) {
+      error.value = "已達到訂閱頻道上限，請升級方案";
+      throw new Error("已達到訂閱頻道上限，請升級方案");
+    }
+
     isLoading.value = true;
     error.value = null;
 
@@ -36,8 +45,9 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
         type: currentSource.value,
       });
 
-      // 新增成功後重新獲取訂閱列表
+      // 新增成功後重新獲取訂閱列表和使用情況
       await fetchSubscriptions(currentSource.value);
+      await plansStore.updateUsage();
 
       return response;
     } catch (err) {
@@ -63,8 +73,13 @@ export const useSubscriptionsStore = defineStore("subscriptions", () => {
       // 調用 API 刪除訂閱
       await api.rss.deleteSubscription(subscription.id);
 
-      // 刪除成功後重新獲取訂閱列表
+      // 刪除成功後重新獲取訂閱列表和使用情況
       await fetchSubscriptions(currentSource.value);
+
+      // 更新使用情況
+      const { usePlansStore } = await import("./plans");
+      const plansStore = usePlansStore();
+      await plansStore.updateUsage();
     } catch (err) {
       error.value = err.message || "刪除訂閱失敗";
       console.error("刪除訂閱失敗:", err);

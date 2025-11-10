@@ -7,6 +7,13 @@
         <h1 class="app-title">Video Assistant</h1>
       </div>
       <div class="header-right">
+        <button class="subscription-link-btn" @click="router.push('/subscription')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path
+              d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+          </svg>
+          <span>訂閱方案</span>
+        </button>
         <div class="user-profile" @click="openSettings">
           <div class="user-avatar">{{ userInitial }}</div>
           <span class="user-name" id="user-name">{{ userName }}</span>
@@ -22,6 +29,12 @@
         <div class="sidebar-header">
           <div class="sidebar-title">影音來源</div>
         </div>
+
+        <!-- 訂閱方案狀態 -->
+        <div style="padding: 0 15px 20px">
+          <SubscriptionStatus />
+        </div>
+
         <ul class="source-list">
           <li
             v-for="source in sources"
@@ -62,6 +75,11 @@
               <span>管理訂閱</span>
             </button>
           </div>
+        </div>
+
+        <!-- 訂閱方案限制警告 -->
+        <div style="padding: 20px 30px 0">
+          <SubscriptionLimitWarning />
         </div>
 
         <div class="subscriptions-container">
@@ -212,6 +230,8 @@ import { storeToRefs } from "pinia";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
+import SubscriptionLimitWarning from "@/components/SubscriptionLimitWarning.vue";
+import SubscriptionStatus from "@/components/SubscriptionStatus.vue";
 
 // 配置 dayjs
 dayjs.extend(relativeTime);
@@ -538,6 +558,26 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.subscription-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subscription-link-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .user-profile {

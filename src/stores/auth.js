@@ -70,6 +70,12 @@ export const useAuthStore = defineStore("auth", () => {
         const userData = await api.user.getCurrentUser();
         user.value = userData;
         isAuthenticated.value = true;
+        
+        // 初始化訂閱方案信息
+        // 動態導入 plans store 避免循環依賴
+        const { usePlansStore } = await import("./plans");
+        const plansStore = usePlansStore();
+        await plansStore.initialize();
       } catch (error) {
         // Token 無效，清除本地儲存
         console.error("Token 驗證失敗:", error);
