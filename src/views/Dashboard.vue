@@ -118,7 +118,7 @@
                       <!-- <div class="channel-name">{{ video.channel }}</div> -->
                     </div>
                     <div class="video-meta">
-                      <span>{{ video.published_at }}</span>
+                      <span>{{ formatRelativeTime(video.published_at) }}</span>
                     </div>
                   </div>
                 </div>
@@ -209,6 +209,13 @@ import { useAuthStore } from "@/stores/auth";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import { useMediaStore } from "@/stores/media";
 import { storeToRefs } from "pinia";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/zh-tw";
+
+// 配置 dayjs
+dayjs.extend(relativeTime);
+dayjs.locale("zh-tw");
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -320,6 +327,12 @@ const userInitial = computed(() => {
   const name = userName.value;
   return name.charAt(0).toUpperCase();
 });
+
+// 格式化時間為相對時間
+const formatRelativeTime = (dateString) => {
+  if (!dateString) return "";
+  return dayjs(dateString).fromNow();
+};
 
 const switchSource = async (sourceId) => {
   // 同時切換兩個 store 的來源
