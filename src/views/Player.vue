@@ -30,35 +30,21 @@
       <div class="left-section">
         <!-- 播放器區域 -->
         <div class="player-wrapper" ref="playerWrapperRef">
-          <!-- YouTube iframe 播放器 -->
-          <div v-if="isLoadingMedia" class="player-placeholder">
+          <!-- YouTube iframe 播放器容器 - 始終存在 -->
+          <div id="youtube-player" class="youtube-player"></div>
+
+          <!-- 載入狀態覆蓋層 -->
+          <div v-if="isLoadingMedia" class="player-placeholder overlay">
             <div class="player-placeholder-icon">⏳</div>
             <div class="player-placeholder-text">正在載入媒體資料...</div>
           </div>
-          <div v-else-if="mediaLoadError" class="player-placeholder">
+          <div v-else-if="mediaLoadError" class="player-placeholder overlay">
             <div class="player-placeholder-icon">❌</div>
             <div class="player-placeholder-text">{{ mediaLoadError }}</div>
           </div>
-          <div v-else-if="!videoLoaded" class="player-placeholder">
+          <div v-else-if="!videoLoaded" class="player-placeholder overlay">
             <div class="player-placeholder-icon">🎬</div>
             <div class="player-placeholder-text">正在載入影片...</div>
-          </div>
-          <div v-else id="youtube-player" class="youtube-player"></div>
-
-          <!-- 播放控制條 -->
-          <div class="player-controls" v-if="videoLoaded">
-            <div class="progress-bar" @click="handleProgressClick">
-              <div class="progress-filled" :style="{ width: progressPercent + '%' }"></div>
-            </div>
-            <div class="controls-row">
-              <button class="control-btn" @click="togglePlay">{{ isPlaying ? "⏸️" : "▶️" }}</button>
-              <button class="control-btn" @click="seek(-10)">⏪</button>
-              <button class="control-btn" @click="seek(10)">⏩</button>
-              <span class="time-display">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
-              <div class="spacer"></div>
-              <button class="control-btn" @click="toggleMute">{{ isMuted ? "🔇" : "🔊" }}</button>
-              <button class="control-btn" @click="toggleFullscreen">⛶</button>
-            </div>
           </div>
         </div>
 
@@ -325,10 +311,22 @@ const fetchMediaDetails = async (mediaId) => {
 };
 
 // 載入 YouTube iframe API
-const loadYouTubeAPI = () => {
+const loadYouTubeAPI = async () => {
+  // 等待 DOM 更新
+  await nextTick();
+
   // 檢查 API 是否已載入
   if (window.YT && window.YT.Player) {
     initYouTubePlayer();
+    return;
+  }
+
+  // 檢查是否已經在載入中
+  if (document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+    // API 正在載入中，設置回調等待
+    window.onYouTubeIframeAPIReady = () => {
+      initYouTubePlayer();
+    };
     return;
   }
 
@@ -346,33 +344,58 @@ const loadYouTubeAPI = () => {
 
 // 初始化 YouTube 播放器
 const initYouTubePlayer = () => {
+  // 檢查影片 ID
   if (!videoData.value.videoId) {
     console.error("No video ID found");
     showNotification("無法載入影片：缺少影片 ID");
     return;
   }
 
-  youtubePlayer = new window.YT.Player("youtube-player", {
-    height: "100%",
-    width: "100%",
-    videoId: videoData.value.videoId,
-    playerVars: {
-      autoplay: 0,
-      controls: 0, // 隱藏 YouTube 控制條，使用自訂控制條
-      modestbranding: 1,
-      rel: 0,
-      showinfo: 0,
-      fs: 1,
-      cc_load_policy: 0,
-      iv_load_policy: 3,
-    },
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange,
-    },
-  });
+  // 檢查 DOM 元素是否存在
+  const playerElement = document.getElementById("youtube-player");
+  if (!playerElement) {
+    console.error("Player element not found");
+    showNotification("無法載入影片：播放器元素不存在");
+    return;
+  }
 
-  console.log(youtubePlayer);
+  // 檢查 YouTube API 是否可用
+  if (!window.YT || !window.YT.Player) {
+    console.error("YouTube API not loaded");
+    showNotification("無法載入影片：YouTube API 未就緒");
+    return;
+  }
+
+  try {
+    console.log("初始化 YouTube 播放器，影片 ID:", videoData.value.videoId);
+
+    youtubePlayer = new window.YT.Player("youtube-player", {
+      height: "100%",
+      width: "100%",
+      videoId: videoData.value.videoId,
+      playerVars: {
+        autoplay: 0,
+        controls: 1, // 顯示 YouTube 控制條
+        modestbranding: 1, // 簡化 YouTube logo
+        rel: 0, // 播放完畢不顯示相關影片
+        fs: 1, // 允許全螢幕
+        cc_load_policy: 0, // 預設不顯示字幕
+        iv_load_policy: 3, // 不顯示影片註解
+        enablejsapi: 1, // 啟用 JavaScript API
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+        onError: onPlayerError,
+      },
+    });
+
+    console.log("YouTube 播放器已創建:", youtubePlayer);
+  } catch (error) {
+    console.error("初始化 YouTube 播放器失敗:", error);
+    mediaLoadError.value = "初始化播放器失敗";
+    showNotification("初始化播放器失敗，請重新整理頁面");
+  }
 };
 
 // 播放器就緒
@@ -406,6 +429,33 @@ const onPlayerStateChange = (event) => {
     isPlaying.value = false;
     showNotification("影片播放完畢");
   }
+};
+
+// 播放器錯誤處理
+const onPlayerError = (event) => {
+  console.error("YouTube 播放器錯誤:", event.data);
+
+  let errorMessage;
+  switch (event.data) {
+    case 2:
+      errorMessage = "無效的影片 ID";
+      break;
+    case 5:
+      errorMessage = "HTML5 播放器錯誤";
+      break;
+    case 100:
+      errorMessage = "影片不存在或已被刪除";
+      break;
+    case 101:
+    case 150:
+      errorMessage = "影片所有者不允許嵌入播放";
+      break;
+    default:
+      errorMessage = `播放器錯誤 (代碼: ${event.data})`;
+  }
+
+  mediaLoadError.value = errorMessage;
+  showNotification(errorMessage);
 };
 
 // 從 URL 提取 YouTube 影片 ID
@@ -754,6 +804,16 @@ window.seekToTime = seekToTime;
   color: #666;
 }
 
+.player-placeholder.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 10;
+}
+
 .player-placeholder-icon {
   font-size: 80px;
   opacity: 0.5;
@@ -762,69 +822,6 @@ window.seekToTime = seekToTime;
 .player-placeholder-text {
   font-size: 16px;
   color: #999;
-}
-
-/* 播放控制條 */
-.player-controls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-  padding: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.player-wrapper:hover .player-controls {
-  opacity: 1;
-}
-
-.progress-bar {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-  cursor: pointer;
-  margin-bottom: 15px;
-  position: relative;
-}
-
-.progress-filled {
-  height: 100%;
-  background: #667eea;
-  border-radius: 2px;
-  transition: width 0.1s ease;
-}
-
-.controls-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.control-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.control-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.time-display {
-  font-size: 13px;
-  color: #fff;
-  font-weight: 500;
-}
-
-.spacer {
-  flex: 1;
 }
 
 /* 聊天區域 */
