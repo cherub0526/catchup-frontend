@@ -88,6 +88,9 @@ const api = {
     getMediaByType: (type, page = 1) => {
       return client.get("/v1/media", { params: { type, page } });
     },
+    getMediaById: (id) => {
+      return client.get(`/v1/media/${id}`);
+    },
   },
 };
 

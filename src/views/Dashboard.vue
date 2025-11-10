@@ -409,6 +409,7 @@ const openVideo = (video) => {
   router.push({
     name: "Player",
     query: {
+      mediaId: video.id,
       title: video.title,
       source: currentSource.value,
       url: video.url,

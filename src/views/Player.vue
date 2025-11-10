@@ -31,7 +31,15 @@
         <!-- 播放器區域 -->
         <div class="player-wrapper" ref="playerWrapperRef">
           <!-- YouTube iframe 播放器 -->
-          <div v-if="!videoLoaded" class="player-placeholder">
+          <div v-if="isLoadingMedia" class="player-placeholder">
+            <div class="player-placeholder-icon">⏳</div>
+            <div class="player-placeholder-text">正在載入媒體資料...</div>
+          </div>
+          <div v-else-if="mediaLoadError" class="player-placeholder">
+            <div class="player-placeholder-icon">❌</div>
+            <div class="player-placeholder-text">{{ mediaLoadError }}</div>
+          </div>
+          <div v-else-if="!videoLoaded" class="player-placeholder">
             <div class="player-placeholder-icon">🎬</div>
             <div class="player-placeholder-text">正在載入影片...</div>
           </div>
@@ -167,6 +175,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import api from "@/api";
 
 const route = useRoute();
 const router = useRouter();
@@ -187,6 +196,8 @@ const videoData = ref({
   duration: 600,
   currentTime: 0,
   isPlaying: false,
+  type: "",
+  mediaId: null,
 });
 
 const videoLoaded = ref(false);
@@ -194,6 +205,8 @@ const isPlaying = ref(false);
 const isMuted = ref(false);
 const currentTime = ref(0);
 const duration = ref(600);
+const isLoadingMedia = ref(false);
+const mediaLoadError = ref(null);
 
 // 聊天相關
 const chatInput = ref("");
@@ -228,23 +241,32 @@ const progressPercent = computed(() => {
 });
 
 // 初始化
-onMounted(() => {
+onMounted(async () => {
   // 從 URL 參數獲取影片資訊
+  const mediaId = route.query.mediaId;
   const title = route.query.title || "範例影片";
   const url = route.query.url || "";
 
   videoData.value.title = title;
   videoData.value.url = url;
+  videoData.value.mediaId = mediaId;
 
-  // 從 URL 中提取 YouTube 影片 ID
-  const videoId = extractYouTubeVideoId(url);
-  videoData.value.videoId = videoId;
+  // 如果有 mediaId，從 API 獲取詳細資料
+  if (mediaId) {
+    await fetchMediaDetails(mediaId);
+  } else {
+    // 如果沒有 mediaId，使用 URL 參數的資料
+    const videoId = extractYouTubeVideoId(url);
+    videoData.value.videoId = videoId;
 
-  // 載入時間軸
-  loadTimeline();
+    // 載入時間軸
+    loadTimeline();
 
-  // 載入 YouTube iframe API
-  loadYouTubeAPI();
+    // 載入 YouTube iframe API
+    if (videoId) {
+      loadYouTubeAPI();
+    }
+  }
 });
 
 onBeforeUnmount(() => {
@@ -257,6 +279,51 @@ onBeforeUnmount(() => {
   }
 });
 
+// 從 API 獲取媒體詳細資料
+const fetchMediaDetails = async (mediaId) => {
+  isLoadingMedia.value = true;
+  mediaLoadError.value = null;
+
+  try {
+    const response = await api.media.getMediaById(mediaId);
+
+    if (response?.data) {
+      const media = response.data;
+
+      // 更新影片資料
+      videoData.value.title = media.title || videoData.value.title;
+      videoData.value.url = media.url || videoData.value.url;
+      videoData.value.type = media.type || media.source || "youtube";
+
+      // 如果是 YouTube 影片，提取影片 ID 並載入播放器
+      if (videoData.value.type === "youtube") {
+        const videoId = extractYouTubeVideoId(media.url || videoData.value.url);
+        videoData.value.videoId = videoId;
+
+        if (videoId) {
+          // 載入時間軸
+          loadTimeline();
+
+          // 載入 YouTube iframe API
+          loadYouTubeAPI();
+        } else {
+          mediaLoadError.value = "無法從 URL 中提取 YouTube 影片 ID";
+          showNotification("無法載入影片：缺少有效的 YouTube URL");
+        }
+      } else {
+        // 其他類型的媒體（未來可以擴展支援）
+        showNotification(`暫不支援 ${videoData.value.type} 類型的播放`);
+      }
+    }
+  } catch (error) {
+    console.error("獲取媒體詳細資料失敗:", error);
+    mediaLoadError.value = error.message || "獲取媒體資料失敗";
+    showNotification("無法載入影片資料，請稍後再試");
+  } finally {
+    isLoadingMedia.value = false;
+  }
+};
+
 // 載入 YouTube iframe API
 const loadYouTubeAPI = () => {
   // 檢查 API 是否已載入
@@ -267,7 +334,7 @@ const loadYouTubeAPI = () => {
 
   // 載入 YouTube iframe API
   const tag = document.createElement("script");
-  tag.src = "https://www.youtube.com/embed/LlcdBguL3hA?si=H3gDXhJWORSyOWjV";
+  tag.src = "https://www.youtube.com/iframe_api";
   const firstScriptTag = document.getElementsByTagName("script")[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -304,6 +371,8 @@ const initYouTubePlayer = () => {
       onStateChange: onPlayerStateChange,
     },
   });
+
+  console.log(youtubePlayer);
 };
 
 // 播放器就緒
@@ -504,12 +573,11 @@ const loadTimeline = async () => {
   timelineError.value = "";
 
   try {
-    const response = await fetch(`/pages/timelines/${timelineLanguage.value}.json`);
-    if (!response.ok) {
-      throw new Error(`Failed to load timeline for ${timelineLanguage.value}`);
-    }
-
-    timelineData.value = await response.json();
+    // const response = await fetch(`/pages/timelines/${timelineLanguage.value}.json`);
+    // if (!response.ok) {
+    // throw new Error(`Failed to load timeline for ${timelineLanguage.value}`);
+    // }
+    // timelineData.value = await response.json();
   } catch (error) {
     console.error("Error loading timeline:", error);
     timelineError.value = "無法載入時間軸";
