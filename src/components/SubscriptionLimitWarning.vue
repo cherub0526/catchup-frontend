@@ -2,34 +2,36 @@
   <div v-if="shouldShowWarning" class="limit-warning">
     <div class="warning-content">
       <svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="12" y1="9" x2="12" y2="13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path
+          d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+        <line x1="12" y1="9" x2="12" y2="13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-      
+
       <div class="warning-text">
         <h4>{{ warningTitle }}</h4>
         <p>{{ warningMessage }}</p>
       </div>
-      
-      <router-link to="/subscription" class="upgrade-btn">
-        升級方案
-      </router-link>
-      
-      <button @click="dismiss" class="dismiss-btn">×</button>
+
+      <router-link to="/subscription" class="upgrade-btn"> 升級方案 </router-link>
+
+      <!-- <button @click="dismiss" class="dismiss-btn">×</button> -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { usePlansStore } from '@/stores/plans';
-import { storeToRefs } from 'pinia';
+import { ref, computed, watch } from "vue";
+import { usePlansStore } from "@/stores/plans";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   type: {
     type: String,
-    default: 'both', // 'channel', 'media', or 'both'
+    default: "both", // 'channel', 'media', or 'both'
   },
   showAlways: {
     type: Boolean,
@@ -44,10 +46,10 @@ const isDismissed = ref(false);
 
 const shouldShowWarning = computed(() => {
   if (isDismissed.value && !props.showAlways) return false;
-  
-  if (props.type === 'channel') {
+
+  if (props.type === "channel") {
     return isChannelLimitReached.value;
-  } else if (props.type === 'media') {
+  } else if (props.type === "media") {
     return isMediaLimitReached.value;
   } else {
     return isChannelLimitReached.value || isMediaLimitReached.value;
@@ -56,27 +58,27 @@ const shouldShowWarning = computed(() => {
 
 const warningTitle = computed(() => {
   if (isChannelLimitReached.value && isMediaLimitReached.value) {
-    return '已達到訂閱限制';
+    return "已達到訂閱限制";
   } else if (isChannelLimitReached.value) {
-    return '已達到頻道訂閱上限';
+    return "已達到頻道訂閱上限";
   } else if (isMediaLimitReached.value) {
-    return '已達到影音數量上限';
+    return "已達到影音數量上限";
   }
-  return '';
+  return "";
 });
 
 const warningMessage = computed(() => {
   const messages = [];
-  
+
   if (isChannelLimitReached.value) {
     messages.push(`頻道訂閱數：${usage.value.channels}/${currentLimits.value.channels}`);
   }
-  
+
   if (isMediaLimitReached.value) {
     messages.push(`影音數量：${usage.value.media}/${currentLimits.value.media}`);
   }
-  
-  return messages.join(' | ') + '。升級方案以獲得更多容量。';
+
+  return messages.join(" | ") + "。升級方案以獲得更多容量。";
 });
 
 const dismiss = () => {
@@ -188,16 +190,15 @@ watch([isChannelLimitReached, isMediaLimitReached], () => {
     flex-wrap: wrap;
     padding: 16px;
   }
-  
+
   .warning-text {
     width: 100%;
     margin-bottom: 8px;
   }
-  
+
   .upgrade-btn {
     width: 100%;
     text-align: center;
   }
 }
 </style>
-
