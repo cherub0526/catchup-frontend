@@ -2,9 +2,7 @@
   <div class="settings-page">
     <div class="settings-header">
       <button class="back-btn" @click="goBack">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-          <path d="M19 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H19v-2z"/>
-        </svg>
+        <font-awesome-icon icon="arrow-left" />
         返回
       </button>
       <h2>設定</h2>

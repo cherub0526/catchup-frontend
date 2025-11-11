@@ -10,16 +10,7 @@
     <div class="usage-grid">
       <div class="usage-card">
         <div class="usage-header">
-          <svg class="usage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path
-              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round" />
-            <circle cx="9" cy="7" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+          <font-awesome-icon icon="users" class="usage-icon" />
           <span class="usage-label">訂閱頻道</span>
         </div>
         <div class="usage-stats">
@@ -37,19 +28,7 @@
 
       <div class="usage-card">
         <div class="usage-header">
-          <svg class="usage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polygon points="23 7 16 12 23 17 23 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <rect
-              x="1"
-              y="5"
-              width="15"
-              height="14"
-              rx="2"
-              ry="2"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
+          <font-awesome-icon icon="video" class="usage-icon" />
           <span class="usage-label">影音數量</span>
         </div>
         <div class="usage-stats">

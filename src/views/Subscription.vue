@@ -3,9 +3,7 @@
     <div class="subscription-container">
       <!-- 返回按鈕 -->
       <button class="back-btn" @click="goBack">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor">
-          <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <font-awesome-icon icon="arrow-left" />
         <span>返回</span>
       </button>
 
@@ -87,28 +85,18 @@
 
         <div class="plan-limits">
           <div class="limit-item">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="9" cy="7" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <font-awesome-icon icon="users" class="icon" />
             <span>最多 {{ plan.limits.channels }} 個訂閱頻道</span>
           </div>
           <div class="limit-item">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <polygon points="23 7 16 12 23 17 23 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <font-awesome-icon icon="video" class="icon" />
             <span>最多 {{ plan.limits.media }} 隻影音</span>
           </div>
         </div>
 
         <div class="plan-features">
           <div v-for="(feature, index) in plan.features" :key="index" class="feature-item">
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <font-awesome-icon icon="check" class="check-icon" />
             <span>{{ feature }}</span>
           </div>
         </div>
@@ -158,79 +146,49 @@
             <tr>
               <td>高畫質播放</td>
               <td>
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <font-awesome-icon icon="times" class="x-icon" />
               </td>
               <td>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <font-awesome-icon icon="check" class="check-icon" />
               </td>
               <td>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <font-awesome-icon icon="check" class="check-icon" />
               </td>
             </tr>
             <tr>
               <td>離線下載</td>
               <td>
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <font-awesome-icon icon="times" class="x-icon" />
               </td>
               <td>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <font-awesome-icon icon="check" class="check-icon" />
               </td>
               <td>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <font-awesome-icon icon="check" class="check-icon" />
               </td>
             </tr>
             <tr>
               <td>優先客服支援</td>
               <td>
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <font-awesome-icon icon="times" class="x-icon" />
               </td>
               <td>
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <font-awesome-icon icon="times" class="x-icon" />
               </td>
               <td>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <font-awesome-icon icon="check" class="check-icon" />
               </td>
             </tr>
             <tr>
               <td>進階分析功能</td>
               <td>
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <font-awesome-icon icon="times" class="x-icon" />
               </td>
               <td>
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <font-awesome-icon icon="times" class="x-icon" />
               </td>
               <td>
-                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <font-awesome-icon icon="check" class="check-icon" />
               </td>
             </tr>
           </tbody>

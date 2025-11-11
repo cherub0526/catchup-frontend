@@ -8,10 +8,7 @@
       </div>
       <div class="header-right">
         <button class="subscription-link-btn" @click="router.push('/subscription')">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path
-              d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-          </svg>
+          <font-awesome-icon icon="credit-card" />
           <span>訂閱方案</span>
         </button>
 
@@ -34,24 +31,7 @@
             <div class="popup-usage">
               <div class="popup-usage-item">
                 <div class="popup-usage-header">
-                  <svg class="popup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                    <circle cx="9" cy="7" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path
-                      d="M23 21v-2a4 4 0 0 0-3-3.87"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                    <path
-                      d="M16 3.13a4 4 0 0 1 0 7.75"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
+                  <font-awesome-icon icon="users" class="popup-icon" />
                   <span class="popup-label">訂閱頻道</span>
                 </div>
                 <div class="popup-stats">
@@ -69,23 +49,7 @@
 
               <div class="popup-usage-item">
                 <div class="popup-usage-header">
-                  <svg class="popup-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <polygon
-                      points="23 7 16 12 23 17 23 7"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                    <rect
-                      x="1"
-                      y="5"
-                      width="15"
-                      height="14"
-                      rx="2"
-                      ry="2"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
+                  <font-awesome-icon icon="video" class="popup-icon" />
                   <span class="popup-label">影音數量</span>
                 </div>
                 <div class="popup-stats">
@@ -123,8 +87,14 @@
             class="source-item"
             :class="{ active: currentSource === source.id }"
             @click="switchSource(source.id)">
-            <div class="source-icon" :style="{ background: source.color }">
-              <div v-html="source.icon"></div>
+            <div class="source-icon" :style="{ background: source.id === 'youtube' ? 'transparent' : source.color }">
+              <svg v-if="source.id === 'youtube'" viewBox="0 0 159 110" fill="none" style="width: 100%; height: 100%">
+                <path
+                  d="M154 17.5c-1.82-6.73-7.07-12-13.8-13.8C128.2 0 79 0 79 0S29.8 0 17.8 3.7C11.07 5.5 5.82 10.77 4 17.5 0 29.5 0 55 0 55s0 25.5 4 37.5c1.82 6.73 7.07 12 13.8 13.8C29.8 110 79 110 79 110s49.2 0 61.2-3.7c6.73-1.8 11.98-7.07 13.8-13.8 4-12 4-37.5 4-37.5s0-25.5-4-37.5z"
+                  fill="#FF0000" />
+                <path d="M64 78.77V31.23L104 55 64 78.77z" fill="white" />
+              </svg>
+              <font-awesome-icon v-else :icon="source.icon" size="lg" />
             </div>
             <div class="source-info">
               <div class="source-name">{{ source.name }}</div>
@@ -140,8 +110,22 @@
         <div class="content-header">
           <div class="content-header-top">
             <div class="content-title-wrapper">
-              <div class="content-icon" :style="{ background: currentSourceConfig.color }">
-                <div v-html="currentSourceConfig.iconLarge"></div>
+              <div
+                class="content-icon"
+                :style="{
+                  background: currentSourceConfig.id === 'youtube' ? 'transparent' : currentSourceConfig.color,
+                }">
+                <svg
+                  v-if="currentSourceConfig.id === 'youtube'"
+                  viewBox="0 0 159 110"
+                  fill="none"
+                  style="width: 100%; height: 100%">
+                  <path
+                    d="M154 17.5c-1.82-6.73-7.07-12-13.8-13.8C128.2 0 79 0 79 0S29.8 0 17.8 3.7C11.07 5.5 5.82 10.77 4 17.5 0 29.5 0 55 0 55s0 25.5 4 37.5c1.82 6.73 7.07 12 13.8 13.8C29.8 110 79 110 79 110s49.2 0 61.2-3.7c6.73-1.8 11.98-7.07 13.8-13.8 4-12 4-37.5 4-37.5s0-25.5-4-37.5z"
+                    fill="#FF0000" />
+                  <path d="M64 78.77V31.23L104 55 64 78.77z" fill="white" />
+                </svg>
+                <font-awesome-icon v-else :icon="currentSourceConfig.icon" size="2x" />
               </div>
               <div class="content-title-text">
                 <h2>{{ currentSourceConfig.name }}</h2>
@@ -183,11 +167,11 @@
             <!-- 空狀態 -->
             <div v-if="currentSubscriptions.length === 0" class="empty-state">
               <div class="empty-icon">{{ currentSourceConfig.emptyIcon }}</div>
-              <h3>尚未新增訂閱</h3>
-              <p>點擊「管理訂閱」按鈕來新增您的第一個訂閱頻道</p>
+              <h3>尚未新增頻道</h3>
+              <p>點擊「管理頻道」按鈕來新增您的第一個訂閱頻道</p>
               <button class="add-subscription-btn" @click="openManageModal">
-                <span>➕</span>
-                <span>新增訂閱</span>
+                <font-awesome-icon icon="plus" />
+                <span>新增頻道</span>
               </button>
             </div>
 
@@ -239,17 +223,19 @@
       </main>
     </div>
 
-    <!-- 管理訂閱模態視窗 -->
+    <!-- 管理頻道模態視窗 -->
     <div class="modal" :class="{ show: isModalOpen }" @click="closeModalOutside">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h3>
-            管理訂閱 - <span>{{ currentSourceConfig.name }}</span>
+            管理頻道 - <span>{{ currentSourceConfig.name }}</span>
           </h3>
-          <button class="close-modal" @click="closeManageModal">✕</button>
+          <button class="close-modal" @click="closeManageModal">
+            <font-awesome-icon icon="times" />
+          </button>
         </div>
         <div class="modal-body">
-          <!-- 新增訂閱表單 -->
+          <!-- 新增頻道表單 -->
           <form class="subscription-form" @submit.prevent="handleAddSubscription">
             <div class="form-group">
               <label for="channel-name">頻道名稱</label>
@@ -265,7 +251,7 @@
               <input type="text" id="channel" v-model="subscriptionForm.url" placeholder="請輸入頻道連結" required />
             </div>
             <div class="form-actions">
-              <button type="submit" class="btn-primary">新增訂閱</button>
+              <button type="submit" class="btn-primary">新增頻道</button>
               <button type="button" class="btn-secondary" @click="resetForm">取消</button>
             </div>
           </form>
@@ -361,9 +347,7 @@ const sources = [
   {
     id: "youtube",
     name: "YouTube",
-    icon: '<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
-    iconLarge:
-      '<svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
+    icon: ["fab", "youtube"],
     color: "#ff0000",
     subtitle: "管理您的 YouTube 訂閱頻道",
     emptyIcon: "📺",
@@ -504,7 +488,7 @@ const handleAddSubscription = async () => {
     resetForm();
   } catch (error) {
     console.error("新增訂閱失敗:", error);
-    alert(error.message || "新增訂閱失敗，請稍後再試");
+    alert(error.message || "新增失敗，請稍後再試");
   }
 };
 
