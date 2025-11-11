@@ -4,7 +4,8 @@
       <div class="login-box">
         <!-- Logo 區域 -->
         <div class="logo-section">
-          <h1>Video Assistant</h1>
+          <h1>{{ appName }}</h1>
+          <p class="slogan">{{ appSlogan }}</p>
         </div>
 
         <!-- 標籤切換 -->
@@ -216,9 +217,14 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { APP_NAME, APP_SLOGAN } from "@/config/app";
 
 const router = useRouter();
 const authStore = useAuthStore();
+
+// 應用配置
+const appName = ref(APP_NAME);
+const appSlogan = ref(APP_SLOGAN.zh);
 
 const activeTab = ref("login");
 const isLoading = ref(false);
@@ -439,10 +445,18 @@ const getApiErrorMessage = (error) => {
 }
 
 .logo-section h1 {
-  font-size: 28px;
+  font-size: 32px;
   color: #333;
   margin-bottom: 8px;
   font-weight: 700;
+}
+
+.logo-section .slogan {
+  font-size: 14px;
+  color: #667eea;
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.9;
 }
 
 .tab-container {

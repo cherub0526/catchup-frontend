@@ -1,6 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const { join } = require('path')
 
+// 應用配置
+const APP_NAME = 'CatchUp'
+const APP_DESCRIPTION = '自動化總結訂閱頻道內容的智能助理'
+
 // 開發環境檢測
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -13,6 +17,7 @@ function createWindow() {
     height: 900,
     minWidth: 1200,
     minHeight: 700,
+    title: APP_NAME,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

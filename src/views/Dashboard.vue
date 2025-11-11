@@ -4,7 +4,7 @@
     <header class="header">
       <div class="header-left">
         <span class="app-logo">🎬</span>
-        <h1 class="app-title">Video Assistant</h1>
+        <h1 class="app-title">{{ appName }}</h1>
       </div>
       <div class="header-right">
         <button class="subscription-link-btn" @click="router.push('/subscription')">
@@ -313,6 +313,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
 import SubscriptionLimitWarning from "@/components/SubscriptionLimitWarning.vue";
+import { APP_NAME } from "@/config/app";
 
 // 配置 dayjs
 dayjs.extend(relativeTime);
@@ -323,6 +324,9 @@ const authStore = useAuthStore();
 const subscriptionsStore = useSubscriptionsStore();
 const mediaStore = useMediaStore();
 const plansStore = usePlansStore();
+
+// 應用配置
+const appName = ref(APP_NAME);
 
 const { currentSource, subscriptionsData } = storeToRefs(subscriptionsStore);
 const { mediaData, currentPagination, isLoading } = storeToRefs(mediaStore);

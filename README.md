@@ -1,6 +1,8 @@
-# Video Assistant
+# CatchUp
 
-一個使用 Electron 打造的影片助理應用程式，提供完整的使用者認證系統。
+**輕鬆跟上節奏，不再錯過精彩**
+
+一個使用 Electron 打造的智能助理應用程式，自動化總結訂閱頻道內容，提供完整的使用者認證系統和訂閱管理功能。
 
 ## 功能特色
 
@@ -26,7 +28,7 @@
 
 ```bash
 git clone <repository-url>
-cd video-assistant
+cd catchup
 ```
 
 2. 安裝相依套件
@@ -70,17 +72,23 @@ npm run make
 ## 專案結構
 
 ```
-video-assistant/
-├── main.js                 # Electron 主程序
-├── pages/                  # 所有頁面檔案
-│   ├── login.html         # 登入/註冊頁面
-│   ├── index.html         # 主應用程式頁面
-│   ├── styles/
-│   │   └── login.css      # 登入頁面樣式
-│   └── scripts/
-│       └── login.js       # 登入頁面邏輯
-├── config.example.js      # OAuth 設定範例
-├── README.md              # 專案說明文件
+catchup/
+├── electron/              # Electron 主程序
+│   ├── main.js           # 主程序入口
+│   └── preload.js        # 預載入腳本
+├── src/                  # Vue 3 應用程式
+│   ├── views/           # 頁面組件
+│   │   ├── Login.vue    # 登入/註冊頁面
+│   │   ├── Dashboard.vue # 主儀表板
+│   │   ├── Player.vue   # 影片播放器
+│   │   ├── Settings.vue # 設定頁面
+│   │   └── Subscription.vue # 訂閱管理
+│   ├── components/      # 共用組件
+│   ├── stores/          # Pinia 狀態管理
+│   ├── config/          # 應用配置（統一管理名稱、slogan 等）
+│   └── api/             # API 服務
+├── config.example.js    # OAuth 設定範例
+├── README.md            # 專案說明文件
 └── package.json
 ```
 
@@ -117,43 +125,81 @@ video-assistant/
 ### 技術棧
 
 - **框架**：Electron
-- **前端**：HTML5, CSS3, JavaScript (Vanilla)
+- **前端**：Vue 3 (Composition API)
+- **狀態管理**：Pinia
+- **路由**：Vue Router
+- **建置工具**：Vite
 - **打包工具**：Electron Forge
 
 ### 主要檔案說明
 
-#### main.js
+#### electron/main.js
 
 - Electron 主程序
 - 處理視窗建立
 - 處理 IPC 通訊
 - 實作 OAuth 流程
+- 配置應用程式標題和描述
 
-#### login.html
+#### src/config/app.js
 
-- 登入/註冊頁面 HTML 結構
-- 包含表單和社群登入按鈕
+**統一的應用配置檔案** - 這是整個專案中最重要的配置文件：
 
-#### styles/login.css
+- 集中管理應用名稱、Slogan、描述等
+- 修改此檔案後，所有引用的組件和頁面都會自動更新
+- 無需在多個地方手動修改應用名稱
 
-- 登入頁面的所有樣式
-- 響應式設計
-- 現代化 UI 元素
+```javascript
+export const APP_CONFIG = {
+  name: 'CatchUp',  // 應用名稱
+  slogan: {
+    zh: '輕鬆跟上節奏，不再錯過精彩',
+    en: 'Stay caught up, without the catch.'
+  },
+  description: '自動化總結訂閱頻道內容的智能助理',
+  // ...其他配置
+}
+```
 
-#### scripts/login.js
+#### src/views/
 
-- 處理表單提交
-- 表單驗證
-- 與主程序通訊
-- OAuth 流程觸發
+- **Login.vue** - 登入/註冊頁面，包含社群登入
+- **Dashboard.vue** - 主儀表板，顯示訂閱內容
+- **Player.vue** - 影片播放器頁面
+- **Settings.vue** - 使用者設定頁面
+- **Subscription.vue** - 訂閱方案管理
 
-### 自訂設計
+#### src/stores/
 
-您可以輕鬆自訂應用程式的外觀：
+使用 Pinia 進行狀態管理：
+- **auth.js** - 使用者認證狀態
+- **media.js** - 媒體內容管理
+- **plans.js** - 訂閱方案管理
+- **subscriptions.js** - 頻道訂閱管理
 
-1. **顏色主題**：編輯 `styles/login.css` 中的漸層色和主色調
-2. **Logo**：替換 `.logo-section` 中的標題
-3. **表單欄位**：在 HTML 中新增或移除欄位
+### 自訂應用配置
+
+**統一管理應用名稱和 Slogan：**
+
+1. 編輯 `src/config/app.js` 檔案
+2. 修改 `APP_CONFIG` 物件中的設定：
+   ```javascript
+   export const APP_CONFIG = {
+     name: '您的應用名稱',  // 修改應用名稱
+     slogan: {
+       zh: '您的中文 Slogan',
+       en: 'Your English Slogan'
+     },
+     // ...
+   }
+   ```
+3. 儲存後，所有使用該配置的組件會自動更新
+
+**自訂樣式：**
+
+1. **顏色主題**：編輯 `src/assets/styles/variables.css` 中的 CSS 變數
+2. **組件樣式**：每個 Vue 組件都有 scoped 樣式區塊
+3. **全域樣式**：編輯 `src/assets/styles/main.css`
 
 ### 與後端整合
 

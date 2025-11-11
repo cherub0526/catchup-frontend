@@ -1,5 +1,6 @@
 {
-  "name": "video-assistant",
+  "name": "catchup",
+  "productName": "CatchUp",
   "version": "1.0.0",
   "main": "electron/main.js",
   "scripts": {
@@ -15,7 +16,7 @@
   },
   "author": "",
   "license": "MIT",
-  "description": "",
+  "description": "自動化總結訂閱頻道內容的智能助理",
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",
     "@electron-forge/maker-deb": "^7.10.2",
