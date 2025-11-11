@@ -442,6 +442,11 @@ const switchSource = async (sourceId) => {
   await mediaStore.switchSource(sourceId);
   // 更新使用情況
   await plansStore.updateUsage();
+
+  // 切換來源後檢查是否需要自動載入更多內容
+  setTimeout(() => {
+    checkAndLoadMore();
+  }, 300);
 };
 
 const openManageModal = async () => {
@@ -559,6 +564,7 @@ const showNotification = (message) => {
 
 // 滾動監聽器
 const contentAreaRef = ref(null);
+const isAutoLoading = ref(false);
 
 const handleScroll = async (event) => {
   const element = event.target;
@@ -576,6 +582,41 @@ const handleScroll = async (event) => {
     console.log("總頁數:", currentPagination.value.totalPages);
     console.log("總項目數:", currentPagination.value.total);
     await mediaStore.fetchNextPage(currentSource.value);
+
+    // 載入完成後檢查是否需要繼續載入
+    setTimeout(() => {
+      checkAndLoadMore();
+    }, 100);
+  }
+};
+
+// 檢查內容是否足夠填滿視窗，如果不夠則自動載入更多
+const checkAndLoadMore = async () => {
+  if (isAutoLoading.value) return;
+
+  const contentArea = contentAreaRef.value;
+  if (!contentArea) return;
+
+  const scrollHeight = contentArea.scrollHeight;
+  const clientHeight = contentArea.clientHeight;
+
+  // 如果內容高度小於等於視窗高度（沒有滾動條），且還有下一頁，且沒有正在載入
+  if (scrollHeight <= clientHeight && currentPagination.value.hasNextPage && !isLoading.value) {
+    console.log("內容不足以填滿視窗，自動載入下一頁...");
+    console.log("scrollHeight:", scrollHeight, "clientHeight:", clientHeight);
+
+    isAutoLoading.value = true;
+    try {
+      await mediaStore.fetchNextPage(currentSource.value);
+      // 載入完成後再次檢查（遞迴檢查）
+      setTimeout(() => {
+        isAutoLoading.value = false;
+        checkAndLoadMore();
+      }, 100);
+    } catch (error) {
+      console.error("自動載入失敗:", error);
+      isAutoLoading.value = false;
+    }
   }
 };
 
@@ -589,6 +630,11 @@ onMounted(async () => {
 
   // 更新使用情況
   await plansStore.updateUsage();
+
+  // 初始檢查是否需要自動載入更多內容（延遲執行以確保 DOM 已渲染）
+  setTimeout(() => {
+    checkAndLoadMore();
+  }, 500);
 });
 
 onUnmounted(() => {
