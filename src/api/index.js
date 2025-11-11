@@ -74,11 +74,17 @@ const api = {
     },
   },
   media: {
-    getMediaByType: (type, page = 1) => {
-      return client.get("/v1/media", { params: { type, page } });
+    getMediaByType: (type, page = 1, range = "all") => {
+      return client.get("/v1/media", { params: { type, page, range } });
     },
     getMediaById: (id) => {
       return client.get(`/v1/media/${id}`);
+    },
+    getCaptions: (mediaId) => {
+      return client.get(`/v1/media/${mediaId}/captions`);
+    },
+    getCaptionById: (mediaId, captionId) => {
+      return client.get(`/v1/media/${mediaId}/captions/${captionId}`);
     },
   },
   subscription: {

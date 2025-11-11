@@ -4,6 +4,7 @@ import api from "@/api";
 
 export const useMediaStore = defineStore("media", () => {
   const currentSource = ref("youtube");
+  const currentRange = ref("all");
   const isLoading = ref(false);
   const error = ref(null);
 
@@ -36,6 +37,12 @@ export const useMediaStore = defineStore("media", () => {
     await fetchMedia(source, true);
   };
 
+  const switchRange = async (range) => {
+    currentRange.value = range;
+    // 切換範圍時重新獲取當前來源的影片（重置為第一頁）
+    await fetchMedia(currentSource.value, true);
+  };
+
   // 從 API 獲取影片列表
   const fetchMedia = async (type, reset = false) => {
     // 如果正在載入或沒有下一頁且不是重置，則不執行
@@ -53,7 +60,7 @@ export const useMediaStore = defineStore("media", () => {
       // 如果是重置，從第1頁開始，否則載入下一頁
       const page = reset ? 1 : paginationInfo.value[type].currentPage + 1;
 
-      const response = await api.media.getMediaByType(type, page);
+      const response = await api.media.getMediaByType(type, page, currentRange.value);
 
       // 更新對應來源的影片數據
       if (response?.data) {
@@ -121,6 +128,7 @@ export const useMediaStore = defineStore("media", () => {
 
   return {
     currentSource,
+    currentRange,
     mediaData,
     currentMedia,
     currentPagination,
@@ -128,6 +136,7 @@ export const useMediaStore = defineStore("media", () => {
     isLoading,
     error,
     switchSource,
+    switchRange,
     fetchMedia,
     fetchNextPage,
     initialize,

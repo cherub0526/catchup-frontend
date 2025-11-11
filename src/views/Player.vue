@@ -136,25 +136,34 @@
           <!-- 時間軸內容 -->
           <div v-show="activeTab === 'timeline'" class="tab-content active">
             <div class="timeline-header-bar">
-              <select class="timeline-language-selector" v-model="timelineLanguage" @change="loadTimeline">
-                <option value="zh-TW">繁體中文</option>
-                <option value="en">English</option>
-                <option value="ja">日本語</option>
+              <select
+                v-if="captionsList.length > 0"
+                class="caption-selector"
+                v-model="selectedCaption"
+                @change="handleCaptionChange">
+                <option v-for="caption in captionsList" :key="caption.id" :value="caption">
+                  {{ caption.locale || caption.name || caption.language || `字幕 ${caption.id}` }}
+                </option>
               </select>
+              <div v-else class="no-captions-hint">
+                <span>📝</span>
+                <span>暫無字幕</span>
+              </div>
             </div>
             <div class="timeline-content">
               <div v-if="timelineLoading" class="summary-text">載入中...</div>
               <div v-else-if="timelineError" class="summary-text" style="color: #ef4444">
                 {{ timelineError }}
               </div>
+              <div v-else-if="timelineData.length === 0" class="summary-text" style="color: #9ca3af">尚無字幕內容</div>
               <div v-else>
                 <div v-for="(item, index) in timelineData" :key="index" class="timeline-item">
                   <div class="timestamp-link" @click="seekToTime(item.time)">
                     <span>⏱️</span>
                     <span>{{ formatTime(item.time) }}</span>
-                    <span> - {{ item.label }}</span>
+                    <span>{{ item.label }}</span>
                   </div>
-                  <p class="timeline-description">{{ item.description }}</p>
+                  <p v-if="item.description" class="timeline-description">{{ item.description }}</p>
                 </div>
               </div>
             </div>
@@ -218,6 +227,11 @@ const timelineLanguage = ref("zh-TW");
 const timelineData = ref([]);
 const timelineLoading = ref(false);
 const timelineError = ref("");
+
+// 字幕相關
+const captionsList = ref([]);
+const selectedCaption = ref(null);
+const captionsContent = ref([]);
 
 // AI 總結資料
 const aiSummary = ref({
@@ -289,8 +303,8 @@ const fetchMediaDetails = async (mediaId) => {
   try {
     const response = await api.media.getMediaById(mediaId);
 
-    if (response?.data) {
-      const media = response.data;
+    if (response?.id) {
+      const media = response;
 
       // 更新影片資料
       videoData.value.title = media.title || videoData.value.title;
@@ -306,6 +320,9 @@ const fetchMediaDetails = async (mediaId) => {
           // 載入時間軸
           loadTimeline();
 
+          // 獲取字幕
+          await fetchCaptions();
+
           // 初始化 Plyr 播放器
           await nextTick();
           initPlyrPlayer();
@@ -315,6 +332,9 @@ const fetchMediaDetails = async (mediaId) => {
         }
       } else {
         // 其他類型的媒體
+        // 獲取字幕
+        await fetchCaptions();
+
         await nextTick();
         initPlyrPlayer();
       }
@@ -462,6 +482,15 @@ const seekToTime = (seconds) => {
   if (!player) return;
 
   player.currentTime = seconds;
+  // // 確保聲音開啟
+  // if (player.muted) {
+  //   player.muted = false;
+  //   isMuted.value = false;
+  // }
+  // 自動播放
+  if (!player.playing) {
+    player.play();
+  }
   showNotification(`已跳轉至 ${formatTime(seconds)}`);
 };
 
@@ -567,6 +596,153 @@ const generateAIResponse = (question) => {
 
   // 預設回應
   return '這是一個很好的問題！根據影片內容，建議您查看以下重點時刻：<span class="reference-mark" onclick="seekToTime(30)" data-time="30" data-content="前端框架簡介">1<span class="reference-tooltip"><div class="tooltip-time">⏱️ 00:30</div><div class="tooltip-content">前端框架簡介</div></span></span> 和 <span class="reference-mark" onclick="seekToTime(180)" data-time="180" data-content="組件化開發">2<span class="reference-tooltip"><div class="tooltip-time">⏱️ 03:00</div><div class="tooltip-content">組件化開發</div></span></span>。如果需要更詳細的資訊，請告訴我您想了解的具體方面。';
+};
+
+// 獲取字幕列表
+const fetchCaptions = async () => {
+  if (!videoData.value.mediaId) {
+    console.log("無 mediaId，跳過獲取字幕");
+    return;
+  }
+
+  try {
+    const response = await api.media.getCaptions(videoData.value.mediaId);
+
+    // 處理直接回傳陣列的情況
+    if (Array.isArray(response)) {
+      captionsList.value = response;
+    }
+    // 處理包含 data 屬性的情況
+    else if (response?.data && Array.isArray(response.data)) {
+      captionsList.value = response.data;
+    }
+
+    // 如果有字幕，預設選擇第一個
+    if (captionsList.value.length > 0) {
+      const firstCaption = captionsList.value[0];
+      selectedCaption.value = firstCaption;
+      await fetchCaptionContent(firstCaption.id);
+    }
+  } catch (error) {
+    console.error("獲取字幕列表失敗:", error);
+    // 不顯示錯誤通知，因為沒有字幕是正常的情況
+  }
+};
+
+// 獲取字幕內容
+const fetchCaptionContent = async (captionId) => {
+  if (!videoData.value.mediaId || !captionId) {
+    return;
+  }
+
+  timelineLoading.value = true;
+  timelineError.value = "";
+
+  try {
+    const response = await api.media.getCaptionById(videoData.value.mediaId, captionId);
+
+    if (response) {
+      // 將字幕內容轉換為時間軸格式
+      captionsContent.value = response;
+
+      // 處理包含 segments 的結構 {id, locale, segments: [{start, end, text}]}
+      if (response.segments && Array.isArray(response.segments)) {
+        timelineData.value = response.segments.map((segment) => ({
+          time: segment.start || 0,
+          label: segment.text || "",
+          description: "",
+        }));
+        showNotification("字幕載入成功");
+      }
+      // 如果是舊的 data 包裝格式
+      else if (response?.data?.segments && Array.isArray(response.data.segments)) {
+        timelineData.value = response.data.segments.map((segment) => ({
+          time: segment.start || 0,
+          label: segment.text || "",
+          description: "",
+        }));
+        showNotification("字幕載入成功");
+      }
+      // 如果是簡單的陣列格式
+      else if (Array.isArray(response.data)) {
+        timelineData.value = response.data.map((item) => ({
+          time: item.start || item.time || 0,
+          label: item.text || item.content || "",
+          description: item.description || "",
+        }));
+        showNotification("字幕載入成功");
+      }
+      // 如果是包含 content 的物件格式（字幕文件內容）
+      else if (response.data?.content) {
+        parseSubtitles(response.data.content);
+        showNotification("字幕載入成功");
+      } else {
+        timelineError.value = "不支援的字幕格式";
+      }
+    }
+  } catch (error) {
+    console.error("獲取字幕內容失敗:", error);
+    timelineError.value = "無法載入字幕內容";
+  } finally {
+    timelineLoading.value = false;
+  }
+};
+
+// 解析字幕格式（支援 VTT、SRT 等格式）
+const parseSubtitles = (content) => {
+  try {
+    // 簡單的字幕解析，可以根據實際格式調整
+    const lines = content.split("\n");
+    const subtitles = [];
+    let currentSubtitle = null;
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+
+      // 檢測時間碼格式 (VTT/SRT)
+      const timeMatch = trimmedLine.match(
+        /(\d{2}):(\d{2}):(\d{2})[.,](\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[.,](\d{3})/
+      );
+
+      if (timeMatch) {
+        const startTime =
+          Number.parseInt(timeMatch[1]) * 3600 + Number.parseInt(timeMatch[2]) * 60 + Number.parseInt(timeMatch[3]);
+
+        currentSubtitle = {
+          time: startTime,
+          label: "",
+          description: "",
+        };
+      } else if (trimmedLine && currentSubtitle && !trimmedLine.match(/^\d+$/)) {
+        // 字幕文字
+        if (currentSubtitle.label === "") {
+          currentSubtitle.label = trimmedLine;
+        } else {
+          currentSubtitle.description += (currentSubtitle.description ? " " : "") + trimmedLine;
+        }
+      } else if (trimmedLine === "" && currentSubtitle) {
+        // 空行表示一個字幕結束
+        subtitles.push(currentSubtitle);
+        currentSubtitle = null;
+      }
+    }
+
+    if (currentSubtitle) {
+      subtitles.push(currentSubtitle);
+    }
+
+    timelineData.value = subtitles;
+  } catch (error) {
+    console.error("解析字幕失敗:", error);
+    timelineError.value = "解析字幕格式失敗";
+  }
+};
+
+// 處理字幕選擇變化
+const handleCaptionChange = async () => {
+  if (selectedCaption.value && selectedCaption.value.id) {
+    await fetchCaptionContent(selectedCaption.value.id);
+  }
 };
 
 // 時間軸功能
@@ -1131,7 +1307,52 @@ window.seekToTime = seekToTime;
   font-weight: 700;
 }
 
-/* 時間軸語言選擇器 */
+/* 字幕選擇器 */
+.caption-selector {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  min-width: 150px;
+}
+
+.caption-selector:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(102, 126, 234, 0.5);
+}
+
+.caption-selector:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.caption-selector option {
+  background: #1a1d24;
+  color: #fff;
+  padding: 8px;
+}
+
+/* 無字幕提示 */
+.no-captions-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 時間軸語言選擇器（備用，目前已被字幕選擇器取代）*/
 .timeline-language-selector {
   padding: 8px 14px;
   background: rgba(255, 255, 255, 0.08);
@@ -1157,8 +1378,8 @@ window.seekToTime = seekToTime;
 
 /* 時間軸項目 */
 .timeline-item {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -1170,16 +1391,16 @@ window.seekToTime = seekToTime;
 
 .timestamp-link {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 14px;
   color: #d1d5db;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   border: 1px solid transparent;
 }
 

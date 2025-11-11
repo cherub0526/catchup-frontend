@@ -156,7 +156,7 @@
                 :key="filter.value"
                 class="filter-btn"
                 :class="{ active: currentFilter === filter.value }"
-                @click="currentFilter = filter.value">
+                @click="handleFilterChange(filter.value)">
                 {{ filter.label }}
               </button>
             </div>
@@ -339,8 +339,8 @@ const subscriptionForm = ref({
 const filters = [
   { label: "全部", value: "all" },
   { label: "今天", value: "today" },
-  { label: "本週", value: "week" },
-  { label: "本月", value: "month" },
+  { label: "一週", value: "week" },
+  { label: "一個月", value: "month" },
 ];
 
 const sources = [
@@ -444,6 +444,17 @@ const switchSource = async (sourceId) => {
   await plansStore.updateUsage();
 
   // 切換來源後檢查是否需要自動載入更多內容
+  setTimeout(() => {
+    checkAndLoadMore();
+  }, 300);
+};
+
+const handleFilterChange = async (filterValue) => {
+  currentFilter.value = filterValue;
+  // 切換時間範圍篩選器
+  await mediaStore.switchRange(filterValue);
+
+  // 切換後檢查是否需要自動載入更多內容
   setTimeout(() => {
     checkAndLoadMore();
   }, 300);
