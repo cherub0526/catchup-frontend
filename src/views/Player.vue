@@ -157,7 +157,10 @@
               </div>
               <div v-else-if="timelineData.length === 0" class="summary-text" style="color: #9ca3af">尚無字幕內容</div>
               <div v-else>
-                <div v-for="(item, index) in timelineData" :key="index" class="timeline-item">
+                <div
+                  v-for="(item, index) in timelineData"
+                  :key="index"
+                  :class="['timeline-item', { active: activeTimelineIndex === index }]">
                   <div class="timestamp-link" @click="seekToTime(item.time)">
                     <span>⏱️</span>
                     <span>{{ formatTime(item.time) }}</span>
@@ -232,6 +235,7 @@ const timelineError = ref("");
 const captionsList = ref([]);
 const selectedCaption = ref(null);
 const captionsContent = ref([]);
+const activeTimelineIndex = ref(-1);
 
 // AI 總結資料
 const aiSummary = ref({
@@ -420,6 +424,7 @@ const initPlyrPlayer = () => {
     player.on("timeupdate", () => {
       currentTime.value = player.currentTime || 0;
       duration.value = player.duration || 0;
+      updateActiveTimeline(currentTime.value);
     });
 
     player.on("error", (event) => {
@@ -741,7 +746,41 @@ const parseSubtitles = (content) => {
 // 處理字幕選擇變化
 const handleCaptionChange = async () => {
   if (selectedCaption.value && selectedCaption.value.id) {
+    activeTimelineIndex.value = -1; // 重置活動索引
     await fetchCaptionContent(selectedCaption.value.id);
+  }
+};
+
+// 更新活動的時間軸項目
+const updateActiveTimeline = (time) => {
+  if (!timelineData.value || timelineData.value.length === 0) {
+    activeTimelineIndex.value = -1;
+    return;
+  }
+
+  // 找到當前時間對應的時間軸項目
+  let newActiveIndex = -1;
+  for (let i = timelineData.value.length - 1; i >= 0; i--) {
+    if (time >= timelineData.value[i].time) {
+      newActiveIndex = i;
+      break;
+    }
+  }
+
+  // 如果活動項目改變，滾動到可視範圍內
+  if (newActiveIndex !== activeTimelineIndex.value && newActiveIndex >= 0) {
+    activeTimelineIndex.value = newActiveIndex;
+
+    // 使用 nextTick 確保 DOM 已更新
+    nextTick(() => {
+      const activeElement = document.querySelector(".timeline-item.active");
+      if (activeElement) {
+        activeElement.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    });
   }
 };
 
@@ -1381,12 +1420,30 @@ window.seekToTime = seekToTime;
   margin-bottom: 12px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
 }
 
 .timeline-item:last-child {
   border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
+}
+
+/* 活動的時間軸項目 */
+.timeline-item.active .timestamp-link {
+  background: rgba(102, 126, 234, 0.25);
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
+}
+
+.timeline-item.active .timestamp-link span:nth-child(2) {
+  color: #8b9bff;
+  font-weight: 700;
+}
+
+.timeline-item.active .timestamp-link span:nth-child(3) {
+  color: #fff;
+  font-weight: 600;
 }
 
 .timestamp-link {
