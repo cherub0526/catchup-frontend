@@ -134,23 +134,29 @@
           </div>
 
           <!-- 時間軸內容 -->
-          <div v-show="activeTab === 'timeline'" class="tab-content active">
-            <div class="timeline-header-bar">
-              <select
-                v-if="captionsList.length > 0"
-                class="caption-selector"
-                v-model="selectedCaption"
-                @change="handleCaptionChange">
-                <option v-for="caption in captionsList" :key="caption.id" :value="caption">
-                  {{ caption.locale || caption.name || caption.language || `字幕 ${caption.id}` }}
-                </option>
-              </select>
-              <div v-else class="no-captions-hint">
-                <span>📝</span>
-                <span>暫無字幕</span>
+          <div v-show="activeTab === 'timeline'" class="tab-content timeline-tab active">
+            <div class="timeline-header-bar fixed-header">
+              <button :class="['follow-toggle-btn', { active: autoFollowTimeline }]" @click="handleFollowToggle">
+                <span class="follow-icon">{{ autoFollowTimeline ? "📍" : "📌" }}</span>
+                <span>{{ autoFollowTimeline ? "跟隨中" : "跟隨" }}</span>
+              </button>
+              <div class="timeline-selector-wrapper">
+                <select
+                  v-if="captionsList.length > 0"
+                  class="caption-selector"
+                  v-model="selectedCaption"
+                  @change="handleCaptionChange">
+                  <option v-for="caption in captionsList" :key="caption.id" :value="caption">
+                    {{ caption.locale || caption.name || caption.language || `字幕 ${caption.id}` }}
+                  </option>
+                </select>
+                <div v-else class="no-captions-hint">
+                  <span>📝</span>
+                  <span>暫無字幕</span>
+                </div>
               </div>
             </div>
-            <div class="timeline-content">
+            <div class="timeline-content scrollable">
               <div v-if="timelineLoading" class="summary-text">載入中...</div>
               <div v-else-if="timelineError" class="summary-text" style="color: #ef4444">
                 {{ timelineError }}
@@ -236,6 +242,7 @@ const captionsList = ref([]);
 const selectedCaption = ref(null);
 const captionsContent = ref([]);
 const activeTimelineIndex = ref(-1);
+const autoFollowTimeline = ref(true); // 預設啟用時間軸跟隨
 
 // AI 總結資料
 const aiSummary = ref({
@@ -751,8 +758,28 @@ const handleCaptionChange = async () => {
   }
 };
 
+// 處理跟隨開關切換
+const handleFollowToggle = () => {
+  autoFollowTimeline.value = !autoFollowTimeline.value;
+
+  if (autoFollowTimeline.value) {
+    // 開啟跟隨時，立即更新到當前播放位置
+    if (player && currentTime.value > 0) {
+      updateActiveTimeline(currentTime.value);
+    }
+  } else {
+    // 關閉跟隨時，清除高亮狀態
+    activeTimelineIndex.value = -1;
+  }
+};
+
 // 更新活動的時間軸項目
 const updateActiveTimeline = (time) => {
+  // 如果未啟用自動跟隨，則不更新
+  if (!autoFollowTimeline.value) {
+    return;
+  }
+
   if (!timelineData.value || timelineData.value.length === 0) {
     activeTimelineIndex.value = -1;
     return;
@@ -774,7 +801,9 @@ const updateActiveTimeline = (time) => {
     // 使用 nextTick 確保 DOM 已更新
     nextTick(() => {
       const activeElement = document.querySelector(".timeline-item.active");
-      if (activeElement) {
+      const scrollContainer = document.querySelector(".timeline-content.scrollable");
+
+      if (activeElement && scrollContainer) {
         activeElement.scrollIntoView({
           behavior: "smooth",
           block: "nearest",
@@ -1263,6 +1292,14 @@ window.seekToTime = seekToTime;
   padding: 25px;
 }
 
+/* 時間軸 Tab 特殊布局 */
+.timeline-tab {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
 .tab-header {
   display: flex;
   align-items: center;
@@ -1285,14 +1322,79 @@ window.seekToTime = seekToTime;
 
 .timeline-header-bar {
   display: flex;
-  justify-content: flex-end;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px 15px 25px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 12px;
+  background: #1a1d24;
+  z-index: 10;
+}
+
+.timeline-header-bar.fixed-header {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+}
+
+/* 跟隨按鈕 */
+.follow-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.follow-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(102, 126, 234, 0.4);
+  color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.follow-toggle-btn.active {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  border-color: rgba(102, 126, 234, 0.6);
+  color: #8b9bff;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.follow-toggle-btn.active:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+  border-color: rgba(102, 126, 234, 0.8);
+  color: #a5b4ff;
+}
+
+.follow-icon {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.timeline-selector-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .timeline-content {
   flex: 1;
+}
+
+.timeline-content.scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 25px;
 }
 
 .summary-section {
