@@ -89,6 +89,9 @@ const api = {
     getSummaries: (mediaId) => {
       return client.get(`/v1/media/${mediaId}/summaries`);
     },
+    chat: (mediaId, messages) => {
+      return client.post(`/v1/media/${mediaId}/chat`, { messages });
+    },
   },
   subscription: {
     // 獲取當前用戶的訂閱方案

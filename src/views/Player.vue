@@ -73,9 +73,24 @@
             </div>
 
             <!-- 聊天訊息 -->
-            <div v-for="(msg, index) in chatMessages" :key="index" :class="['message', msg.type]">
-              <div class="message-avatar">{{ msg.type === "user" ? "👤" : "🤖" }}</div>
+            <div
+              v-for="(msg, index) in chatMessages"
+              :key="index"
+              :class="['message', msg.role === 'user' ? 'user' : 'ai']">
+              <div class="message-avatar">{{ msg.role === "user" ? "👤" : "🤖" }}</div>
               <div class="message-content" v-html="msg.content"></div>
+            </div>
+
+            <!-- 等待回應的泡泡 -->
+            <div v-if="isThinking" class="message ai">
+              <div class="message-avatar">🤖</div>
+              <div class="message-content thinking-bubble">
+                <div class="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -631,75 +646,79 @@ const handleShare = () => {
 // 聊天功能
 const handleChatSubmit = async () => {
   const message = chatInput.value.trim();
-  if (!message) return;
+  if (!message || isThinking.value) return;
+
+  // 檢查是否有 mediaId
+  if (!videoData.value.mediaId) {
+    showNotification("無法使用聊天功能：缺少媒體 ID");
+    return;
+  }
 
   // 添加使用者訊息
-  chatMessages.value.push({
-    type: "user",
+  const userMessage = {
+    role: "user",
     content: message,
-  });
+  };
+  chatMessages.value.push(userMessage);
 
+  // 清空輸入框並設置等待狀態
   chatInput.value = "";
   isThinking.value = true;
 
-  // 滾動到底部
+  // 滾動到底部（顯示使用者訊息）
   await nextTick();
   if (chatMessagesRef.value) {
     chatMessagesRef.value.scrollTop = chatMessagesRef.value.scrollHeight;
   }
 
-  // 模擬 AI 回應
-  setTimeout(() => {
-    const response = generateAIResponse(message);
-    chatMessages.value.push({
-      type: "ai",
-      content: response,
-    });
-
-    isThinking.value = false;
-
-    // 滾動到底部
-    nextTick(() => {
-      if (chatMessagesRef.value) {
-        chatMessagesRef.value.scrollTop = chatMessagesRef.value.scrollHeight;
-      }
-    });
-  }, 1500);
-};
-
-const generateAIResponse = (question) => {
-  const responses = [
-    {
-      keywords: ["什麼", "介紹", "是什麼"],
-      answer:
-        '根據影片內容，這部影片主要介紹了現代前端開發的核心概念。<span class="reference-mark" onclick="seekToTime(30)" data-time="30" data-content="前端框架簡介部分詳細說明了為什麼需要使用現代框架，以及它們如何提升開發效率。">1<span class="reference-tooltip"><div class="tooltip-time">⏱️ 00:30</div><div class="tooltip-content">前端框架簡介部分詳細說明了為什麼需要使用現代框架，以及它們如何提升開發效率。</div></span></span>',
-    },
-    {
-      keywords: ["組件", "元件", "component"],
-      answer:
-        '關於組件化開發，影片中提到了幾個關鍵優勢：可重用性、易維護性和模組化。<span class="reference-mark" onclick="seekToTime(180)" data-time="180" data-content="組件化開發章節展示了如何設計可重用的組件，包括 props 傳遞和事件處理。">1<span class="reference-tooltip"><div class="tooltip-time">⏱️ 03:00</div><div class="tooltip-content">組件化開發章節展示了如何設計可重用的組件，包括 props 傳遞和事件處理。</div></span></span> 您可以在這個時間點看到具體的實作範例。',
-    },
-    {
-      keywords: ["狀態", "state", "管理"],
-      answer:
-        '狀態管理是影片的重要主題之一。<span class="reference-mark" onclick="seekToTime(360)" data-time="360" data-content="狀態管理部分比較了不同的解決方案，包括 Redux、MobX 和 Context API。">1<span class="reference-tooltip"><div class="tooltip-time">⏱️ 06:00</div><div class="tooltip-content">狀態管理部分比較了不同的解決方案，包括 Redux、MobX 和 Context API。</div></span></span> 影片中詳細比較了各種狀態管理方案的優缺點。',
-    },
-    {
-      keywords: ["性能", "優化", "performance"],
-      answer:
-        '影片後半段專門討論了性能優化。<span class="reference-mark" onclick="seekToTime(480)" data-time="480" data-content="性能優化章節介紹了 lazy loading、code splitting 和 memoization 等技術。">1<span class="reference-tooltip"><div class="tooltip-time">⏱️ 08:00</div><div class="tooltip-content">性能優化章節介紹了 lazy loading、code splitting 和 memoization 等技術。</div></span></span> 包含了許多實用的優化技巧。',
-    },
-  ];
-
-  // 尋找匹配的回應
-  for (const response of responses) {
-    if (response.keywords.some((keyword) => question.includes(keyword))) {
-      return response.answer;
-    }
+  // 再次滾動以顯示等待泡泡
+  await nextTick();
+  if (chatMessagesRef.value) {
+    chatMessagesRef.value.scrollTop = chatMessagesRef.value.scrollHeight;
   }
 
-  // 預設回應
-  return '這是一個很好的問題！根據影片內容，建議您查看以下重點時刻：<span class="reference-mark" onclick="seekToTime(30)" data-time="30" data-content="前端框架簡介">1<span class="reference-tooltip"><div class="tooltip-time">⏱️ 00:30</div><div class="tooltip-content">前端框架簡介</div></span></span> 和 <span class="reference-mark" onclick="seekToTime(180)" data-time="180" data-content="組件化開發">2<span class="reference-tooltip"><div class="tooltip-time">⏱️ 03:00</div><div class="tooltip-content">組件化開發</div></span></span>。如果需要更詳細的資訊，請告訴我您想了解的具體方面。';
+  try {
+    // 準備發送給 API 的訊息陣列（包含歷史對話）
+    const messagesToSend = chatMessages.value.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
+
+    // 呼叫 API
+    const response = await api.media.chat(videoData.value.mediaId, messagesToSend);
+
+    // 添加 AI 回應
+    if (response && response.role === "assistant" && response.content) {
+      chatMessages.value.push({
+        role: "assistant",
+        content: response.content,
+      });
+    } else {
+      // 如果回應格式不正確，顯示錯誤訊息
+      chatMessages.value.push({
+        role: "assistant",
+        content: "抱歉，我無法理解這個回應。請稍後再試。",
+      });
+    }
+  } catch (error) {
+    console.error("聊天 API 請求失敗:", error);
+
+    // 添加錯誤訊息
+    chatMessages.value.push({
+      role: "assistant",
+      content: "抱歉，發生錯誤。請稍後再試。",
+    });
+
+    showNotification("聊天請求失敗，請稍後再試");
+  } finally {
+    isThinking.value = false;
+
+    // 滾動到底部（顯示 AI 回應）
+    await nextTick();
+    if (chatMessagesRef.value) {
+      chatMessagesRef.value.scrollTop = chatMessagesRef.value.scrollHeight;
+    }
+  }
 };
 
 // 獲取字幕列表
@@ -1231,6 +1250,57 @@ window.seekToTime = seekToTime;
   color: #fff;
 }
 
+/* 等待泡泡樣式 */
+.thinking-bubble {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  min-width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 打字指示器 */
+.typing-indicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #667eea;
+  animation: typing 1.4s infinite;
+  opacity: 0.6;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
 /* 參考標記 */
 .message-content :deep(.reference-mark) {
   display: inline-flex;
@@ -1284,6 +1354,12 @@ window.seekToTime = seekToTime;
   outline: none;
   border-color: rgba(102, 126, 234, 0.5);
   background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .chat-input::placeholder {
