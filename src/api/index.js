@@ -86,6 +86,9 @@ const api = {
     getCaptionById: (mediaId, captionId) => {
       return client.get(`/v1/media/${mediaId}/captions/${captionId}`);
     },
+    getSummaries: (mediaId) => {
+      return client.get(`/v1/media/${mediaId}/summaries`);
+    },
   },
   subscription: {
     // 獲取當前用戶的訂閱方案

@@ -116,15 +116,33 @@
             <div class="tab-header">
               <p>由 AI 自動生成</p>
             </div>
-            <div class="summary-content">
+
+            <!-- 載入狀態 -->
+            <div v-if="isLoadingSummary" class="summary-content">
+              <div class="summary-text" style="text-align: center; color: #9ca3af">
+                <div style="font-size: 32px; margin-bottom: 10px">⏳</div>
+                <div>載入 AI 總結中...</div>
+              </div>
+            </div>
+
+            <!-- 錯誤狀態 -->
+            <div v-else-if="summaryLoadError" class="summary-content">
+              <div class="summary-text" style="text-align: center; color: #ef4444">
+                <div style="font-size: 32px; margin-bottom: 10px">❌</div>
+                <div>{{ summaryLoadError }}</div>
+              </div>
+            </div>
+
+            <!-- 總結內容 -->
+            <div v-else class="summary-content">
               <!-- 摘要 -->
               <div class="summary-section">
                 <h4><span class="summary-section-icon">📝</span>內容摘要</h4>
-                <p class="summary-text">{{ aiSummary.overview }}</p>
+                <div class="summary-text markdown-content" v-html="summaryHtml"></div>
               </div>
 
               <!-- 重點 -->
-              <div class="summary-section">
+              <div class="summary-section" v-if="aiSummary.keypoints && aiSummary.keypoints.length > 0">
                 <h4><span class="summary-section-icon">⭐</span>重點整理</h4>
                 <ul class="summary-list">
                   <li v-for="(point, index) in aiSummary.keypoints" :key="index">{{ point }}</li>
@@ -190,10 +208,17 @@ import { usePlansStore } from "@/stores/plans";
 import api from "@/api";
 import Plyr from "plyr";
 import "plyr/dist/plyr.css";
+import { marked } from "marked";
 
 const route = useRoute();
 const router = useRouter();
 const plansStore = usePlansStore();
+
+// 配置 marked 選項
+marked.setOptions({
+  breaks: true, // 支援換行
+  gfm: true, // 使用 GitHub Flavored Markdown
+});
 
 // Refs
 const playerWrapperRef = ref(null);
@@ -246,20 +271,34 @@ const autoFollowTimeline = ref(true); // 預設啟用時間軸跟隨
 
 // AI 總結資料
 const aiSummary = ref({
-  overview:
-    "這是一部關於 Web 開發的教學影片，介紹了現代前端框架的核心概念和最佳實踐。影片涵蓋了組件化開發、狀態管理、路由設計等重要主題，適合有一定基礎的開發者學習。",
-  keypoints: [
-    "介紹了現代前端框架的核心概念",
-    "詳細講解了組件化開發的優勢與實踐",
-    "深入探討了狀態管理的不同解決方案",
-    "展示了實際專案中的最佳實踐案例",
-    "提供了性能優化的實用技巧",
-  ],
+  overview: "載入中...",
+  keypoints: [],
 });
+
+const isLoadingSummary = ref(false);
+const summaryLoadError = ref(null);
 
 // Computed
 const progressPercent = computed(() => {
   return (currentTime.value / duration.value) * 100;
+});
+
+// 將 markdown 格式的總結內容轉換為 HTML
+const summaryHtml = computed(() => {
+  if (
+    !aiSummary.value.overview ||
+    aiSummary.value.overview === "載入中..." ||
+    aiSummary.value.overview === "暫無 AI 總結"
+  ) {
+    return aiSummary.value.overview;
+  }
+
+  try {
+    return marked.parse(aiSummary.value.overview);
+  } catch (error) {
+    console.error("解析 markdown 失敗:", error);
+    return aiSummary.value.overview;
+  }
 });
 
 // 初始化
@@ -334,6 +373,9 @@ const fetchMediaDetails = async (mediaId) => {
           // 獲取字幕
           await fetchCaptions();
 
+          // 獲取 AI 總結
+          await fetchAISummary();
+
           // 初始化 Plyr 播放器
           await nextTick();
           initPlyrPlayer();
@@ -346,6 +388,9 @@ const fetchMediaDetails = async (mediaId) => {
         // 獲取字幕
         await fetchCaptions();
 
+        // 獲取 AI 總結
+        await fetchAISummary();
+
         await nextTick();
         initPlyrPlayer();
       }
@@ -356,6 +401,53 @@ const fetchMediaDetails = async (mediaId) => {
     showNotification("無法載入影片資料，請稍後再試");
   } finally {
     isLoadingMedia.value = false;
+  }
+};
+
+// 獲取 AI 總結
+const fetchAISummary = async () => {
+  if (!videoData.value.mediaId) {
+    console.log("無 mediaId，跳過獲取 AI 總結");
+    return;
+  }
+
+  isLoadingSummary.value = true;
+  summaryLoadError.value = null;
+
+  try {
+    const response = await api.media.getSummaries(videoData.value.mediaId);
+
+    if (response) {
+      // 處理返回的總結數據
+      // 假設返回的結構為: {id, locale, text: {short_summary, long_summary: {content, key_points, keywords}}}
+
+      if (response.text?.long_summary) {
+        const longSummary = response.text.long_summary;
+
+        // 更新內容摘要 - 顯示 long_summary.content
+        aiSummary.value.overview = longSummary.content || "暫無總結內容";
+
+        // 更新重點整理 - 顯示 long_summary.key_points
+        aiSummary.value.keypoints = Array.isArray(longSummary.key_points) ? longSummary.key_points : [];
+
+        console.log("AI 總結載入成功");
+      } else if (response.text?.short_summary) {
+        // 如果沒有 long_summary，使用 short_summary 作為備選
+        aiSummary.value.overview = response.text.short_summary;
+        aiSummary.value.keypoints = [];
+      } else {
+        summaryLoadError.value = "總結數據格式不正確";
+        aiSummary.value.overview = "總結數據格式不正確";
+      }
+    }
+  } catch (error) {
+    console.error("獲取 AI 總結失敗:", error);
+    summaryLoadError.value = error.message || "無法載入 AI 總結";
+    aiSummary.value.overview = "暫無 AI 總結";
+    aiSummary.value.keypoints = [];
+    // 不顯示錯誤通知，因為沒有總結是正常的情況
+  } finally {
+    isLoadingSummary.value = false;
   }
 };
 
@@ -1423,6 +1515,131 @@ window.seekToTime = seekToTime;
   font-size: 14px;
   line-height: 1.7;
   color: #d1d5db;
+}
+
+/* Markdown 內容樣式 */
+.markdown-content :deep(h1),
+.markdown-content :deep(h2),
+.markdown-content :deep(h3),
+.markdown-content :deep(h4),
+.markdown-content :deep(h5),
+.markdown-content :deep(h6) {
+  color: #fff;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.markdown-content :deep(h1) {
+  font-size: 20px;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+  padding-bottom: 8px;
+}
+
+.markdown-content :deep(h2) {
+  font-size: 18px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+  padding-bottom: 6px;
+}
+
+.markdown-content :deep(h3) {
+  font-size: 16px;
+  color: #8b9bff;
+}
+
+.markdown-content :deep(h4) {
+  font-size: 15px;
+}
+
+.markdown-content :deep(h5),
+.markdown-content :deep(h6) {
+  font-size: 14px;
+}
+
+.markdown-content :deep(h1):first-child,
+.markdown-content :deep(h2):first-child,
+.markdown-content :deep(h3):first-child {
+  margin-top: 0;
+}
+
+.markdown-content :deep(p) {
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+.markdown-content :deep(p):last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content :deep(ul),
+.markdown-content :deep(ol) {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.markdown-content :deep(li) {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.markdown-content :deep(strong) {
+  color: #fff;
+  font-weight: 600;
+}
+
+.markdown-content :deep(em) {
+  font-style: italic;
+  color: #a5b4ff;
+}
+
+.markdown-content :deep(code) {
+  background: rgba(102, 126, 234, 0.15);
+  color: #8b9bff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
+  font-size: 13px;
+}
+
+.markdown-content :deep(pre) {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0;
+  overflow-x: auto;
+}
+
+.markdown-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: #d1d5db;
+}
+
+.markdown-content :deep(blockquote) {
+  border-left: 3px solid rgba(102, 126, 234, 0.5);
+  padding-left: 16px;
+  margin: 12px 0;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.markdown-content :deep(a) {
+  color: #667eea;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.markdown-content :deep(a:hover) {
+  color: #8b9bff;
+  text-decoration: underline;
+}
+
+.markdown-content :deep(hr) {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 20px 0;
 }
 
 .summary-list {

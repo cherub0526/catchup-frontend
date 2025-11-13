@@ -41,6 +41,7 @@
     "dayjs": "^1.11.19",
     "dotenv": "^16.4.5",
     "electron-squirrel-startup": "^1.0.1",
+    "marked": "^17.0.0",
     "pinia": "^3.0.3",
     "plyr": "^3.8.3",
     "vite": "^6.4.1",
