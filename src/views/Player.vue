@@ -24,9 +24,9 @@
     <!-- 主要內容區域 -->
     <div class="main-content">
       <!-- 左側區域 -->
-      <div class="left-section">
+      <div class="left-section" :style="{ width: leftSectionWidth + 'px' }">
         <!-- 播放器區域 -->
-        <div class="player-wrapper" ref="playerWrapperRef">
+        <div class="player-wrapper" ref="playerWrapperRef" :style="{ height: playerHeight + 'px' }">
           <!-- Plyr 播放器容器 -->
           <div class="plyr-container">
             <div
@@ -54,6 +54,12 @@
             <div class="player-placeholder-text">正在載入影片...</div>
           </div>
         </div>
+
+        <!-- 垂直拖動條 (播放器與聊天區域之間) -->
+        <div
+          class="resizer resizer-horizontal"
+          @mousedown="startVerticalResize"
+          @touchstart="startVerticalResize"></div>
 
         <!-- 聊天區域 -->
         <div class="chat-wrapper">
@@ -110,6 +116,12 @@
           </div>
         </div>
       </div>
+
+      <!-- 水平拖動條 (左側區域與右側區域之間) -->
+      <div
+        class="resizer resizer-vertical"
+        @mousedown="startHorizontalResize"
+        @touchstart="startHorizontalResize"></div>
 
       <!-- 右側區域 -->
       <div class="right-section">
@@ -243,6 +255,12 @@ const chatMessagesRef = ref(null);
 let player = null;
 let playerCheckInterval = null;
 
+// 可調整大小的區塊
+const playerHeight = ref(0);
+const leftSectionWidth = ref(0);
+const isResizing = ref(false);
+const resizeType = ref(null); // 'vertical' 或 'horizontal'
+
 // 影片資料
 const videoData = ref({
   title: "載入中...",
@@ -318,6 +336,9 @@ const summaryHtml = computed(() => {
 
 // 初始化
 onMounted(async () => {
+  // 初始化可調整區塊的大小
+  initializeResizableSections();
+
   // 從 URL 參數獲取影片資訊
   const mediaId = route.query.mediaId;
   const title = route.query.title || "範例影片";
@@ -358,6 +379,12 @@ onBeforeUnmount(() => {
   if (playerCheckInterval) {
     clearInterval(playerCheckInterval);
   }
+  // 清理拖動事件監聽器
+  document.removeEventListener("mousemove", handleResize);
+  document.removeEventListener("mouseup", stopResize);
+  document.removeEventListener("touchmove", handleResize);
+  document.removeEventListener("touchend", stopResize);
+  window.removeEventListener("resize", handleWindowResize);
 });
 
 // 從 API 獲取媒體詳細資料
@@ -950,6 +977,127 @@ const formatTime = (seconds) => {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
+// 可調整大小功能
+const initializeResizableSections = () => {
+  nextTick(() => {
+    // 獲取視窗尺寸
+    const mainContent = document.querySelector(".main-content");
+    if (!mainContent) return;
+
+    const contentHeight = mainContent.clientHeight;
+    const contentWidth = mainContent.clientWidth;
+
+    // 設置初始高度 (播放器佔 60%，聊天佔 40%)
+    playerHeight.value = Math.floor(contentHeight * 0.6);
+
+    // 設置初始寬度 (左側佔 70%，右側佔 30%)
+    leftSectionWidth.value = Math.floor(contentWidth * 0.7);
+
+    // 監聽視窗大小變化
+    window.addEventListener("resize", handleWindowResize);
+  });
+};
+
+const handleWindowResize = () => {
+  const mainContent = document.querySelector(".main-content");
+  if (!mainContent) return;
+
+  const contentHeight = mainContent.clientHeight;
+  const contentWidth = mainContent.clientWidth;
+
+  // 確保尺寸在合理範圍內
+  if (playerHeight.value > contentHeight - 200) {
+    playerHeight.value = contentHeight - 200;
+  }
+  if (leftSectionWidth.value > contentWidth - 300) {
+    leftSectionWidth.value = contentWidth - 300;
+  }
+};
+
+// 開始垂直調整大小 (播放器與聊天區域)
+const startVerticalResize = (e) => {
+  e.preventDefault();
+  isResizing.value = true;
+  resizeType.value = "vertical";
+
+  document.addEventListener("mousemove", handleResize);
+  document.addEventListener("mouseup", stopResize);
+  document.addEventListener("touchmove", handleResize);
+  document.addEventListener("touchend", stopResize);
+
+  // 添加 body 樣式防止文字選取
+  document.body.style.userSelect = "none";
+  document.body.style.cursor = "ns-resize";
+};
+
+// 開始水平調整大小 (左右區域)
+const startHorizontalResize = (e) => {
+  e.preventDefault();
+  isResizing.value = true;
+  resizeType.value = "horizontal";
+
+  document.addEventListener("mousemove", handleResize);
+  document.addEventListener("mouseup", stopResize);
+  document.addEventListener("touchmove", handleResize);
+  document.addEventListener("touchend", stopResize);
+
+  // 添加 body 樣式防止文字選取
+  document.body.style.userSelect = "none";
+  document.body.style.cursor = "ew-resize";
+};
+
+// 處理調整大小
+const handleResize = (e) => {
+  if (!isResizing.value) return;
+
+  const mainContent = document.querySelector(".main-content");
+  if (!mainContent) return;
+
+  if (resizeType.value === "vertical") {
+    // 垂直調整 (播放器與聊天區域)
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const header = document.querySelector(".header");
+    const headerHeight = header ? header.clientHeight : 60;
+    const newHeight = clientY - headerHeight;
+    const contentHeight = mainContent.clientHeight;
+
+    // 限制最小和最大高度
+    const minHeight = 200;
+    const maxHeight = contentHeight - 200;
+
+    if (newHeight >= minHeight && newHeight <= maxHeight) {
+      playerHeight.value = newHeight;
+    }
+  } else if (resizeType.value === "horizontal") {
+    // 水平調整 (左右區域)
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const contentWidth = mainContent.clientWidth;
+
+    // 限制最小和最大寬度
+    const minWidth = 400;
+    const maxWidth = contentWidth - 300;
+
+    if (clientX >= minWidth && clientX <= maxWidth) {
+      leftSectionWidth.value = clientX;
+    }
+  }
+};
+
+// 停止調整大小
+const stopResize = () => {
+  isResizing.value = false;
+  resizeType.value = null;
+
+  document.removeEventListener("mousemove", handleResize);
+  document.removeEventListener("mouseup", stopResize);
+  document.removeEventListener("touchmove", handleResize);
+  document.removeEventListener("touchend", stopResize);
+
+  // 恢復 body 樣式
+  document.body.style.userSelect = "";
+  document.body.style.cursor = "";
+};
+
 const showNotification = (message) => {
   const notification = document.createElement("div");
   notification.style.cssText = `
@@ -1076,20 +1224,88 @@ window.seekToTime = seekToTime;
 
 /* 左側區域 */
 .left-section {
-  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+}
+
+/* 拖動條 */
+.resizer {
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+  z-index: 100;
+  position: relative;
+}
+
+.resizer:hover {
+  background: rgba(102, 126, 234, 0.3);
+}
+
+.resizer:active {
+  background: rgba(102, 126, 234, 0.6);
+}
+
+/* 水平拖動條 (播放器與聊天區域之間) */
+.resizer-horizontal {
+  height: 4px;
+  cursor: ns-resize;
+  flex-shrink: 0;
+}
+
+.resizer-horizontal::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.resizer-horizontal:hover::before {
+  width: 60px;
+  height: 4px;
+  background: rgba(102, 126, 234, 0.8);
+}
+
+/* 垂直拖動條 (左右區域之間) */
+.resizer-vertical {
+  width: 4px;
+  cursor: ew-resize;
+  flex-shrink: 0;
+}
+
+.resizer-vertical::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.resizer-vertical:hover::before {
+  width: 4px;
+  height: 60px;
+  background: rgba(102, 126, 234, 0.8);
 }
 
 /* 播放器區域 */
 .player-wrapper {
-  flex: 1;
   background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  flex-shrink: 0;
 }
 
 .plyr-container {
@@ -1140,11 +1356,13 @@ window.seekToTime = seekToTime;
 
 /* 聊天區域 */
 .chat-wrapper {
-  height: 350px;
+  flex: 1;
   background: #1a1d24;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
+  min-height: 200px;
+  overflow: hidden;
 }
 
 .chat-header {
@@ -1391,12 +1609,13 @@ window.seekToTime = seekToTime;
 
 /* 右側區域 */
 .right-section {
-  width: 400px;
+  flex: 1;
   background: #1a1d24;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 300px;
 }
 
 /* AI 總結區域 */
@@ -1912,21 +2131,25 @@ window.seekToTime = seekToTime;
 /* 響應式設計 */
 @media (max-width: 1024px) {
   .right-section {
-    width: 350px;
-  }
-
-  .chat-wrapper {
-    height: 300px;
+    min-width: 250px;
   }
 }
 
 @media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .left-section {
+    width: 100% !important;
+  }
+
   .right-section {
     display: none;
   }
 
-  .chat-wrapper {
-    height: 250px;
+  .resizer-vertical {
+    display: none;
   }
 }
 
