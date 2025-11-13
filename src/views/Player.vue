@@ -84,7 +84,7 @@
               :key="index"
               :class="['message', msg.role === 'user' ? 'user' : 'ai']">
               <div class="message-avatar">{{ msg.role === "user" ? "👤" : "🤖" }}</div>
-              <div class="message-content" v-html="msg.content"></div>
+              <div class="message-content markdown-content" v-html="msg.content"></div>
             </div>
 
             <!-- 等待回應的泡泡 -->
@@ -670,6 +670,16 @@ const handleShare = () => {
   showNotification("分享連結已複製到剪貼簿");
 };
 
+// 將 markdown 轉換為 HTML
+const convertMarkdownToHtml = (markdown) => {
+  try {
+    return marked.parse(markdown);
+  } catch (error) {
+    console.error("轉換 markdown 失敗:", error);
+    return markdown; // 如果轉換失敗，返回原始文字
+  }
+};
+
 // 聊天功能
 const handleChatSubmit = async () => {
   const message = chatInput.value.trim();
@@ -706,9 +716,10 @@ const handleChatSubmit = async () => {
 
   try {
     // 準備發送給 API 的訊息陣列（包含歷史對話）
+    // 注意：發送原始 content（可能是 markdown），而不是已轉換的 HTML
     const messagesToSend = chatMessages.value.map((msg) => ({
       role: msg.role,
-      content: msg.content,
+      content: msg.rawContent || msg.content, // 優先使用原始內容
     }));
 
     // 呼叫 API
@@ -718,13 +729,15 @@ const handleChatSubmit = async () => {
     if (response && response.role === "assistant" && response.content) {
       chatMessages.value.push({
         role: "assistant",
-        content: response.content,
+        content: convertMarkdownToHtml(response.content), // 轉換 markdown 為 HTML
+        rawContent: response.content, // 保存原始內容用於後續發送
       });
     } else {
       // 如果回應格式不正確，顯示錯誤訊息
       chatMessages.value.push({
         role: "assistant",
         content: "抱歉，我無法理解這個回應。請稍後再試。",
+        rawContent: "抱歉，我無法理解這個回應。請稍後再試。",
       });
     }
   } catch (error) {
@@ -734,6 +747,7 @@ const handleChatSubmit = async () => {
     chatMessages.value.push({
       role: "assistant",
       content: "抱歉，發生錯誤。請稍後再試。",
+      rawContent: "抱歉，發生錯誤。請稍後再試。",
     });
 
     showNotification("聊天請求失敗，請稍後再試");
@@ -1466,6 +1480,126 @@ window.seekToTime = seekToTime;
 .message.user .message-content {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
+}
+
+/* 聊天訊息中的 markdown 樣式 */
+.message-content.markdown-content :deep(p) {
+  margin-bottom: 8px;
+}
+
+.message-content.markdown-content :deep(p):last-child {
+  margin-bottom: 0;
+}
+
+.message-content.markdown-content :deep(code) {
+  background: rgba(0, 0, 0, 0.3);
+  color: #a5b4ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
+  font-size: 13px;
+}
+
+.message-content.markdown-content :deep(pre) {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 8px 0;
+  overflow-x: auto;
+}
+
+.message-content.markdown-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: #d1d5db;
+}
+
+.message-content.markdown-content :deep(strong) {
+  font-weight: 600;
+  color: #fff;
+}
+
+.message-content.markdown-content :deep(em) {
+  font-style: italic;
+}
+
+.message-content.markdown-content :deep(ul),
+.message-content.markdown-content :deep(ol) {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.message-content.markdown-content :deep(li) {
+  margin-bottom: 4px;
+}
+
+.message-content.markdown-content :deep(a) {
+  color: #8b9bff;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.message-content.markdown-content :deep(a:hover) {
+  color: #a5b4ff;
+}
+
+.message-content.markdown-content :deep(blockquote) {
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  padding-left: 12px;
+  margin: 8px 0;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.message-content.markdown-content :deep(h1),
+.message-content.markdown-content :deep(h2),
+.message-content.markdown-content :deep(h3),
+.message-content.markdown-content :deep(h4),
+.message-content.markdown-content :deep(h5),
+.message-content.markdown-content :deep(h6) {
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.message-content.markdown-content :deep(h1) {
+  font-size: 18px;
+}
+
+.message-content.markdown-content :deep(h2) {
+  font-size: 16px;
+}
+
+.message-content.markdown-content :deep(h3) {
+  font-size: 15px;
+}
+
+.message-content.markdown-content :deep(hr) {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 12px 0;
+}
+
+/* 使用者訊息中的 markdown 樣式（顏色調整）*/
+.message.user .message-content.markdown-content :deep(code) {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.message.user .message-content.markdown-content :deep(pre) {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.message.user .message-content.markdown-content :deep(a) {
+  color: #fff;
+  font-weight: 600;
+}
+
+.message.user .message-content.markdown-content :deep(blockquote) {
+  border-left-color: rgba(255, 255, 255, 0.5);
 }
 
 /* 等待泡泡樣式 */

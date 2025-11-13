@@ -11,6 +11,24 @@ const client = axios.create({
   },
 });
 
+// 用於追蹤是否正在刷新 token
+let isRefreshing = false;
+// 用於存儲待重試的請求
+let failedQueue = [];
+
+// 處理等待隊列中的請求
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 // Request interceptor
 client.interceptors.request.use(
   (config) => {
@@ -30,11 +48,89 @@ client.interceptors.response.use(
   (response) => {
     return response.data;
   },
-  (error) => {
-    if (error.response) {
-      return Promise.reject(error.response);
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 如果錯誤不是 401 或者沒有 response，直接拋出錯誤
+    if (!error.response || error.response.status !== 401) {
+      if (error.response) {
+        return Promise.reject(error.response);
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+
+    // 檢查是否有 token
+    const token = localStorage.getItem("token");
+    
+    // 如果沒有 token，或者這個請求已經是重試的請求，或者是 refresh 請求本身，直接拋出錯誤
+    if (!token || originalRequest._retry || originalRequest.url?.includes('/v1/auth/refresh')) {
+      // 清除 token 並拋出錯誤
+      localStorage.removeItem("token");
+      if (error.response) {
+        return Promise.reject(error.response);
+      }
+      return Promise.reject(error);
+    }
+
+    // 如果正在刷新 token，將請求加入隊列
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      })
+        .then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return client(originalRequest);
+        })
+        .catch((err) => {
+          return Promise.reject(err);
+        });
+    }
+
+    // 標記正在刷新
+    originalRequest._retry = true;
+    isRefreshing = true;
+
+    try {
+      // 發送 refresh token 請求
+      const response = await axios.post(
+        `${apiUrl}/v1/auth/refresh`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const newToken = response.data.access_token || response.data.token;
+
+      if (!newToken) {
+        throw new Error('未收到新的 token');
+      }
+
+      // 更新 localStorage 中的 token
+      localStorage.setItem("token", newToken);
+
+      // 更新原始請求的 Authorization header
+      originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+      // 處理隊列中的其他請求
+      processQueue(null, newToken);
+
+      // 重試原始請求
+      return client(originalRequest);
+    } catch (refreshError) {
+      // Token 刷新失敗，清除 token 並處理隊列
+      processQueue(refreshError, null);
+      localStorage.removeItem("token");
+
+      if (refreshError.response) {
+        return Promise.reject(refreshError.response);
+      }
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
+    }
   }
 );
 

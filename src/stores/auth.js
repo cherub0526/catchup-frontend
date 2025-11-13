@@ -37,7 +37,18 @@ export const useAuthStore = defineStore("auth", () => {
   const logout = () => {
     token.value = null;
     isAuthenticated.value = false;
+    user.value = null;
     localStorage.removeItem("token");
+  };
+
+  // 更新 token（用於 token 刷新後同步狀態）
+  const updateToken = (newToken) => {
+    token.value = newToken;
+    if (newToken) {
+      localStorage.setItem("token", newToken);
+    } else {
+      localStorage.removeItem("token");
+    }
   };
 
   const oauthLogin = (provider) => {
@@ -99,5 +110,6 @@ export const useAuthStore = defineStore("auth", () => {
     logout,
     oauthLogin,
     initAuth,
+    updateToken,
   };
 });
