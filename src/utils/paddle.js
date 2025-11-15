@@ -11,6 +11,7 @@ export const initPaddle = async () => {
 
   try {
     const clientToken = import.meta.env.VITE_PADDLE_CLIENT_TOKEN;
+    const clientEnvironment = import.meta.env.VITE_PADDLE_ENVIRONMENT;
 
     if (!clientToken) {
       console.warn("未設置 VITE_PADDLE_CLIENT_TOKEN，Paddle 將無法初始化");
@@ -19,10 +20,15 @@ export const initPaddle = async () => {
 
     paddleInstance = await initializePaddle({
       token: clientToken,
+      // pwCustomer: {
+      //   id: "ctm_01ka4addg2tqasbqfndj2warsz", // replace with a customer Paddle ID
+      // },
       eventCallback: (event) => {
         console.log("Paddle event:", event);
       },
     });
+
+    paddleInstance.Environment.set(clientEnvironment);
 
     return paddleInstance;
   } catch (error) {
@@ -55,6 +61,7 @@ export const openPaddleCheckout = async (options) => {
         locale: "zh-TW",
         ...options.settings,
       },
+      allowedPaymentMethods: ["card"],
       ...options,
     });
 
@@ -89,7 +96,7 @@ export const openSubscriptionCheckout = async (priceId, planId, billingCycle) =>
         displayMode: "overlay",
         theme: "light",
         locale: "zh-TW",
-        successUrl: `${window.location.origin}/subscription?success=true&planId=${planId}&billingCycle=${billingCycle}`,
+        successUrl: `${globalThis.location.origin}/subscription?success=true&planId=${planId}&billingCycle=${billingCycle}`,
         successUrlTarget: "_self",
       },
     });
@@ -109,29 +116,29 @@ export const setupPaddleListeners = (callbacks) => {
     return;
   }
 
-  // 訂閱成功事件
-  if (callbacks.onCheckoutCompleted) {
-    paddle.Checkout.on("checkout.completed", (data) => {
-      console.log("結帳完成:", data);
-      callbacks.onCheckoutCompleted(data);
-    });
-  }
+  // // 訂閱成功事件
+  // if (callbacks.onCheckoutCompleted) {
+  //   paddle.Checkout.onCheckoutCompleted((data) => {
+  //     console.log("結帳完成:", data);
+  //     callbacks.onCheckoutCompleted(data);
+  //   });
+  // }
 
-  // 結帳關閉事件
-  if (callbacks.onCheckoutClosed) {
-    paddle.Checkout.on("checkout.closed", (data) => {
-      console.log("結帳視窗關閉:", data);
-      callbacks.onCheckoutClosed(data);
-    });
-  }
+  // // 結帳關閉事件
+  // if (callbacks.onCheckoutClosed) {
+  //   paddle.Checkout.onCheckoutClosed((data) => {
+  //     console.log("結帳視窗關閉:", data);
+  //     callbacks.onCheckoutClosed(data);
+  //   });
+  // }
 
-  // 錯誤事件
-  if (callbacks.onError) {
-    paddle.Checkout.on("checkout.error", (error) => {
-      console.error("結帳錯誤:", error);
-      callbacks.onError(error);
-    });
-  }
+  // // 錯誤事件
+  // if (callbacks.onError) {
+  //   paddle.Checkout.onCheckoutError((error) => {
+  //     console.error("結帳錯誤:", error);
+  //     callbacks.onError(error);
+  //   });
+  // }
 };
 
 // 清理 Paddle 實例

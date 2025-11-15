@@ -5,22 +5,24 @@ import api from "@/api";
 // 將 API 返回的方案資料轉換為應用程式格式
 const transformPlanFromAPI = (apiPlan) => {
   const planId = apiPlan.title.toLowerCase();
-  
+
   // 轉換價格格式
   const price = {
     monthly: null,
-    yearly: null,
+    annually: null,
   };
-  
+
   apiPlan.prices.forEach((p) => {
     if (p.unit === "monthly") {
       price.monthly = {
         id: p.id,
+        paddlePriceId: p.paddle_price_id || "",
         price: p.price,
       };
-    } else if (p.unit === "yearly") {
-      price.yearly = {
+    } else if (p.unit === "annually") {
+      price.annually = {
         id: p.id,
+        paddlePriceId: p.paddle_price_id || "",
         price: p.price,
       };
     }
@@ -28,25 +30,15 @@ const transformPlanFromAPI = (apiPlan) => {
 
   // 生成功能列表
   const features = [];
-  if (apiPlan.channel_limit > 0) {
-    features.push(`最多 ${apiPlan.channel_limit} 個訂閱頻道`);
-  }
-  if (apiPlan.video_limit > 0) {
-    features.push(`最多 ${apiPlan.video_limit} 隻影音`);
-  }
-  if (apiPlan.chat_limit > 0) {
-    features.push(`最多 ${apiPlan.chat_limit} 次聊天`);
-  }
+
   if (planId === "advance") {
-    features.push("優先客服支援", "進階分析功能");
-  }
-  if (planId === "free") {
-    features.push("基本播放功能");
+    features.push("優先客服支援");
   }
 
   return {
     id: planId,
     apiId: apiPlan.id, // 保留原始 API ID 用於後續請求
+    paddlePlanId: apiPlan.paddle_plan_id || "", // Paddle 方案 ID
     name: apiPlan.title,
     description: apiPlan.description || "",
     price: price,
@@ -61,7 +53,7 @@ const transformPlanFromAPI = (apiPlan) => {
 
 export const usePlansStore = defineStore("plans", () => {
   const currentPlan = ref(null);
-  const billingCycle = ref("monthly"); // 'monthly' or 'yearly'
+  const billingCycle = ref("monthly"); // 'monthly' or 'annually'
   const isLoading = ref(false);
   const error = ref(null);
 
@@ -112,6 +104,20 @@ export const usePlansStore = defineStore("plans", () => {
       if (response.data && Array.isArray(response.data)) {
         // 轉換 API 返回的方案資料
         plans.value = response.data.map(transformPlanFromAPI);
+
+        // 如果當前方案存在，同步更新其限制值（使用最新的方案列表）
+        if (currentPlan.value) {
+          const latestPlan = getPlanById(currentPlan.value.id) || getPlanById(currentPlan.value.apiId);
+          if (latestPlan) {
+            // 更新當前方案的限制值，但保留其他屬性
+            currentPlan.value = {
+              ...currentPlan.value,
+              limits: {
+                ...latestPlan.limits,
+              },
+            };
+          }
+        }
       } else {
         console.warn("API 返回的方案資料格式不正確");
         plans.value = [];
@@ -138,21 +144,43 @@ export const usePlansStore = defineStore("plans", () => {
 
       if (response.data) {
         const planId = response.data.planId || response.data.plan_id || "free";
-        // 從方案列表中查找對應的方案
-        currentPlan.value = getPlanById(planId) || plans.value.find((p) => p.id === "free");
-        billingCycle.value = response.data.billingCycle || response.data.billing_cycle || "monthly";
+        // 從方案列表中查找對應的方案（使用最新的方案列表）
+        const foundPlan = getPlanById(planId) || plans.value.find((p) => p.id === "free");
 
-        // 如果 API 返回了 plan 限制，使用 API 的值更新當前方案限制
-        if (response.data.plan) {
+        if (foundPlan) {
+          // 創建新的方案對象，確保使用最新的限制值
           currentPlan.value = {
-            ...currentPlan.value,
-            limits: response.data.plan,
+            ...foundPlan,
           };
+
+          // 如果 API 返回了 plan 限制（channel_limit, video_limit），優先使用 API 的值
+          if (response.data.plan) {
+            currentPlan.value.limits = {
+              channels: response.data.plan.channel_limit || response.data.plan.channels || foundPlan.limits.channels,
+              media: response.data.plan.video_limit || response.data.plan.media || foundPlan.limits.media,
+              chat: response.data.plan.chat_limit || response.data.plan.chat || foundPlan.limits.chat || 0,
+            };
+          } else if (response.data.channel_limit !== undefined || response.data.video_limit !== undefined) {
+            // 如果 API 直接在 data 中返回限制值
+            currentPlan.value.limits = {
+              channels: response.data.channel_limit || currentPlan.value.limits.channels,
+              media: response.data.video_limit || currentPlan.value.limits.media,
+              chat: response.data.chat_limit || currentPlan.value.limits.chat || 0,
+            };
+          }
+        } else {
+          // 如果找不到方案，使用免費方案
+          currentPlan.value = plans.value.find((p) => p.id === "free");
         }
+
+        billingCycle.value = response.data.billingCycle || response.data.billing_cycle || "monthly";
 
         // 更新使用情況
         if (response.data.usage) {
-          usage.value = response.data.usage;
+          usage.value = {
+            channels: response.data.usage.channels || response.data.usage.channel_count || 0,
+            media: response.data.usage.media || response.data.usage.video_count || response.data.usage.media_count || 0,
+          };
         }
       } else {
         // 默認為免費方案
@@ -227,15 +255,48 @@ export const usePlansStore = defineStore("plans", () => {
       const response = await api.subscription.getUsage();
 
       if (response) {
-        // API 返回結構: { plan: {channels, media}, usage: {channels, media} }
-        if (response.data.usage) {
-          usage.value = response.data.usage;
+        // API 返回結構: { plan: {channel_limit, video_limit}, usage: {channels, media} }
+        if (response.data?.usage) {
+          usage.value = {
+            channels: response.data.usage.channels || response.data.usage.channel_count || usage.value.channels,
+            media:
+              response.data.usage.media ||
+              response.data.usage.video_count ||
+              response.data.usage.media_count ||
+              usage.value.media,
+          };
         }
 
-        console.log(response);
-        // 如果 API 也返回了 plan limits，可以更新當前方案的限制
-        if (response.data.plan && currentPlan.value) {
-          currentPlan.value.limits = response.data.plan;
+        // 如果 API 返回了 plan limits，更新當前方案的限制
+        if (response.data?.plan && currentPlan.value) {
+          currentPlan.value.limits = {
+            channels:
+              response.data.plan.channel_limit || response.data.plan.channels || currentPlan.value.limits.channels,
+            media: response.data.plan.video_limit || response.data.plan.media || currentPlan.value.limits.media,
+            chat: response.data.plan.chat_limit || response.data.plan.chat || currentPlan.value.limits.chat || 0,
+          };
+        } else if (response.data?.channel_limit !== undefined || response.data?.video_limit !== undefined) {
+          // 如果 API 直接在 data 中返回限制值
+          if (currentPlan.value) {
+            currentPlan.value.limits = {
+              channels: response.data.channel_limit || currentPlan.value.limits.channels,
+              media: response.data.video_limit || currentPlan.value.limits.media,
+              chat: response.data.chat_limit || currentPlan.value.limits.chat || 0,
+            };
+          }
+        }
+
+        // 如果當前方案存在，從最新的方案列表中同步限制值
+        if (currentPlan.value) {
+          const latestPlan = getPlanById(currentPlan.value.id) || getPlanById(currentPlan.value.apiId);
+          if (latestPlan) {
+            // 只有在 API 沒有返回限制值時，才使用方案列表中的限制值
+            if (!response.data?.plan && response.data?.channel_limit === undefined) {
+              currentPlan.value.limits = {
+                ...latestPlan.limits,
+              };
+            }
+          }
         }
       }
 
@@ -263,20 +324,20 @@ export const usePlansStore = defineStore("plans", () => {
     return priceObj ? priceObj.price : 0;
   };
 
-  // 獲取方案的價格 ID（用於 Paddle）
+  // 獲取方案的 Paddle 價格 ID（用於 Paddle 結帳）
   const getPlanPriceId = (plan, cycle = null) => {
     const currentCycle = cycle || billingCycle.value;
     const priceObj = plan.price[currentCycle];
-    return priceObj ? priceObj.id : null;
+    return priceObj ? priceObj.paddlePriceId : null;
   };
 
   // 計算年費節省金額
   const getYearlySavings = (plan) => {
     const monthlyPrice = plan.price.monthly?.price || 0;
-    const yearlyPrice = plan.price.yearly?.price || 0;
+    const annuallyPrice = plan.price.annually?.price || 0;
     const monthlyTotal = monthlyPrice * 12;
-    const yearlySaving = monthlyTotal - yearlyPrice;
-    return yearlySaving;
+    const annuallySaving = monthlyTotal - annuallyPrice;
+    return annuallySaving;
   };
 
   // 初始化

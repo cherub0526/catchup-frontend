@@ -32,14 +32,14 @@
           <span class="usage-label">影音數量</span>
         </div>
         <div class="usage-stats">
-          <span class="usage-current">{{ usage.videos }}</span>
+          <span class="usage-current">{{ usage.media }}</span>
           <span class="usage-separator">/</span>
-          <span class="usage-limit">{{ currentLimits.videos }}</span>
+          <span class="usage-limit">{{ currentLimits.media }}</span>
         </div>
         <div class="usage-bar">
           <div
             class="usage-fill"
-            :class="{ 'near-limit': videoUsagePercentage >= 80, 'at-limit': isVideoLimitReached }"
+            :class="{ 'near-limit': videoUsagePercentage >= 80, 'at-limit': isMediaLimitReached }"
             :style="{ width: `${Math.min(videoUsagePercentage, 100)}%` }"></div>
         </div>
       </div>
@@ -53,7 +53,7 @@ import { usePlansStore } from "@/stores/plans";
 import { storeToRefs } from "pinia";
 
 const plansStore = usePlansStore();
-const { currentPlan, usage, currentLimits, isChannelLimitReached, isVideoLimitReached } = storeToRefs(plansStore);
+const { currentPlan, usage, currentLimits, isChannelLimitReached, isMediaLimitReached } = storeToRefs(plansStore);
 
 const planBadgeClass = computed(() => {
   const planId = currentPlan.value?.id || "free";
@@ -66,8 +66,8 @@ const channelUsagePercentage = computed(() => {
 });
 
 const videoUsagePercentage = computed(() => {
-  if (currentLimits.value.videos === 0) return 0;
-  return (usage.value.videos / currentLimits.value.videos) * 100;
+  if (currentLimits.value.media === 0) return 0;
+  return (usage.value.media / currentLimits.value.media) * 100;
 });
 </script>
 

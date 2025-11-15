@@ -12,245 +12,180 @@
         <p class="subtitle">選擇最適合您的方案</p>
       </div>
 
-    <!-- 計費週期切換 -->
-    <div class="billing-toggle">
-      <button 
-        :class="['toggle-btn', { active: billingCycle === 'monthly' }]"
-        @click="billingCycle = 'monthly'"
-      >
-        月付
-      </button>
-      <button 
-        :class="['toggle-btn', { active: billingCycle === 'yearly' }]"
-        @click="billingCycle = 'yearly'"
-      >
-        年付
-        <span class="savings-badge">省 20%</span>
-      </button>
-    </div>
-
-    <!-- 當前使用情況 -->
-    <div v-if="currentPlan" class="current-plan-info">
-      <div class="info-card">
-        <h3>您目前的方案：{{ currentPlan.name }}</h3>
-        <div class="usage-stats">
-          <div class="usage-item">
-            <span class="usage-label">訂閱頻道</span>
-            <span class="usage-value">{{ usage.channels }} / {{ currentLimits.channels }}</span>
-            <div class="usage-bar">
-              <div 
-                class="usage-progress" 
-                :style="{ width: `${(usage.channels / currentLimits.channels) * 100}%` }"
-                :class="{ 'limit-reached': isChannelLimitReached }"
-              ></div>
-            </div>
-          </div>
-          <div class="usage-item">
-            <span class="usage-label">影音數量</span>
-            <span class="usage-value">{{ usage.media }} / {{ currentLimits.media }}</span>
-            <div class="usage-bar">
-              <div 
-                class="usage-progress" 
-                :style="{ width: `${(usage.media / currentLimits.media) * 100}%` }"
-                :class="{ 'limit-reached': isMediaLimitReached }"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 方案列表 -->
-    <div class="plans-grid">
-      <div 
-        v-for="plan in allPlans" 
-        :key="plan.id"
-        :class="['plan-card', { 
-          'current': currentPlan && currentPlan.id === plan.id,
-          'recommended': plan.id === 'basic'
-        }]"
-      >
-        <div v-if="plan.id === 'basic'" class="recommended-badge">推薦</div>
-        
-        <div class="plan-header">
-          <h2 class="plan-name">{{ plan.name }}</h2>
-          <div class="plan-price">
-            <span class="price-amount">${{ getPlanPrice(plan, billingCycle) }}</span>
-            <span class="price-period">/ {{ billingCycle === 'monthly' ? '月' : '年' }}</span>
-          </div>
-          <div v-if="billingCycle === 'yearly' && plan.price.monthly?.price > 0" class="yearly-savings">
-            每年節省 ${{ getYearlySavings(plan) }}
-          </div>
-        </div>
-
-        <div class="plan-limits">
-          <div class="limit-item">
-            <font-awesome-icon icon="users" class="icon" />
-            <span>最多 {{ plan.limits.channels }} 個訂閱頻道</span>
-          </div>
-          <div class="limit-item">
-            <font-awesome-icon icon="video" class="icon" />
-            <span>最多 {{ plan.limits.media }} 隻影音</span>
-          </div>
-        </div>
-
-        <div class="plan-features">
-          <div v-for="(feature, index) in plan.features" :key="index" class="feature-item">
-            <font-awesome-icon icon="check" class="check-icon" />
-            <span>{{ feature }}</span>
-          </div>
-        </div>
-
-        <button 
-          :class="['subscribe-btn', {
-            'current-plan': currentPlan && currentPlan.id === plan.id,
-            'upgrade': !currentPlan || (currentPlan && getPlanValue(currentPlan) < getPlanValue(plan)),
-            'downgrade': currentPlan && getPlanValue(currentPlan) > getPlanValue(plan)
-          }]"
-          @click="handlePlanChange(plan)"
-          :disabled="isLoading || (currentPlan && currentPlan.id === plan.id)"
-        >
-          <span v-if="currentPlan && currentPlan.id === plan.id">目前方案</span>
-          <span v-else-if="!currentPlan || getPlanValue(currentPlan) < getPlanValue(plan)">升級</span>
-          <span v-else-if="getPlanValue(currentPlan) > getPlanValue(plan)">降級</span>
+      <!-- 計費週期切換 -->
+      <div class="billing-toggle">
+        <button :class="['toggle-btn', { active: billingCycle === 'monthly' }]" @click="billingCycle = 'monthly'">
+          月付
+        </button>
+        <button :class="['toggle-btn', { active: billingCycle === 'annually' }]" @click="billingCycle = 'annually'">
+          年付
+          <span class="savings-badge">省 20%</span>
         </button>
       </div>
-    </div>
 
-    <!-- 方案比較表 -->
-    <div class="comparison-section">
-      <h2>方案比較</h2>
-      <div class="comparison-table">
-        <table>
-          <thead>
-            <tr>
-              <th>功能</th>
-              <th>Free</th>
-              <th>Basic</th>
-              <th>Advance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>訂閱頻道</td>
-              <td>1 個</td>
-              <td>3 個</td>
-              <td>10 個</td>
-            </tr>
-            <tr>
-              <td>影音數量</td>
-              <td>3 隻</td>
-              <td>50 隻</td>
-              <td>100 隻</td>
-            </tr>
-            <tr>
-              <td>高畫質播放</td>
-              <td>
-                <font-awesome-icon icon="times" class="x-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="check" class="check-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="check" class="check-icon" />
-              </td>
-            </tr>
-            <tr>
-              <td>離線下載</td>
-              <td>
-                <font-awesome-icon icon="times" class="x-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="check" class="check-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="check" class="check-icon" />
-              </td>
-            </tr>
-            <tr>
-              <td>優先客服支援</td>
-              <td>
-                <font-awesome-icon icon="times" class="x-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="times" class="x-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="check" class="check-icon" />
-              </td>
-            </tr>
-            <tr>
-              <td>進階分析功能</td>
-              <td>
-                <font-awesome-icon icon="times" class="x-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="times" class="x-icon" />
-              </td>
-              <td>
-                <font-awesome-icon icon="check" class="check-icon" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- 當前使用情況 -->
+      <div v-if="currentPlan" class="current-plan-info">
+        <div class="info-card">
+          <h3>您目前的方案：{{ currentPlan.name }}</h3>
+          <div class="usage-stats">
+            <div class="usage-item">
+              <span class="usage-label">訂閱頻道</span>
+              <span class="usage-value">{{ usage.channels }} / {{ currentLimits.channels }}</span>
+              <div class="usage-bar">
+                <div
+                  class="usage-progress"
+                  :style="{ width: `${(usage.channels / currentLimits.channels) * 100}%` }"
+                  :class="{ 'limit-reached': isChannelLimitReached }"></div>
+              </div>
+            </div>
+            <div class="usage-item">
+              <span class="usage-label">影音數量</span>
+              <span class="usage-value">{{ usage.media }} / {{ currentLimits.media }}</span>
+              <div class="usage-bar">
+                <div
+                  class="usage-progress"
+                  :style="{ width: `${(usage.media / currentLimits.media) * 100}%` }"
+                  :class="{ 'limit-reached': isMediaLimitReached }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Loading overlay -->
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
+      <!-- 方案列表 -->
+      <div class="plans-grid">
+        <div
+          v-for="plan in allPlans"
+          :key="plan.id"
+          :class="[
+            'plan-card',
+            {
+              current: currentPlan && currentPlan.id === plan.id,
+              recommended: plan.id === 'basic',
+            },
+          ]">
+          <div v-if="plan.id === 'basic'" class="recommended-badge">推薦</div>
 
-    <!-- Error message -->
-    <div v-if="error" class="error-message">
-      <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <circle cx="12" cy="12" r="10" stroke-width="2"/>
-        <line x1="12" y1="8" x2="12" y2="12" stroke-width="2" stroke-linecap="round"/>
-        <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span>{{ error }}</span>
-      <button @click="error = null" class="close-btn">×</button>
-    </div>
+          <div class="plan-header">
+            <h2 class="plan-name">{{ plan.name }}</h2>
+            <div class="plan-price">
+              <span class="price-amount">${{ getPlanPrice(plan, billingCycle) }}</span>
+              <span class="price-period">/ {{ billingCycle === "monthly" ? "月" : "年" }}</span>
+            </div>
+            <div v-if="billingCycle === 'annually' && plan.price.monthly?.price > 0" class="yearly-savings">
+              每年節省 ${{ getYearlySavings(plan) }}
+            </div>
+          </div>
+
+          <div class="plan-limits">
+            <div class="limit-item">
+              <font-awesome-icon icon="users" class="icon" />
+              <span>最多 {{ plan.limits.channels }} 個訂閱頻道</span>
+            </div>
+            <div class="limit-item">
+              <font-awesome-icon icon="video" class="icon" />
+              <span>最多 {{ plan.limits.media }} 隻影音</span>
+            </div>
+          </div>
+
+          <div class="plan-features">
+            <div v-for="(feature, index) in plan.features" :key="index" class="feature-item">
+              <font-awesome-icon icon="check" class="check-icon" />
+              <span>{{ feature }}</span>
+            </div>
+          </div>
+
+          <button
+            :class="[
+              'subscribe-btn',
+              {
+                'current-plan': currentPlan && currentPlan.id === plan.id,
+                upgrade: !currentPlan || (currentPlan && getPlanValue(currentPlan) < getPlanValue(plan)),
+                downgrade: currentPlan && getPlanValue(currentPlan) > getPlanValue(plan),
+              },
+            ]"
+            @click="handlePlanChange(plan)"
+            :disabled="isLoading || (currentPlan && currentPlan.id === plan.id)">
+            <span v-if="currentPlan && currentPlan.id === plan.id">目前方案</span>
+            <span v-else-if="!currentPlan || getPlanValue(currentPlan) < getPlanValue(plan)">升級</span>
+            <span v-else-if="getPlanValue(currentPlan) > getPlanValue(plan)">降級</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 方案比較表 -->
+      <div class="comparison-section">
+        <h2>方案比較</h2>
+        <div class="comparison-table">
+          <table>
+            <thead>
+              <tr>
+                <th>功能</th>
+                <th v-for="plan in allPlans" :key="plan.id">{{ plan.name }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>訂閱頻道</td>
+                <td v-for="plan in allPlans" :key="plan.id">{{ plan.limits.channels }} 個</td>
+              </tr>
+              <tr>
+                <td>影音數量</td>
+                <td v-for="plan in allPlans" :key="plan.id">{{ plan.limits.media }} 隻</td>
+              </tr>
+              <tr>
+                <td>優先客服支援</td>
+                <td v-for="plan in allPlans" :key="plan.id">
+                  <font-awesome-icon v-if="plan.id === 'advance'" icon="check" class="check-icon" />
+                  <font-awesome-icon v-else icon="times" class="x-icon" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Loading overlay -->
+      <div v-if="isLoading" class="loading-overlay">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Error message -->
+      <div v-if="error" class="error-message">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10" stroke-width="2" />
+          <line x1="12" y1="8" x2="12" y2="12" stroke-width="2" stroke-linecap="round" />
+          <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span>{{ error }}</span>
+        <button @click="error = null" class="close-btn">×</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { usePlansStore } from '@/stores/plans';
-import { storeToRefs } from 'pinia';
-import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle } from '@/utils/paddle';
-import api from '@/api';
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { usePlansStore } from "@/stores/plans";
+import { storeToRefs } from "pinia";
+import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle } from "@/utils/paddle";
+import api from "@/api";
 
 const router = useRouter();
 const route = useRoute();
 const plansStore = usePlansStore();
 
-const {
-  currentPlan,
-  allPlans,
-  isLoading,
-  error,
-  usage,
-  currentLimits,
-  isChannelLimitReached,
-  isMediaLimitReached,
-} = storeToRefs(plansStore);
+const { currentPlan, allPlans, isLoading, error, usage, currentLimits, isChannelLimitReached, isMediaLimitReached } =
+  storeToRefs(plansStore);
 
-const {
-  getPlanPrice,
-  getPlanPriceId,
-  getYearlySavings,
-  updateSubscription,
-  initialize,
-} = plansStore;
+const { getPlanPrice, getPlanPriceId, getYearlySavings, updateSubscription, initialize } = plansStore;
 
-const billingCycle = ref('monthly');
+const billingCycle = ref("monthly");
 
 // 獲取方案的數值（用於比較）
 const getPlanValue = (plan) => {
-  const planValues = { 'free': 0, 'basic': 1, 'advance': 2 };
+  const planValues = { free: 0, basic: 1, advance: 2 };
   return planValues[plan.id] || 0;
 };
 
@@ -261,11 +196,12 @@ const handlePlanChange = async (plan) => {
   }
 
   try {
+    console.log(currentPlan.value, plan);
     // 如果是免費方案，顯示確認對話框
-    if (currentPlan.value && currentPlan.value.id !== 'free' && plan.id === 'free') {
-      const confirmed = confirm('確定要降級到免費方案嗎？您將失去目前的訂閱功能。');
+    if (currentPlan.value && currentPlan.value.id !== "free" && plan.id === "free") {
+      const confirmed = confirm("確定要降級到免費方案嗎？您將失去目前的訂閱功能。");
       if (!confirmed) return;
-      
+
       // 直接更新到免費方案
       await updateSubscription(plan.id, billingCycle.value);
       alert(`成功變更到 ${plan.name} 方案！`);
@@ -273,33 +209,26 @@ const handlePlanChange = async (plan) => {
     }
 
     // 如果是付費方案，打開 Paddle 付款視窗
-    if (plan.id !== 'free') {
+    if (plan.id !== "free") {
       isLoading.value = true;
-      
+
       try {
         // 從方案中獲取 Paddle price ID
         const priceId = getPlanPriceId(plan, billingCycle.value);
-        
+
         if (priceId) {
           // 直接使用方案中的 price ID 打開 Paddle 結帳視窗
-          await openSubscriptionCheckout(
-            priceId,
-            plan.id,
-            billingCycle.value
-          );
+          await openSubscriptionCheckout(priceId, plan.id, billingCycle.value);
           return;
         }
 
         // 如果方案中沒有 price ID，嘗試從後端獲取
-        const checkoutResponse = await api.subscription.createCheckoutSession(
-          plan.id,
-          billingCycle.value
-        );
+        const checkoutResponse = await api.subscription.createCheckoutSession(plan.id, billingCycle.value);
 
         // 如果後端返回了 checkout URL，使用 URL 打開
         if (checkoutResponse.checkoutUrl) {
           // 在 Electron 中打開外部瀏覽器或使用 BrowserWindow
-          window.open(checkoutResponse.checkoutUrl, '_blank');
+          window.open(checkoutResponse.checkoutUrl, "_blank");
           return;
         }
 
@@ -314,9 +243,9 @@ const handlePlanChange = async (plan) => {
         }
 
         // 如果都沒有，顯示錯誤
-        throw new Error('無法獲取付款信息，請稍後再試');
+        throw new Error("無法獲取付款信息，請稍後再試");
       } catch (checkoutError) {
-        console.error('創建結帳會話失敗:', checkoutError);
+        console.error("創建結帳會話失敗:", checkoutError);
         throw checkoutError;
       } finally {
         isLoading.value = false;
@@ -327,8 +256,8 @@ const handlePlanChange = async (plan) => {
       alert(`成功變更到 ${plan.name} 方案！`);
     }
   } catch (err) {
-    console.error('更新方案失敗:', err);
-    error.value = err.message || '更新方案失敗，請稍後再試';
+    console.error("更新方案失敗:", err);
+    error.value = err.message || "更新方案失敗，請稍後再試";
     setTimeout(() => {
       error.value = null;
     }, 5000);
@@ -348,8 +277,8 @@ const initializePaddle = async () => {
     // 設置 Paddle 事件監聽器
     setupPaddleListeners({
       onCheckoutCompleted: async (data) => {
-        console.log('Paddle 結帳完成:', data);
-        
+        console.log("Paddle 結帳完成:", data);
+
         // 從 customData 獲取方案信息
         const customData = data.customData || {};
         const planId = customData.planId || route.query.planId;
@@ -359,36 +288,38 @@ const initializePaddle = async () => {
           try {
             // 更新訂閱方案
             await updateSubscription(planId, cycle);
-            alert(`付款成功！已成功${getPlanValue({ id: planId }) > getPlanValue(currentPlan.value) ? '升級' : '變更'}到方案！`);
-            
+            alert(
+              `付款成功！已成功${getPlanValue({ id: planId }) > getPlanValue(currentPlan.value) ? "升級" : "變更"}到方案！`
+            );
+
             // 刷新訂閱信息
             await plansStore.fetchCurrentSubscription();
             await plansStore.updateUsage();
           } catch (err) {
-            console.error('更新訂閱失敗:', err);
-            error.value = '付款成功，但更新訂閱失敗，請聯繫客服';
+            console.error("更新訂閱失敗:", err);
+            error.value = "付款成功，但更新訂閱失敗，請聯繫客服";
           }
         }
       },
       onCheckoutClosed: (data) => {
-        console.log('Paddle 結帳視窗關閉:', data);
+        console.log("Paddle 結帳視窗關閉:", data);
         isLoading.value = false;
       },
       onError: (err) => {
-        console.error('Paddle 結帳錯誤:', err);
-        error.value = err.message || '付款過程中發生錯誤';
+        console.error("Paddle 結帳錯誤:", err);
+        error.value = err.message || "付款過程中發生錯誤";
         isLoading.value = false;
       },
     });
   } catch (err) {
-    console.error('初始化 Paddle 失敗:', err);
+    console.error("初始化 Paddle 失敗:", err);
     // 不阻止應用運行，只是付款功能無法使用
   }
 };
 
 // 檢查 URL 參數中的付款成功標記
 const checkPaymentSuccess = async () => {
-  if (route.query.success === 'true') {
+  if (route.query.success === "true") {
     // 從 URL 參數獲取方案信息
     const planId = route.query.planId;
     const cycle = route.query.billingCycle || plansStore.billingCycle;
@@ -396,17 +327,17 @@ const checkPaymentSuccess = async () => {
     if (planId) {
       try {
         await updateSubscription(planId, cycle);
-        alert('付款成功！訂閱已更新。');
-        
+        alert("付款成功！訂閱已更新。");
+
         // 清除 URL 參數
-        router.replace({ path: '/subscription', query: {} });
-        
+        router.replace({ path: "/subscription", query: {} });
+
         // 刷新訂閱信息
         await plansStore.fetchCurrentSubscription();
         await plansStore.updateUsage();
       } catch (err) {
-        console.error('更新訂閱失敗:', err);
-        error.value = '付款成功，但更新訂閱失敗，請聯繫客服';
+        console.error("更新訂閱失敗:", err);
+        error.value = "付款成功，但更新訂閱失敗，請聯繫客服";
       }
     }
   }
@@ -917,4 +848,3 @@ tbody tr:hover {
   }
 }
 </style>
-
