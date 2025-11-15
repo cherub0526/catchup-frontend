@@ -61,9 +61,9 @@ client.interceptors.response.use(
 
     // 檢查是否有 token
     const token = localStorage.getItem("token");
-    
+
     // 如果沒有 token，或者這個請求已經是重試的請求，或者是 refresh 請求本身，直接拋出錯誤
-    if (!token || originalRequest._retry || originalRequest.url?.includes('/v1/auth/refresh')) {
+    if (!token || originalRequest._retry || originalRequest.url?.includes("/v1/auth/refresh")) {
       // 清除 token 並拋出錯誤
       localStorage.removeItem("token");
       if (error.response) {
@@ -105,7 +105,7 @@ client.interceptors.response.use(
       const newToken = response.data.access_token || response.data.token;
 
       if (!newToken) {
-        throw new Error('未收到新的 token');
+        throw new Error("未收到新的 token");
       }
 
       // 更新 localStorage 中的 token
@@ -155,7 +155,7 @@ const api = {
       return client.get("/user/profile");
     },
     updateProfile: (data) => {
-      return client.put("/user/profile", data);
+      return client.put("/v1/users", data);
     },
   },
   rss: {
@@ -208,7 +208,7 @@ const api = {
     },
     // 獲取所有可用方案
     getPlans: () => {
-      return client.get("/v1/subscriptions/plans");
+      return client.get("/v1/plans");
     },
     // 創建支付會話 (用於 Stripe 等支付集成)
     createCheckoutSession: (planId, billingCycle) => {

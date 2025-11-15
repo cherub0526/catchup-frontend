@@ -78,7 +78,7 @@
             <span class="price-amount">${{ getPlanPrice(plan, billingCycle) }}</span>
             <span class="price-period">/ {{ billingCycle === 'monthly' ? '月' : '年' }}</span>
           </div>
-          <div v-if="billingCycle === 'yearly' && plan.price.monthly > 0" class="yearly-savings">
+          <div v-if="billingCycle === 'yearly' && plan.price.monthly?.price > 0" class="yearly-savings">
             每年節省 ${{ getYearlySavings(plan) }}
           </div>
         </div>
@@ -216,12 +216,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { usePlansStore } from '@/stores/plans';
 import { storeToRefs } from 'pinia';
+import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle } from '@/utils/paddle';
+import api from '@/api';
 
 const router = useRouter();
+const route = useRoute();
 const plansStore = usePlansStore();
 
 const {
@@ -237,6 +240,7 @@ const {
 
 const {
   getPlanPrice,
+  getPlanPriceId,
   getYearlySavings,
   updateSubscription,
   initialize,
@@ -261,14 +265,73 @@ const handlePlanChange = async (plan) => {
     if (currentPlan.value && currentPlan.value.id !== 'free' && plan.id === 'free') {
       const confirmed = confirm('確定要降級到免費方案嗎？您將失去目前的訂閱功能。');
       if (!confirmed) return;
+      
+      // 直接更新到免費方案
+      await updateSubscription(plan.id, billingCycle.value);
+      alert(`成功變更到 ${plan.name} 方案！`);
+      return;
     }
 
-    await updateSubscription(plan.id, billingCycle.value);
-    
-    // 顯示成功訊息
-    alert(`成功${getPlanValue(plan) > getPlanValue(currentPlan.value) ? '升級' : '變更'}到 ${plan.name} 方案！`);
+    // 如果是付費方案，打開 Paddle 付款視窗
+    if (plan.id !== 'free') {
+      isLoading.value = true;
+      
+      try {
+        // 從方案中獲取 Paddle price ID
+        const priceId = getPlanPriceId(plan, billingCycle.value);
+        
+        if (priceId) {
+          // 直接使用方案中的 price ID 打開 Paddle 結帳視窗
+          await openSubscriptionCheckout(
+            priceId,
+            plan.id,
+            billingCycle.value
+          );
+          return;
+        }
+
+        // 如果方案中沒有 price ID，嘗試從後端獲取
+        const checkoutResponse = await api.subscription.createCheckoutSession(
+          plan.id,
+          billingCycle.value
+        );
+
+        // 如果後端返回了 checkout URL，使用 URL 打開
+        if (checkoutResponse.checkoutUrl) {
+          // 在 Electron 中打開外部瀏覽器或使用 BrowserWindow
+          window.open(checkoutResponse.checkoutUrl, '_blank');
+          return;
+        }
+
+        // 如果後端返回了產品 ID，使用產品 ID 打開
+        if (checkoutResponse.productId || checkoutResponse.priceId) {
+          await openSubscriptionCheckout(
+            checkoutResponse.productId || checkoutResponse.priceId,
+            plan.id,
+            billingCycle.value
+          );
+          return;
+        }
+
+        // 如果都沒有，顯示錯誤
+        throw new Error('無法獲取付款信息，請稍後再試');
+      } catch (checkoutError) {
+        console.error('創建結帳會話失敗:', checkoutError);
+        throw checkoutError;
+      } finally {
+        isLoading.value = false;
+      }
+    } else {
+      // 免費方案直接更新
+      await updateSubscription(plan.id, billingCycle.value);
+      alert(`成功變更到 ${plan.name} 方案！`);
+    }
   } catch (err) {
     console.error('更新方案失敗:', err);
+    error.value = err.message || '更新方案失敗，請稍後再試';
+    setTimeout(() => {
+      error.value = null;
+    }, 5000);
   }
 };
 
@@ -277,11 +340,92 @@ const goBack = () => {
   router.back();
 };
 
+// 初始化 Paddle
+const initializePaddle = async () => {
+  try {
+    await initPaddle();
+
+    // 設置 Paddle 事件監聽器
+    setupPaddleListeners({
+      onCheckoutCompleted: async (data) => {
+        console.log('Paddle 結帳完成:', data);
+        
+        // 從 customData 獲取方案信息
+        const customData = data.customData || {};
+        const planId = customData.planId || route.query.planId;
+        const cycle = customData.billingCycle || route.query.billingCycle || plansStore.billingCycle;
+
+        if (planId) {
+          try {
+            // 更新訂閱方案
+            await updateSubscription(planId, cycle);
+            alert(`付款成功！已成功${getPlanValue({ id: planId }) > getPlanValue(currentPlan.value) ? '升級' : '變更'}到方案！`);
+            
+            // 刷新訂閱信息
+            await plansStore.fetchCurrentSubscription();
+            await plansStore.updateUsage();
+          } catch (err) {
+            console.error('更新訂閱失敗:', err);
+            error.value = '付款成功，但更新訂閱失敗，請聯繫客服';
+          }
+        }
+      },
+      onCheckoutClosed: (data) => {
+        console.log('Paddle 結帳視窗關閉:', data);
+        isLoading.value = false;
+      },
+      onError: (err) => {
+        console.error('Paddle 結帳錯誤:', err);
+        error.value = err.message || '付款過程中發生錯誤';
+        isLoading.value = false;
+      },
+    });
+  } catch (err) {
+    console.error('初始化 Paddle 失敗:', err);
+    // 不阻止應用運行，只是付款功能無法使用
+  }
+};
+
+// 檢查 URL 參數中的付款成功標記
+const checkPaymentSuccess = async () => {
+  if (route.query.success === 'true') {
+    // 從 URL 參數獲取方案信息
+    const planId = route.query.planId;
+    const cycle = route.query.billingCycle || plansStore.billingCycle;
+
+    if (planId) {
+      try {
+        await updateSubscription(planId, cycle);
+        alert('付款成功！訂閱已更新。');
+        
+        // 清除 URL 參數
+        router.replace({ path: '/subscription', query: {} });
+        
+        // 刷新訂閱信息
+        await plansStore.fetchCurrentSubscription();
+        await plansStore.updateUsage();
+      } catch (err) {
+        console.error('更新訂閱失敗:', err);
+        error.value = '付款成功，但更新訂閱失敗，請聯繫客服';
+      }
+    }
+  }
+};
+
 // 初始化
 onMounted(async () => {
   await initialize();
   // 更新使用情況
   await plansStore.updateUsage();
+  // 初始化 Paddle
+  await initializePaddle();
+  // 檢查付款成功
+  await checkPaymentSuccess();
+});
+
+// 清理
+onBeforeUnmount(() => {
+  destroyPaddle();
 });
 </script>
 

@@ -10,14 +10,19 @@
     <div class="settings-container">
       <div class="settings-section">
         <h3>帳號設定</h3>
-        <div class="settings-item">
-          <label>使用者名稱</label>
-          <input type="text" v-model="username" placeholder="請輸入使用者名稱" />
+        <div v-if="loading" class="loading-state">
+          載入中...
         </div>
-        <div class="settings-item">
-          <label>電子郵件</label>
-          <input type="email" v-model="email" placeholder="請輸入電子郵件" />
-        </div>
+        <template v-else>
+          <div class="settings-item">
+            <label>使用者名稱</label>
+            <input type="text" v-model="username" placeholder="請輸入使用者名稱" :disabled="loading" />
+          </div>
+          <div class="settings-item">
+            <label>電子郵件</label>
+            <input type="email" v-model="email" placeholder="請輸入電子郵件" :disabled="loading" />
+          </div>
+        </template>
       </div>
 
       <div class="settings-section">
@@ -37,36 +42,230 @@
       </div>
 
       <div class="settings-actions">
-        <button class="btn-primary" @click="saveSettings">儲存設定</button>
-        <button class="btn-secondary" @click="cancelSettings">取消</button>
+        <button class="btn-primary" @click="saveSettings" :disabled="loading || saving">
+          {{ saving ? '儲存中...' : '儲存設定' }}
+        </button>
+        <button class="btn-secondary" @click="cancelSettings" :disabled="loading || saving">取消</button>
       </div>
     </div>
+
+    <!-- 訊息提示 -->
+    <transition name="message-fade">
+      <div v-if="message.text" :class="['message-toast', `message-${message.type}`]">
+        <div class="message-content">
+          <span class="message-icon">
+            <font-awesome-icon v-if="message.type === 'success'" icon="check-circle" />
+            <font-awesome-icon v-else-if="message.type === 'error'" icon="exclamation-circle" />
+          </span>
+          <span class="message-text">{{ message.text }}</span>
+        </div>
+        <button class="message-close" @click="clearMessage">
+          <font-awesome-icon icon="times" />
+        </button>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '@/api'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-const username = ref('使用者')
+const username = ref('')
 const email = ref('')
 const notifications = ref(true)
 const autoPlay = ref(false)
+const loading = ref(false)
+const saving = ref(false)
+const message = ref({ text: '', type: 'success' })
+let messageTimer = null
+
+// 從 API 獲取使用者資料
+const fetchUserData = async () => {
+  loading.value = true
+  try {
+    // 優先從 auth store 獲取使用者資料
+    if (authStore.user) {
+      username.value = authStore.user.name || authStore.user.username || ''
+      email.value = authStore.user.email || ''
+    } else {
+      // 如果 store 中沒有，則從 API 獲取
+      const userData = await api.user.getCurrentUser()
+      username.value = userData.name || userData.username || ''
+      email.value = userData.email || ''
+      // 更新 auth store
+      authStore.user = userData
+    }
+  } catch (error) {
+    console.error('獲取使用者資料失敗:', error)
+    // 如果 API 失敗，嘗試從 auth store 獲取
+    if (authStore.user) {
+      username.value = authStore.user.name || authStore.user.username || ''
+      email.value = authStore.user.email || ''
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+// 顯示訊息
+const showMessage = (text, type = 'success') => {
+  message.value = { text, type }
+  
+  // 清除之前的計時器
+  if (messageTimer) {
+    clearTimeout(messageTimer)
+  }
+  
+  // 3 秒後自動清除訊息
+  messageTimer = setTimeout(() => {
+    clearMessage()
+  }, 3000)
+}
+
+// 清除訊息
+const clearMessage = () => {
+  message.value = { text: '', type: 'success' }
+  if (messageTimer) {
+    clearTimeout(messageTimer)
+    messageTimer = null
+  }
+}
+
+// 從錯誤物件中提取錯誤訊息
+const getErrorMessage = (error) => {
+  // API client 會 reject error.response，所以先檢查 response.data
+  if (error?.data) {
+    // 嘗試從不同可能的欄位獲取錯誤訊息
+    const errorMsg = error.data.message || 
+                     error.data.error || 
+                     error.data.msg || 
+                     error.data.detail ||
+                     (typeof error.data === 'string' ? error.data : null)
+    
+    if (errorMsg) {
+      return errorMsg
+    }
+  }
+  
+  // 如果錯誤有 response 和 response.data（axios 原始錯誤格式）
+  if (error?.response?.data) {
+    const errorMsg = error.response.data.message || 
+                     error.response.data.error || 
+                     error.response.data.msg || 
+                     error.response.data.detail ||
+                     (typeof error.response.data === 'string' ? error.response.data : null)
+    
+    if (errorMsg) {
+      return errorMsg
+    }
+  }
+  
+  // 如果錯誤有 message
+  if (error?.message) {
+    return error.message
+  }
+  
+  // 根據 HTTP 狀態碼提供預設訊息
+  if (error?.status) {
+    if (error.status === 400) {
+      return '請求資料格式錯誤，請檢查輸入內容'
+    } else if (error.status === 401) {
+      return '登入已過期，請重新登入'
+    } else if (error.status === 403) {
+      return '沒有權限執行此操作'
+    } else if (error.status === 404) {
+      return '找不到請求的資源'
+    } else if (error.status === 409) {
+      return '資料衝突，可能是電子郵件已被使用'
+    } else if (error.status >= 500) {
+      return '伺服器錯誤，請稍後再試'
+    }
+  }
+  
+  // 預設錯誤訊息
+  return '儲存設定失敗，請稍後再試'
+}
 
 const goBack = () => {
   router.back()
 }
 
-const saveSettings = () => {
-  // 這裡可以保存設定到 localStorage 或後端
-  alert('設定已儲存！')
+const saveSettings = async () => {
+  // 基本驗證
+  if (!username.value.trim()) {
+    showMessage('請輸入使用者名稱', 'error')
+    return
+  }
+  
+  if (!email.value.trim()) {
+    showMessage('請輸入電子郵件', 'error')
+    return
+  }
+  
+  // 驗證電子郵件格式
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email.value)) {
+    showMessage('請輸入有效的電子郵件地址', 'error')
+    return
+  }
+  
+  saving.value = true
+  clearMessage() // 清除之前的訊息
+  
+  try {
+    // 更新使用者資料到 API (PUT /v1/users)
+    const updateData = {
+      name: username.value.trim(),
+      email: email.value.trim(),
+    }
+    
+    const response = await api.user.updateProfile(updateData)
+    
+    // 更新 auth store 中的使用者資料
+    if (authStore.user) {
+      authStore.user = {
+        ...authStore.user,
+        ...updateData
+      }
+    }
+    
+    // 顯示成功訊息
+    showMessage('設定已成功儲存！', 'success')
+  } catch (error) {
+    console.error('儲存設定失敗:', error)
+    
+    // 提取並顯示錯誤訊息
+    const errorMessage = getErrorMessage(error)
+    showMessage(errorMessage, 'error')
+  } finally {
+    saving.value = false
+  }
 }
 
 const cancelSettings = () => {
+  // 取消時重新載入原始資料
+  fetchUserData()
   goBack()
 }
+
+// 組件掛載時載入使用者資料
+onMounted(() => {
+  fetchUserData()
+})
+
+// 組件卸載時清理計時器
+onUnmounted(() => {
+  if (messageTimer) {
+    clearTimeout(messageTimer)
+    messageTimer = null
+  }
+})
 </script>
 
 <style scoped>
@@ -226,6 +425,115 @@ const cancelSettings = () => {
 .btn-secondary:hover {
   background: #f8f9fa;
   border-color: #d0d0d0;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading-state {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.settings-item input:disabled {
+  background-color: #f5f7fa;
+  cursor: not-allowed;
+}
+
+/* 訊息提示樣式 */
+.message-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.message-success {
+  background: #10b981;
+  color: white;
+}
+
+.message-error {
+  background: #ef4444;
+  color: white;
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.message-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.message-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.message-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.message-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.message-fade-enter-active,
+.message-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.message-fade-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.message-fade-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>
 
