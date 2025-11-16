@@ -168,6 +168,7 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { usePlansStore } from "@/stores/plans";
+import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle } from "@/utils/paddle";
 import api from "@/api";
@@ -175,11 +176,13 @@ import api from "@/api";
 const router = useRouter();
 const route = useRoute();
 const plansStore = usePlansStore();
+const authStore = useAuthStore();
 
 const { currentPlan, allPlans, isLoading, error, usage, currentLimits, isChannelLimitReached, isMediaLimitReached } =
   storeToRefs(plansStore);
 
-const { getPlanPrice, getPlanPriceId, getYearlySavings, updateSubscription, initialize } = plansStore;
+const { getPlanPrice, getPlanPriceId, getPlanApiPriceId, getYearlySavings, updateSubscription, initialize } =
+  plansStore;
 
 const billingCycle = ref("monthly");
 
@@ -213,12 +216,23 @@ const handlePlanChange = async (plan) => {
       isLoading.value = true;
 
       try {
-        // 從方案中獲取 Paddle price ID
-        const priceId = getPlanPriceId(plan, billingCycle.value);
+        // 獲取用戶 ID
+        const userId = authStore.user?.id;
+        if (!userId) {
+          throw new Error("無法獲取用戶信息，請先登入");
+        }
 
-        if (priceId) {
+        // 從方案中獲取 Paddle price ID（用於 Paddle 結帳）
+        const paddlePriceId = getPlanPriceId(plan, billingCycle.value);
+        // 獲取 API 返回的 price ID（用於 customData）
+        const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
+        // 獲取 API 返回的 plan ID（用於 customData）
+        const apiPlanId = plan.apiId;
+
+        if (paddlePriceId && apiPriceId && apiPlanId) {
           // 直接使用方案中的 price ID 打開 Paddle 結帳視窗
-          await openSubscriptionCheckout(priceId, plan.id, billingCycle.value);
+          // 傳入 paddlePriceId（用於 Paddle 結帳）, apiPlanId（API 的 plan.id）, apiPriceId（API 的 price.id）, userId
+          await openSubscriptionCheckout(paddlePriceId, apiPlanId, apiPriceId, userId);
           return;
         }
 
@@ -234,10 +248,15 @@ const handlePlanChange = async (plan) => {
 
         // 如果後端返回了產品 ID，使用產品 ID 打開
         if (checkoutResponse.productId || checkoutResponse.priceId) {
+          // 獲取 API 返回的 price ID
+          const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
+          const apiPlanId = plan.apiId;
+
           await openSubscriptionCheckout(
             checkoutResponse.productId || checkoutResponse.priceId,
-            plan.id,
-            billingCycle.value
+            apiPlanId || plan.id,
+            apiPriceId || checkoutResponse.priceId,
+            userId
           );
           return;
         }
@@ -282,12 +301,11 @@ const initializePaddle = async () => {
         // 從 customData 獲取方案信息
         const customData = data.customData || {};
         const planId = customData.planId || route.query.planId;
-        const cycle = customData.billingCycle || route.query.billingCycle || plansStore.billingCycle;
 
         if (planId) {
           try {
-            // 更新訂閱方案
-            await updateSubscription(planId, cycle);
+            // 更新訂閱方案（使用當前的 billingCycle）
+            await updateSubscription(planId, billingCycle.value);
             alert(
               `付款成功！已成功${getPlanValue({ id: planId }) > getPlanValue(currentPlan.value) ? "升級" : "變更"}到方案！`
             );

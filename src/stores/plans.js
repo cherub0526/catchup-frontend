@@ -331,6 +331,13 @@ export const usePlansStore = defineStore("plans", () => {
     return priceObj ? priceObj.paddlePriceId : null;
   };
 
+  // 獲取方案的 API 價格 ID（從 /v1/plans 返回的 prices[].id）
+  const getPlanApiPriceId = (plan, cycle = null) => {
+    const currentCycle = cycle || billingCycle.value;
+    const priceObj = plan.price[currentCycle];
+    return priceObj ? priceObj.id : null;
+  };
+
   // 計算年費節省金額
   const getYearlySavings = (plan) => {
     const monthlyPrice = plan.price.monthly?.price || 0;
@@ -369,6 +376,7 @@ export const usePlansStore = defineStore("plans", () => {
     getPlanById,
     getPlanPrice,
     getPlanPriceId,
+    getPlanApiPriceId,
     getYearlySavings,
     initialize,
   };

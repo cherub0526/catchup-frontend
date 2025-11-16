@@ -20,9 +20,6 @@ export const initPaddle = async () => {
 
     paddleInstance = await initializePaddle({
       token: clientToken,
-      // pwCustomer: {
-      //   id: "ctm_01ka4addg2tqasbqfndj2warsz", // replace with a customer Paddle ID
-      // },
       eventCallback: (event) => {
         console.log("Paddle event:", event);
       },
@@ -50,6 +47,8 @@ export const openPaddleCheckout = async (options) => {
       throw new Error("Paddle 尚未初始化");
     }
 
+    console.log(options);
+
     // 打開結帳視窗
     await paddle.Checkout.open({
       items: options.items || [],
@@ -73,7 +72,11 @@ export const openPaddleCheckout = async (options) => {
 };
 
 // 使用產品 ID 打開結帳（訂閱方案）
-export const openSubscriptionCheckout = async (priceId, planId, billingCycle) => {
+// paddlePriceId: Paddle 的價格 ID（用於 items[0].priceId）
+// apiPlanId: API 返回的 plan.id（用於 customData.planId）
+// apiPriceId: API 返回的 prices[].id（用於 customData.priceId）
+// userId: 用戶 ID
+export const openSubscriptionCheckout = async (paddlePriceId, apiPlanId, apiPriceId, userId) => {
   try {
     const paddle = getPaddle();
     if (!paddle) {
@@ -84,20 +87,19 @@ export const openSubscriptionCheckout = async (priceId, planId, billingCycle) =>
     await paddle.Checkout.open({
       items: [
         {
-          priceId: priceId, // Paddle 產品價格 ID
+          priceId: paddlePriceId, // Paddle 產品價格 ID（paddle_price_id）
           quantity: 1,
         },
       ],
       customData: {
-        planId,
-        billingCycle,
+        planId: apiPlanId, // API 返回的 plan.id
+        priceId: apiPriceId, // API 返回的 prices[].id
+        userId: userId, // 用戶 ID
       },
       settings: {
         displayMode: "overlay",
         theme: "light",
         locale: "zh-TW",
-        successUrl: `${globalThis.location.origin}/subscription?success=true&planId=${planId}&billingCycle=${billingCycle}`,
-        successUrlTarget: "_self",
       },
     });
 
