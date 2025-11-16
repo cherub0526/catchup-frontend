@@ -3,6 +3,22 @@ import { initializePaddle } from "@paddle/paddle-js";
 // Paddle 實例
 let paddleInstance = null;
 
+// 處理 checkout.completed 事件
+const handleCheckoutCompleted = async (eventData) => {
+  try {
+    console.log("Paddle checkout.completed 事件:", eventData);
+
+    // 將 Paddle 事件的 callback data 傳送到 /v1/subscriptions
+    const api = await import("@/api");
+    await api.default.subscription.updateSubscription(eventData);
+
+    console.log("已將 Paddle 結帳數據傳送到後端");
+  } catch (error) {
+    console.error("傳送 Paddle 結帳數據到後端失敗:", error);
+    throw error;
+  }
+};
+
 // 初始化 Paddle
 export const initPaddle = async () => {
   if (paddleInstance) {
@@ -22,10 +38,20 @@ export const initPaddle = async () => {
       token: clientToken,
       eventCallback: (event) => {
         console.log("Paddle event:", event);
+
+        // 監聽 checkout.completed 事件
+        if (event.name === "checkout.completed") {
+          handleCheckoutCompleted(event.data);
+        }
       },
     });
 
     paddleInstance.Environment.set(clientEnvironment);
+
+    // 使用 Checkout.on 監聽 checkout.completed 事件（備用方案）
+    if (paddleInstance.Checkout && typeof paddleInstance.Checkout.on === "function") {
+      paddleInstance.Checkout.on("checkout.completed", handleCheckoutCompleted);
+    }
 
     return paddleInstance;
   } catch (error) {
