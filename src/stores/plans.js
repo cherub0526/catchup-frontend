@@ -13,16 +13,17 @@ const transformPlanFromAPI = (apiPlan) => {
   };
 
   apiPlan.prices.forEach((p) => {
+    console.log(p);
     if (p.unit === "monthly") {
       price.monthly = {
         id: p.id,
-        paddlePriceId: p.paddle_price_id || "",
+        paddlePriceId: p.paddle.id || "",
         price: p.price,
       };
     } else if (p.unit === "annually") {
       price.annually = {
         id: p.id,
-        paddlePriceId: p.paddle_price_id || "",
+        paddlePriceId: p.paddle.id || "",
         price: p.price,
       };
     }
@@ -38,7 +39,7 @@ const transformPlanFromAPI = (apiPlan) => {
   return {
     id: planId,
     apiId: apiPlan.id, // 保留原始 API ID 用於後續請求
-    paddlePlanId: apiPlan.paddle_plan_id || "", // Paddle 方案 ID
+    paddlePlanId: apiPlan.paddle.id || "", // Paddle 方案 ID
     name: apiPlan.title,
     description: apiPlan.description || "",
     price: price,

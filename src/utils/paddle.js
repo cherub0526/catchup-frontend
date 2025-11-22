@@ -13,6 +13,23 @@ const handleCheckoutCompleted = async (eventData) => {
     await api.default.subscription.updateSubscription(eventData);
 
     console.log("已將 Paddle 結帳數據傳送到後端");
+
+    // 更新前端的訂閱狀態
+    try {
+      const { usePlansStore } = await import("@/stores/plans");
+      const plansStore = usePlansStore();
+
+      // 重新獲取當前訂閱信息
+      await plansStore.fetchCurrentSubscription();
+
+      // 更新使用情況
+      await plansStore.updateUsage();
+
+      console.log("已更新前端訂閱狀態");
+    } catch (storeError) {
+      console.error("更新前端訂閱狀態失敗:", storeError);
+      // 不拋出錯誤，因為後端已經處理了
+    }
   } catch (error) {
     console.error("傳送 Paddle 結帳數據到後端失敗:", error);
     throw error;
@@ -113,7 +130,7 @@ export const openSubscriptionCheckout = async (paddlePriceId, apiPlanId, apiPric
     await paddle.Checkout.open({
       items: [
         {
-          priceId: paddlePriceId, // Paddle 產品價格 ID（paddle_price_id）
+          priceId: paddlePriceId, // Paddle 產品價格 ID（paddle.id）
           quantity: 1,
         },
       ],
