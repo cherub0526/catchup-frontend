@@ -60,7 +60,7 @@
           :class="[
             'plan-card',
             {
-              current: currentPlan && currentPlan.id === plan.id,
+              current: isCurrentPlan(plan),
               recommended: plan.id === 'basic',
             },
           ]">
@@ -99,14 +99,14 @@
             :class="[
               'subscribe-btn',
               {
-                'current-plan': currentPlan && currentPlan.id === plan.id,
-                upgrade: !currentPlan || (currentPlan && getPlanValue(currentPlan) < getPlanValue(plan)),
-                downgrade: currentPlan && getPlanValue(currentPlan) > getPlanValue(plan),
+                'current-plan': isCurrentPlan(plan),
+                upgrade: !isCurrentPlan(plan) && getPlanValue(currentPlan) < getPlanValue(plan),
+                downgrade: !isCurrentPlan(plan) && getPlanValue(currentPlan) > getPlanValue(plan),
               },
             ]"
             @click="handlePlanChange(plan)"
-            :disabled="isLoading || (currentPlan && currentPlan.id === plan.id)">
-            <span v-if="currentPlan && currentPlan.id === plan.id">目前方案</span>
+            :disabled="isLoading || isCurrentPlan(plan)">
+            <span v-if="isCurrentPlan(plan)">目前方案</span>
             <span v-else-if="!currentPlan || getPlanValue(currentPlan) < getPlanValue(plan)">升級</span>
             <span v-else-if="getPlanValue(currentPlan) > getPlanValue(plan)">降級</span>
           </button>
@@ -178,8 +178,17 @@ const route = useRoute();
 const plansStore = usePlansStore();
 const authStore = useAuthStore();
 
-const { currentPlan, allPlans, isLoading, error, usage, currentLimits, isChannelLimitReached, isMediaLimitReached } =
-  storeToRefs(plansStore);
+const {
+  currentPlan,
+  currentSubscriptionData,
+  allPlans,
+  isLoading,
+  error,
+  usage,
+  currentLimits,
+  isChannelLimitReached,
+  isMediaLimitReached,
+} = storeToRefs(plansStore);
 
 const { getPlanPrice, getPlanPriceId, getPlanApiPriceId, getYearlySavings, updateSubscription, initialize } =
   plansStore;
@@ -192,14 +201,26 @@ const getPlanValue = (plan) => {
   return planValues[plan.id] || 0;
 };
 
+// 判斷是否為當前方案
+const isCurrentPlan = (plan) => {
+  if (!currentSubscriptionData.value) {
+    return false;
+  }
+
+  // 比對 plan.apiId 和 currentSubscriptionData.id
+  const isPlanMatch = plan.apiId === currentSubscriptionData.value.id;
+
+  // 如果沒有價格 ID，只比對方案 ID
+  return isPlanMatch;
+};
+
 // 處理方案變更
 const handlePlanChange = async (plan) => {
-  if (currentPlan.value && currentPlan.value.id === plan.id) {
+  if (isCurrentPlan(plan)) {
     return;
   }
 
   try {
-    console.log(currentPlan.value, plan);
     // 如果是免費方案，顯示確認對話框
     if (currentPlan.value && currentPlan.value.id !== "free" && plan.id === "free") {
       const confirmed = confirm("確定要降級到免費方案嗎？您將失去目前的訂閱功能。");

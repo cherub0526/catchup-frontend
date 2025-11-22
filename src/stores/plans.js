@@ -13,7 +13,6 @@ const transformPlanFromAPI = (apiPlan) => {
   };
 
   apiPlan.prices.forEach((p) => {
-    console.log(p);
     if (p.unit === "monthly") {
       price.monthly = {
         id: p.id,
@@ -106,9 +105,12 @@ export const usePlansStore = defineStore("plans", () => {
         // 轉換 API 返回的方案資料
         plans.value = response.data.map(transformPlanFromAPI);
 
+        console.log(currentPlan.value);
+
         // 如果當前方案存在，同步更新其限制值（使用最新的方案列表）
         if (currentPlan.value) {
           const latestPlan = getPlanById(currentPlan.value.id) || getPlanById(currentPlan.value.apiId);
+
           if (latestPlan) {
             // 更新當前方案的限制值，但保留其他屬性
             currentPlan.value = {
@@ -135,6 +137,9 @@ export const usePlansStore = defineStore("plans", () => {
     }
   };
 
+  // 當前訂閱的原始數據（包含 API 返回的完整信息）
+  const currentSubscriptionData = ref(null);
+
   // 獲取當前訂閱信息
   const fetchCurrentSubscription = async () => {
     isLoading.value = true;
@@ -143,10 +148,14 @@ export const usePlansStore = defineStore("plans", () => {
     try {
       const response = await api.subscription.getCurrentSubscription();
 
-      if (response.data) {
-        const planId = response.data.planId || response.data.plan_id || "free";
-        // 從方案列表中查找對應的方案（使用最新的方案列表）
-        const foundPlan = getPlanById(planId) || plans.value.find((p) => p.id === "free");
+      if (response) {
+        // 保存原始訂閱數據
+        currentSubscriptionData.value = response;
+
+        // 使用 response.data.id 來比對 plan.apiId
+        const subscriptionPlanId = response.id;
+        // 從方案列表中查找對應的方案（使用 apiId 比對）
+        const foundPlan = plans.value.find((p) => p.apiId === subscriptionPlanId);
 
         if (foundPlan) {
           // 創建新的方案對象，確保使用最新的限制值
@@ -155,45 +164,25 @@ export const usePlansStore = defineStore("plans", () => {
           };
 
           // 如果 API 返回了 plan 限制（channel_limit, video_limit），優先使用 API 的值
-          if (response.data.plan) {
-            currentPlan.value.limits = {
-              channels: response.data.plan.channel_limit || response.data.plan.channels || foundPlan.limits.channels,
-              media: response.data.plan.video_limit || response.data.plan.media || foundPlan.limits.media,
-              chat: response.data.plan.chat_limit || response.data.plan.chat || foundPlan.limits.chat || 0,
-            };
-          } else if (response.data.channel_limit !== undefined || response.data.video_limit !== undefined) {
-            // 如果 API 直接在 data 中返回限制值
-            currentPlan.value.limits = {
-              channels: response.data.channel_limit || currentPlan.value.limits.channels,
-              media: response.data.video_limit || currentPlan.value.limits.media,
-              chat: response.data.chat_limit || currentPlan.value.limits.chat || 0,
-            };
-          }
-        } else {
-          // 如果找不到方案，使用免費方案
-          currentPlan.value = plans.value.find((p) => p.id === "free");
-        }
 
-        billingCycle.value = response.data.billingCycle || response.data.billing_cycle || "monthly";
-
-        // 更新使用情況
-        if (response.data.usage) {
-          usage.value = {
-            channels: response.data.usage.channels || response.data.usage.channel_count || 0,
-            media: response.data.usage.media || response.data.usage.video_count || response.data.usage.media_count || 0,
+          currentPlan.value.limits = {
+            channels: response.channel_limit,
+            media: response.video_limit,
+            chat: response.chat_limit,
           };
+
+          // 根據 prices[0].unit 來確定 billingCycle
+          if (response.prices && response.prices.length > 0) {
+            const currentPrice = response.prices[0];
+            billingCycle.value = currentPrice.unit;
+          }
         }
-      } else {
-        // 默認為免費方案
-        currentPlan.value = plans.value.find((p) => p.id === "free");
       }
 
       return response;
     } catch (err) {
       error.value = err.message || "獲取訂閱信息失敗";
-      console.error("獲取訂閱信息失敗:", err);
-      // 如果失敗，默認使用免費方案
-      currentPlan.value = plans.value.find((p) => p.id === "free");
+      currentSubscriptionData.value = null;
       throw err;
     } finally {
       isLoading.value = false;
@@ -267,38 +256,6 @@ export const usePlansStore = defineStore("plans", () => {
               usage.value.media,
           };
         }
-
-        // 如果 API 返回了 plan limits，更新當前方案的限制
-        if (response.data?.plan && currentPlan.value) {
-          currentPlan.value.limits = {
-            channels:
-              response.data.plan.channel_limit || response.data.plan.channels || currentPlan.value.limits.channels,
-            media: response.data.plan.video_limit || response.data.plan.media || currentPlan.value.limits.media,
-            chat: response.data.plan.chat_limit || response.data.plan.chat || currentPlan.value.limits.chat || 0,
-          };
-        } else if (response.data?.channel_limit !== undefined || response.data?.video_limit !== undefined) {
-          // 如果 API 直接在 data 中返回限制值
-          if (currentPlan.value) {
-            currentPlan.value.limits = {
-              channels: response.data.channel_limit || currentPlan.value.limits.channels,
-              media: response.data.video_limit || currentPlan.value.limits.media,
-              chat: response.data.chat_limit || currentPlan.value.limits.chat || 0,
-            };
-          }
-        }
-
-        // 如果當前方案存在，從最新的方案列表中同步限制值
-        if (currentPlan.value) {
-          const latestPlan = getPlanById(currentPlan.value.id) || getPlanById(currentPlan.value.apiId);
-          if (latestPlan) {
-            // 只有在 API 沒有返回限制值時，才使用方案列表中的限制值
-            if (!response.data?.plan && response.data?.channel_limit === undefined) {
-              currentPlan.value.limits = {
-                ...latestPlan.limits,
-              };
-            }
-          }
-        }
       }
 
       return response;
@@ -358,6 +315,7 @@ export const usePlansStore = defineStore("plans", () => {
 
   return {
     currentPlan,
+    currentSubscriptionData,
     billingCycle,
     isLoading,
     error,
