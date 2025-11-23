@@ -178,7 +178,7 @@
             <h4 class="footer-heading">資源</h4>
             <ul class="footer-links">
               <li><a href="#">使用教學</a></li>
-              <li><a href="#">常見問題</a></li>
+              <li><router-link to="/faq">常見問答</router-link></li>
               <li><a href="#">部落格</a></li>
               <li><a href="#">聯絡我們</a></li>
             </ul>

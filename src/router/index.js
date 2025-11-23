@@ -37,6 +37,11 @@ const router = createRouter({
       name: 'Subscription',
       component: () => import('@/views/Subscription.vue')
       // meta: { requiresAuth: true } - Removed to allow public access
+    },
+    {
+      path: '/faq',
+      name: 'Faq',
+      component: () => import('@/views/Faq.vue')
     }
   ]
 })
