@@ -163,12 +163,12 @@
               <a href="#" class="social-link"><font-awesome-icon :icon="['fab', 'linkedin']" /></a>
             </div> -->
           </div>
-          
+
           <div class="footer-nav-col">
             <h4 class="footer-heading">產品</h4>
             <ul class="footer-links">
               <li><a href="#">功能特色</a></li>
-              <li><a href="#">價格方案</a></li>
+              <li><router-link to="/subscription">價格方案</router-link></li>
               <li><a href="#">更新日誌</a></li>
               <li><a href="#">API 文件</a></li>
             </ul>
@@ -1028,19 +1028,23 @@ const scrollToFeatures = () => {
   0% {
     box-shadow: 0 0 0 0 rgba(67, 56, 202, 0.4);
   }
+
   70% {
     box-shadow: 0 0 0 10px rgba(67, 56, 202, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(67, 56, 202, 0);
   }
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-20px);
   }
