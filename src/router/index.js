@@ -42,6 +42,21 @@ const router = createRouter({
       path: '/faq',
       name: 'Faq',
       component: () => import('@/views/Faq.vue')
+    },
+    {
+      path: '/privacy-policy',
+      name: 'PrivacyPolicy',
+      component: () => import('@/views/PrivacyPolicy.vue')
+    },
+    {
+      path: '/terms-of-service',
+      name: 'TermsOfService',
+      component: () => import('@/views/TermsOfService.vue')
+    },
+    {
+      path: '/cookie-policy',
+      name: 'CookiePolicy',
+      component: () => import('@/views/CookiePolicy.vue')
     }
   ]
 })

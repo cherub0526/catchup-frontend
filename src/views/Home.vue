@@ -169,8 +169,6 @@
             <ul class="footer-links">
               <li><a href="#">功能特色</a></li>
               <li><router-link to="/subscription">價格方案</router-link></li>
-              <li><a href="#">更新日誌</a></li>
-              <li><a href="#">API 文件</a></li>
             </ul>
           </div>
 
@@ -200,9 +198,9 @@
 
         <div class="footer-bottom">
           <div class="footer-legal">
-            <a href="#">隱私政策</a>
-            <a href="#">服務條款</a>
-            <a href="#">Cookie 政策</a>
+            <router-link to="/privacy-policy">隱私政策</router-link>
+            <router-link to="/terms-of-service">服務條款</router-link>
+            <router-link to="/cookie-policy">Cookie 政策</router-link>
           </div>
           <p class="copyright">&copy; {{ new Date().getFullYear() }} {{ appName }}. All rights reserved.</p>
         </div>
