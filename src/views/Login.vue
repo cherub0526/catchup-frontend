@@ -28,12 +28,7 @@
             </div>
             <div class="input-group">
               <label for="login-password">密碼</label>
-              <input
-                type="password"
-                id="login-password"
-                v-model="loginForm.password"
-                placeholder="請輸入您的密碼"
-                required />
+              <input type="password" id="login-password" v-model="loginForm.password" placeholder="請輸入您的密碼" required />
             </div>
             <div class="options">
               <label class="checkbox-container">
@@ -72,40 +67,21 @@
           <form @submit.prevent="handleRegister">
             <div class="input-group">
               <label for="register-account">帳號</label>
-              <input
-                type="text"
-                id="register-account"
-                v-model="registerForm.account"
-                placeholder="請輸入您的帳號"
-                required />
+              <input type="text" id="register-account" v-model="registerForm.account" placeholder="請輸入您的帳號" required />
             </div>
             <div class="input-group">
               <label for="register-email">電子郵件</label>
-              <input
-                type="email"
-                id="register-email"
-                v-model="registerForm.email"
-                placeholder="請輸入您的電子郵件"
-                required />
+              <input type="email" id="register-email" v-model="registerForm.email" placeholder="請輸入您的電子郵件" required />
             </div>
             <div class="input-group">
               <label for="register-password">密碼</label>
-              <input
-                type="password"
-                id="register-password"
-                v-model="registerForm.password"
-                placeholder="請輸入密碼（至少 8 個字元）"
-                required
-                minlength="8" />
+              <input type="password" id="register-password" v-model="registerForm.password"
+                placeholder="請輸入密碼（至少 8 個字元）" required minlength="8" />
             </div>
             <div class="input-group">
               <label for="register-confirm-password">確認密碼</label>
-              <input
-                type="password"
-                id="register-confirm-password"
-                v-model="registerForm.confirmPassword"
-                placeholder="請再次輸入密碼"
-                required />
+              <input type="password" id="register-confirm-password" v-model="registerForm.confirmPassword"
+                placeholder="請再次輸入密碼" required />
             </div>
             <div class="options">
               <label class="checkbox-container">
@@ -147,21 +123,13 @@
           <form @submit.prevent="handleForgotPassword">
             <div class="input-group">
               <label for="forgot-email">電子郵件</label>
-              <input
-                type="email"
-                id="forgot-email"
-                v-model="forgotPasswordForm.email"
-                placeholder="請輸入您的電子郵件"
+              <input type="email" id="forgot-email" v-model="forgotPasswordForm.email" placeholder="請輸入您的電子郵件"
                 required />
             </div>
             <button type="submit" class="btn-primary" :disabled="isLoading">
               {{ isLoading ? "發送中..." : "發送重設連結" }}
             </button>
-            <button
-              type="button"
-              class="btn-secondary"
-              @click="activeTab = 'login'"
-              style="
+            <button type="button" class="btn-secondary" @click="activeTab = 'login'" style="
                 margin-top: 10px;
                 width: 100%;
                 padding: 14px;
@@ -243,7 +211,18 @@ const handleLogin = async () => {
     showMessage("登入成功！", "success");
 
     setTimeout(() => {
-      router.push("/dashboard");
+      const redirectPath = router.currentRoute.value.query.redirect;
+      if (redirectPath) {
+        router.push({
+          path: redirectPath,
+          query: {
+            ...router.currentRoute.value.query,
+            redirect: undefined // Remove redirect from query
+          }
+        });
+      } else {
+        router.push("/dashboard");
+      }
     }, 1000);
   } catch (error) {
     const errorMessage = getApiErrorMessage(error);
@@ -332,7 +311,18 @@ const handleOAuthLogin = async (provider) => {
     showMessage("登入成功！", "success");
 
     setTimeout(() => {
-      router.push("/dashboard");
+      const redirectPath = router.currentRoute.value.query.redirect;
+      if (redirectPath) {
+        router.push({
+          path: redirectPath,
+          query: {
+            ...router.currentRoute.value.query,
+            redirect: undefined
+          }
+        });
+      } else {
+        router.push("/dashboard");
+      }
     }, 1000);
   } catch (error) {
     showMessage(`${provider === "google" ? "Google" : "Facebook"} 登入失敗：${error.message}`, "error");
@@ -400,6 +390,7 @@ const getApiErrorMessage = (error) => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -469,6 +460,7 @@ const getApiErrorMessage = (error) => {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -637,13 +629,16 @@ const getApiErrorMessage = (error) => {
 }
 
 @keyframes shake {
+
   0%,
   100% {
     transform: translateX(0);
   }
+
   25% {
     transform: translateX(-10px);
   }
+
   75% {
     transform: translateX(10px);
   }

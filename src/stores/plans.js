@@ -142,6 +142,16 @@ export const usePlansStore = defineStore("plans", () => {
 
   // 獲取當前訂閱信息
   const fetchCurrentSubscription = async () => {
+    // Check authentication first
+    const { useAuthStore } = await import("./auth");
+    const authStore = useAuthStore();
+
+    if (!authStore.isAuthenticated) {
+      currentSubscriptionData.value = null;
+      currentPlan.value = null;
+      return null;
+    }
+
     isLoading.value = true;
     error.value = null;
 
@@ -241,6 +251,16 @@ export const usePlansStore = defineStore("plans", () => {
 
   // 更新使用情況
   const updateUsage = async () => {
+    // Check authentication first
+    const { useAuthStore } = await import("./auth");
+    const authStore = useAuthStore();
+
+    if (!authStore.isAuthenticated) {
+      // Reset usage for guests
+      usage.value = { channels: 0, media: 0 };
+      return null;
+    }
+
     try {
       const response = await api.subscription.getUsage();
 

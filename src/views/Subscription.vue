@@ -32,9 +32,7 @@
               <span class="usage-label">訂閱頻道</span>
               <span class="usage-value">{{ usage.channels }} / {{ currentLimits.channels }}</span>
               <div class="usage-bar">
-                <div
-                  class="usage-progress"
-                  :style="{ width: `${(usage.channels / currentLimits.channels) * 100}%` }"
+                <div class="usage-progress" :style="{ width: `${(usage.channels / currentLimits.channels) * 100}%` }"
                   :class="{ 'limit-reached': isChannelLimitReached }"></div>
               </div>
             </div>
@@ -42,9 +40,7 @@
               <span class="usage-label">影音數量</span>
               <span class="usage-value">{{ usage.media }} / {{ currentLimits.media }}</span>
               <div class="usage-bar">
-                <div
-                  class="usage-progress"
-                  :style="{ width: `${(usage.media / currentLimits.media) * 100}%` }"
+                <div class="usage-progress" :style="{ width: `${(usage.media / currentLimits.media) * 100}%` }"
                   :class="{ 'limit-reached': isMediaLimitReached }"></div>
               </div>
             </div>
@@ -54,16 +50,13 @@
 
       <!-- 方案列表 -->
       <div class="plans-grid">
-        <div
-          v-for="plan in allPlans"
-          :key="plan.id"
-          :class="[
-            'plan-card',
-            {
-              current: isCurrentPlan(plan),
-              recommended: plan.id === 'basic',
-            },
-          ]">
+        <div v-for="plan in allPlans" :key="plan.id" :class="[
+          'plan-card',
+          {
+            current: isCurrentPlan(plan),
+            recommended: plan.id === 'basic',
+          },
+        ]">
           <div v-if="plan.id === 'basic'" class="recommended-badge">推薦</div>
 
           <div class="plan-header">
@@ -95,18 +88,16 @@
             </div>
           </div>
 
-          <button
-            :class="[
-              'subscribe-btn',
-              {
-                'current-plan': isCurrentPlan(plan),
-                upgrade: !isCurrentPlan(plan) && getPlanValue(currentPlan) < getPlanValue(plan),
-                downgrade: !isCurrentPlan(plan) && getPlanValue(currentPlan) > getPlanValue(plan),
-              },
-            ]"
-            @click="handlePlanChange(plan)"
-            :disabled="isLoading || isCurrentPlan(plan)">
-            <span v-if="isCurrentPlan(plan)">目前方案</span>
+          <button :class="[
+            'subscribe-btn',
+            {
+              'current-plan': isCurrentPlan(plan),
+              upgrade: (!isCurrentPlan(plan) && getPlanValue(currentPlan) < getPlanValue(plan)) || !authStore.isAuthenticated,
+              downgrade: !isCurrentPlan(plan) && getPlanValue(currentPlan) > getPlanValue(plan),
+            },
+          ]" @click="handlePlanChange(plan)" :disabled="isLoading || isCurrentPlan(plan)">
+            <span v-if="!authStore.isAuthenticated">訂閱</span>
+            <span v-else-if="isCurrentPlan(plan)">目前方案</span>
             <span v-else-if="!currentPlan || getPlanValue(currentPlan) < getPlanValue(plan)">升級</span>
             <span v-else-if="getPlanValue(currentPlan) > getPlanValue(plan)">降級</span>
           </button>
@@ -197,6 +188,9 @@ const billingCycle = ref("monthly");
 
 // 獲取方案的數值（用於比較）
 const getPlanValue = (plan) => {
+  if (!plan) {
+    return 0;
+  }
   const planValues = { free: 0, basic: 1, advance: 2 };
   return planValues[plan.id] || 0;
 };
@@ -221,6 +215,19 @@ const handlePlanChange = async (plan) => {
   }
 
   try {
+    // Check if user is authenticated
+    if (!authStore.isAuthenticated) {
+      router.push({
+        path: '/login',
+        query: {
+          redirect: '/subscription',
+          planId: plan.id,
+          billingCycle: billingCycle.value
+        }
+      });
+      return;
+    }
+
     // 如果是免費方案，顯示確認對話框
     if (currentPlan.value && currentPlan.value.id !== "free" && plan.id === "free") {
       const confirmed = confirm("確定要降級到免費方案嗎？您將失去目前的訂閱功能。");
@@ -377,6 +384,11 @@ const initializePaddle = async () => {
 // 檢查 URL 參數中的付款成功標記
 const checkPaymentSuccess = async () => {
   if (route.query.success === "true") {
+    // Check authentication first
+    if (!authStore.isAuthenticated) {
+      return;
+    }
+
     // 從 URL 參數獲取方案信息
     const planId = route.query.planId;
     const cycle = route.query.billingCycle || plansStore.billingCycle;
@@ -860,6 +872,7 @@ tbody tr:hover {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
