@@ -170,7 +170,7 @@ import { useRouter, useRoute } from "vue-router";
 import { usePlansStore } from "@/stores/plans";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
-import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle } from "@/utils/paddle";
+import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle, getPaddle } from "@/utils/paddle";
 import api from "@/api";
 
 const router = useRouter();
@@ -232,7 +232,7 @@ const handlePlanChange = async (plan) => {
       return;
     }
 
-    // 如果是付費方案，打開 Paddle 付款視窗
+    // 如果是付費方案，先確認訂閱並獲取 Paddle 配置
     if (plan.id !== "free") {
       isLoading.value = true;
 
@@ -243,49 +243,67 @@ const handlePlanChange = async (plan) => {
           throw new Error("無法獲取用戶信息，請先登入");
         }
 
-        // 從方案中獲取 Paddle price ID（用於 Paddle 結帳）
-        const paddlePriceId = getPlanPriceId(plan, billingCycle.value);
-        // 獲取 API 返回的 price ID（用於 customData）
-        const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
-        // 獲取 API 返回的 plan ID（用於 customData）
+        // 獲取 API 返回的 plan ID 和 price ID
         const apiPlanId = plan.apiId;
+        const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
 
-        if (paddlePriceId && apiPriceId && apiPlanId) {
-          // 直接使用方案中的 price ID 打開 Paddle 結帳視窗
-          // 傳入 paddlePriceId（用於 Paddle 結帳）, apiPlanId（API 的 plan.id）, apiPriceId（API 的 price.id）, userId
-          await openSubscriptionCheckout(paddlePriceId, apiPlanId, apiPriceId, userId);
-          return;
+        if (!apiPlanId || !apiPriceId) {
+          throw new Error("無法獲取方案信息，請稍後再試");
         }
 
-        // 如果方案中沒有 price ID，嘗試從後端獲取
-        const checkoutResponse = await api.subscription.createCheckoutSession(plan.id, billingCycle.value);
+        // 先發送 POST 請求到 /v1/subscriptions 確認是否可以訂閱
+        const confirmResponse = await api.subscription.confirmSubscription({
+          planId: apiPlanId,
+          priceId: apiPriceId,
+          billingCycle: billingCycle.value,
+        });
 
-        // 如果後端返回了 checkout URL，使用 URL 打開
-        if (checkoutResponse.checkoutUrl) {
-          // 在 Electron 中打開外部瀏覽器或使用 BrowserWindow
-          window.open(checkoutResponse.checkoutUrl, "_blank");
-          return;
+        // 檢查響應是否成功
+        if (!confirmResponse || confirmResponse.error) {
+          throw new Error(confirmResponse?.message || "無法訂閱此方案，請稍後再試");
         }
 
-        // 如果後端返回了產品 ID，使用產品 ID 打開
-        if (checkoutResponse.productId || checkoutResponse.priceId) {
-          // 獲取 API 返回的 price ID
-          const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
-          const apiPlanId = plan.apiId;
+        // 從響應中獲取 Paddle 配置
+        const paddleConfig = confirmResponse.paddle || {};
 
-          await openSubscriptionCheckout(
-            checkoutResponse.productId || checkoutResponse.priceId,
-            apiPlanId || plan.id,
-            apiPriceId || checkoutResponse.priceId,
-            userId
-          );
-          return;
+        // 如果提供了新的 Paddle client_token，使用它初始化 Paddle
+        if (paddleConfig.client_token) {
+          await initPaddle({
+            token: paddleConfig.client_token,
+            environment: paddleConfig.environment,
+          });
+        } else {
+          // 確保 Paddle 已初始化
+          await initPaddle();
         }
 
-        // 如果都沒有，顯示錯誤
-        throw new Error("無法獲取付款信息，請稍後再試");
+        // 獲取 Paddle 實例
+        const paddle = getPaddle();
+        if (!paddle) {
+          throw new Error("Paddle 尚未初始化，無法進行結帳");
+        }
+
+        // 轉換 items 格式：從字符串數組轉換為 Paddle 需要的格式
+        // API 返回: ["pri_01kaec721413e6j16a749xm9gj"]
+        // Paddle 需要: [{ priceId: "pri_01kaec721413e6j16a749xm9gj", quantity: 1 }]
+        const items = (confirmResponse.items || []).map((priceId) => ({
+          priceId: priceId,
+          quantity: 1,
+        }));
+
+        // 使用 API 返回的資料打開 Paddle 結帳視窗
+        await paddle.Checkout.open({
+          items: items,
+          customer: confirmResponse.customer || {},
+          customData: confirmResponse.customData || {},
+          settings: {
+            displayMode: "overlay",
+            theme: "light",
+            locale: "zh-TW",
+          },
+        });
       } catch (checkoutError) {
-        console.error("創建結帳會話失敗:", checkoutError);
+        console.error("確認訂閱或打開結帳視窗失敗:", checkoutError);
         throw checkoutError;
       } finally {
         isLoading.value = false;

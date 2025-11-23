@@ -194,6 +194,10 @@ const api = {
     getCurrentSubscription: () => {
       return client.get("/v1/subscriptions");
     },
+    // 確認是否可以訂閱（用於訂閱前驗證並獲取 Paddle 配置）
+    confirmSubscription: (data) => {
+      return client.post("/v1/subscriptions", data);
+    },
     // 更新訂閱方案
     updateSubscription: (data) => {
       return client.post("/v1/subscriptions", data);

@@ -37,18 +37,25 @@ const handleCheckoutCompleted = async (eventData) => {
 };
 
 // 初始化 Paddle
-export const initPaddle = async () => {
-  if (paddleInstance) {
+export const initPaddle = async (options = {}) => {
+  // 如果已經初始化且沒有提供新的配置，直接返回現有實例
+  if (paddleInstance && !options.token) {
     return paddleInstance;
   }
 
   try {
-    const clientToken = import.meta.env.VITE_PADDLE_CLIENT_TOKEN;
-    const clientEnvironment = import.meta.env.VITE_PADDLE_ENVIRONMENT;
+    // 優先使用傳入的配置，否則使用環境變數
+    const clientToken = options.token || import.meta.env.VITE_PADDLE_CLIENT_TOKEN;
+    const clientEnvironment = options.environment || import.meta.env.VITE_PADDLE_ENVIRONMENT;
 
     if (!clientToken) {
-      console.warn("未設置 VITE_PADDLE_CLIENT_TOKEN，Paddle 將無法初始化");
+      console.warn("未設置 Paddle Client Token，Paddle 將無法初始化");
       return null;
+    }
+
+    // 如果已經初始化但提供了新的 token，需要重新初始化
+    if (paddleInstance && options.token) {
+      paddleInstance = null;
     }
 
     paddleInstance = await initializePaddle({
@@ -63,7 +70,10 @@ export const initPaddle = async () => {
       },
     });
 
-    paddleInstance.Environment.set(clientEnvironment);
+    // 設置環境（如果提供）
+    if (clientEnvironment && paddleInstance.Environment) {
+      paddleInstance.Environment.set(clientEnvironment);
+    }
 
     // 使用 Checkout.on 監聽 checkout.completed 事件（備用方案）
     if (paddleInstance.Checkout && typeof paddleInstance.Checkout.on === "function") {
@@ -89,8 +99,6 @@ export const openPaddleCheckout = async (options) => {
     if (!paddle) {
       throw new Error("Paddle 尚未初始化");
     }
-
-    console.log(options);
 
     // 打開結帳視窗
     await paddle.Checkout.open({
