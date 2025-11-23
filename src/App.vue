@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <div id="app" :class="{ 'allow-scroll': route.path === '/' }">
+    <router-view />
+  </div>
 </template>
 
 <script setup>
@@ -16,9 +18,10 @@ const authStore = useAuthStore();
 onMounted(async () => {
   await authStore.initAuth();
   
-  // 如果已經登入且當前在登入頁面或根路徑，則跳轉到 dashboard
+  // 如果已經登入且當前在登入頁面，則跳轉到 dashboard
+  // 允許已登入用戶訪問首頁
   if (authStore.isAuthenticated) {
-    if (route.path === '/login' || route.path === '/') {
+    if (route.path === '/login') {
       router.replace('/dashboard');
     }
   }
@@ -42,6 +45,10 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+}
+
+#app.allow-scroll {
+  overflow: auto;
 }
 </style>
 

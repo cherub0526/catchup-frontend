@@ -7,7 +7,7 @@ import './assets/styles/main.css'
 // Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { 
+import {
   faArrowLeft,
   faPlay,
   faPause,
@@ -44,9 +44,13 @@ import {
   faExclamationTriangle,
   faInfoCircle,
   faCheckCircle,
-  faTimesCircle
+  faTimesCircle,
+  faBolt,
+  faMagic,
+  faShieldAlt,
+  faChartBar
 } from '@fortawesome/free-solid-svg-icons'
-import { 
+import {
   faGoogle,
   faFacebook,
   faYoutube
@@ -91,6 +95,10 @@ library.add(
   faInfoCircle,
   faCheckCircle,
   faTimesCircle,
+  faBolt,
+  faMagic,
+  faShieldAlt,
+  faChartBar,
   faGoogle,
   faFacebook,
   faYoutube
