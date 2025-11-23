@@ -3,7 +3,7 @@
     <!-- 頂部導航欄 -->
     <header class="header">
       <div class="header-left">
-        <span class="app-logo">🎬</span>
+        <img src="@/assets/logo.png" alt="Logo" class="app-logo" />
         <h1 class="app-title">{{ appName }}</h1>
       </div>
       <div class="header-right">
@@ -686,11 +686,13 @@ onUnmounted(() => {
 }
 
 .app-logo {
-  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .app-title {
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;

@@ -4,6 +4,7 @@
       <div class="login-box">
         <!-- Logo 區域 -->
         <div class="logo-section">
+          <img src="@/assets/logo.png" alt="Logo" class="logo-image" />
           <h1>{{ appName }}</h1>
           <p class="slogan">{{ appSlogan }}</p>
         </div>
@@ -408,6 +409,13 @@ const getApiErrorMessage = (error) => {
 .logo-section {
   text-align: center;
   margin-bottom: 25px;
+}
+
+.logo-image {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 12px;
+  object-fit: contain;
 }
 
 .logo-section h1 {
