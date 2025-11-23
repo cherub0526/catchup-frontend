@@ -1,24 +1,8 @@
 <template>
   <div class="home-page">
     <!-- 導航欄 -->
-    <nav class="navbar" :class="{ 'navbar-scrolled': isScrolled }">
-      <div class="nav-container">
-        <div class="nav-brand">
-          <img src="@/assets/logo.png" alt="Logo" class="nav-logo" />
-          <span class="nav-title">{{ appName }}</span>
-        </div>
-        <div class="nav-actions">
-          <template v-if="!isAuthenticated">
-            <button class="nav-btn nav-btn-text" @click="router.push('/login')">登入</button>
-            <button class="nav-btn nav-btn-primary" @click="router.push('/login')">開始使用</button>
-          </template>
-          <template v-else>
-            <button class="nav-btn nav-btn-text" @click="handleLogout">登出</button>
-            <button class="nav-btn nav-btn-primary" @click="router.push('/dashboard')">進入儀表板</button>
-          </template>
-        </div>
-      </div>
-    </nav>
+    <!-- 導航欄 -->
+    <AppHeader />
 
     <!-- 英雄區塊 -->
     <section class="hero-section">
@@ -147,65 +131,7 @@
     </section>
 
     <!-- 頁尾 -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-top">
-          <div class="footer-brand-col">
-            <div class="footer-brand">
-              <img src="@/assets/logo.png" alt="Logo" class="footer-logo" />
-              <span class="footer-title">{{ appName }}</span>
-            </div>
-            <p class="footer-desc">{{ appDescription }}</p>
-            <!-- <div class="social-links">
-              <a href="#" class="social-link"><font-awesome-icon :icon="['fab', 'twitter']" /></a>
-              <a href="#" class="social-link"><font-awesome-icon :icon="['fab', 'facebook']" /></a>
-              <a href="#" class="social-link"><font-awesome-icon :icon="['fab', 'instagram']" /></a>
-              <a href="#" class="social-link"><font-awesome-icon :icon="['fab', 'linkedin']" /></a>
-            </div> -->
-          </div>
-
-          <div class="footer-nav-col">
-            <h4 class="footer-heading">產品</h4>
-            <ul class="footer-links">
-              <li><a href="#">功能特色</a></li>
-              <li><router-link to="/subscription">價格方案</router-link></li>
-            </ul>
-          </div>
-
-          <div class="footer-nav-col">
-            <h4 class="footer-heading">資源</h4>
-            <ul class="footer-links">
-              <li><a href="#">使用教學</a></li>
-              <li><router-link to="/faq">常見問答</router-link></li>
-              <li><a href="#">部落格</a></li>
-              <li><a href="#">聯絡我們</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-newsletter-col">
-            <h4 class="footer-heading">訂閱電子報</h4>
-            <p class="newsletter-desc">訂閱我們的電子報，獲取最新的產品更新和科技新知。</p>
-            <form class="newsletter-form" @submit.prevent>
-              <div class="input-group">
-                <input type="email" placeholder="輸入您的 Email" class="newsletter-input" />
-                <button type="submit" class="newsletter-btn">
-                  <font-awesome-icon icon="arrow-right" />
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <div class="footer-legal">
-            <router-link to="/privacy-policy">隱私政策</router-link>
-            <router-link to="/terms-of-service">服務條款</router-link>
-            <router-link to="/cookie-policy">Cookie 政策</router-link>
-          </div>
-          <p class="copyright">&copy; {{ new Date().getFullYear() }} {{ appName }}. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 
@@ -214,6 +140,8 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { APP_NAME, APP_DESCRIPTION } from "@/config/app";
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();

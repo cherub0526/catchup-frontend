@@ -1,11 +1,7 @@
 <template>
     <div class="faq-page">
+        <AppHeader />
         <div class="faq-container">
-            <!-- 返回按鈕 -->
-            <button class="back-btn" @click="goBack">
-                <font-awesome-icon icon="arrow-left" />
-                <span>返回</span>
-            </button>
 
             <div class="faq-header">
                 <h1>常見問題</h1>
@@ -26,12 +22,15 @@
                 </div>
             </div>
         </div>
+        <AppFooter />
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
 
@@ -66,10 +65,6 @@ const faqItems = ref([
 const toggleItem = (index) => {
     faqItems.value[index].isOpen = !faqItems.value[index].isOpen;
 };
-
-const goBack = () => {
-    router.back();
-};
 </script>
 
 <style scoped>
@@ -82,32 +77,9 @@ const goBack = () => {
 }
 
 .faq-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px 80px;
-}
-
-.back-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    color: #374151;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 30px;
-}
-
-.back-btn:hover {
-    background: #f9fafb;
-    border-color: #2563eb;
-    color: #2563eb;
-    transform: translateX(-4px);
+    padding: 120px 20px 80px;
 }
 
 .faq-header {

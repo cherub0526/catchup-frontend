@@ -1,10 +1,7 @@
 <template>
     <div class="policy-page">
+        <AppHeader />
         <div class="policy-container">
-            <button class="back-btn" @click="goBack">
-                <font-awesome-icon icon="arrow-left" />
-                <span>返回</span>
-            </button>
 
             <div class="policy-header">
                 <h1>Cookie 政策</h1>
@@ -49,17 +46,18 @@
                 </section>
             </div>
         </div>
+        <AppFooter />
     </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
 
-const goBack = () => {
-    router.back();
-};
+
 </script>
 
 <style scoped>
@@ -72,32 +70,9 @@ const goBack = () => {
 }
 
 .policy-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px 80px;
-}
-
-.back-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    color: #374151;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 30px;
-}
-
-.back-btn:hover {
-    background: #f9fafb;
-    border-color: #2563eb;
-    color: #2563eb;
-    transform: translateX(-4px);
+    padding: 120px 20px 80px;
 }
 
 .policy-header {

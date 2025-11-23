@@ -1,11 +1,7 @@
 <template>
   <div class="subscription-page">
+    <AppHeader />
     <div class="subscription-container">
-      <!-- 返回按鈕 -->
-      <button class="back-btn" @click="goBack">
-        <font-awesome-icon icon="arrow-left" />
-        <span>返回</span>
-      </button>
 
       <div class="subscription-header">
         <h1>訂閱方案</h1>
@@ -152,6 +148,7 @@
         <button @click="error = null" class="close-btn">×</button>
       </div>
     </div>
+    <AppFooter />
   </div>
 </template>
 
@@ -163,6 +160,8 @@ import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { initPaddle, openSubscriptionCheckout, setupPaddleListeners, destroyPaddle, getPaddle } from "@/utils/paddle";
 import api from "@/api";
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -329,11 +328,6 @@ const handlePlanChange = async (plan) => {
   }
 };
 
-// 返回上一頁
-const goBack = () => {
-  router.back();
-};
-
 // 初始化 Paddle
 const initializePaddle = async () => {
   try {
@@ -441,39 +435,8 @@ onBeforeUnmount(() => {
 .subscription-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px 80px;
+  padding: 120px 20px 80px;
   position: relative;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  color: #374151;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 30px;
-}
-
-.back-btn:hover {
-  background: #f9fafb;
-  border-color: #2563eb;
-  color: #2563eb;
-  transform: translateX(-4px);
-}
-
-.back-btn svg {
-  transition: transform 0.3s ease;
-}
-
-.back-btn:hover svg {
-  transform: translateX(-2px);
 }
 
 .subscription-header {
