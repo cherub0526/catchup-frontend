@@ -105,8 +105,6 @@ export const usePlansStore = defineStore("plans", () => {
         // 轉換 API 返回的方案資料
         plans.value = response.data.map(transformPlanFromAPI);
 
-        console.log(currentPlan.value);
-
         // 如果當前方案存在，同步更新其限制值（使用最新的方案列表）
         if (currentPlan.value) {
           const latestPlan = getPlanById(currentPlan.value.id) || getPlanById(currentPlan.value.apiId);
@@ -200,13 +198,14 @@ export const usePlansStore = defineStore("plans", () => {
   };
 
   // 更新訂閱方案
-  const updateSubscription = async (planId, cycle = "monthly") => {
+  const updateSubscription = async (planId, priceId, cycle = "monthly") => {
     isLoading.value = true;
     error.value = null;
 
     try {
       const response = await api.subscription.updateSubscription({
         planId,
+        priceId,
         billingCycle: cycle,
       });
 

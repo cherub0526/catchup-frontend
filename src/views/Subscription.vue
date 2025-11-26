@@ -227,98 +227,96 @@ const handlePlanChange = async (plan) => {
       return;
     }
 
+    const isFree = plan.price[billingCycle.value].price === 0;
+
     // 如果是免費方案，顯示確認對話框
-    if (currentPlan.value && currentPlan.value.id !== "free" && plan.id === "free") {
+    if (isFree) {
       const confirmed = confirm("確定要降級到免費方案嗎？您將失去目前的訂閱功能。");
       if (!confirmed) return;
 
-      // 直接更新到免費方案
-      await updateSubscription(plan.id, billingCycle.value);
+      // 免費方案直接更新
+      await updateSubscription(plan.apiId, plan.price[billingCycle.value].id, billingCycle.value);
       alert(`成功變更到 ${plan.name} 方案！`);
       return;
     }
 
     // 如果是付費方案，先確認訂閱並獲取 Paddle 配置
-    if (plan.id !== "free") {
-      isLoading.value = true;
 
-      try {
-        // 獲取用戶 ID
-        const userId = authStore.user?.id;
-        if (!userId) {
-          throw new Error("無法獲取用戶信息，請先登入");
-        }
+    isLoading.value = true;
 
-        // 獲取 API 返回的 plan ID 和 price ID
-        const apiPlanId = plan.apiId;
-        const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
-
-        if (!apiPlanId || !apiPriceId) {
-          throw new Error("無法獲取方案信息，請稍後再試");
-        }
-
-        // 先發送 POST 請求到 /v1/subscriptions 確認是否可以訂閱
-        const confirmResponse = await api.subscription.confirmSubscription({
-          planId: apiPlanId,
-          priceId: apiPriceId,
-          billingCycle: billingCycle.value,
-        });
-
-        // 檢查響應是否成功
-        if (!confirmResponse || confirmResponse.error) {
-          throw new Error(confirmResponse?.message || "無法訂閱此方案，請稍後再試");
-        }
-
-        // 從響應中獲取 Paddle 配置
-        const paddleConfig = confirmResponse.paddle || {};
-
-        // 如果提供了新的 Paddle client_token，使用它初始化 Paddle
-        if (paddleConfig.client_token) {
-          await initPaddle({
-            token: paddleConfig.client_token,
-            environment: paddleConfig.environment,
-          });
-        } else {
-          // 確保 Paddle 已初始化
-          await initPaddle();
-        }
-
-        // 獲取 Paddle 實例
-        const paddle = getPaddle();
-        if (!paddle) {
-          throw new Error("Paddle 尚未初始化，無法進行結帳");
-        }
-
-        // 轉換 items 格式：從字符串數組轉換為 Paddle 需要的格式
-        // API 返回: ["pri_01kaec721413e6j16a749xm9gj"]
-        // Paddle 需要: [{ priceId: "pri_01kaec721413e6j16a749xm9gj", quantity: 1 }]
-        const items = (confirmResponse.items || []).map((priceId) => ({
-          priceId: priceId,
-          quantity: 1,
-        }));
-
-        // 使用 API 返回的資料打開 Paddle 結帳視窗
-        await paddle.Checkout.open({
-          items: items,
-          customer: confirmResponse.customer || {},
-          customData: confirmResponse.customData || {},
-          settings: {
-            displayMode: "overlay",
-            theme: "light",
-            locale: "zh-TW",
-          },
-        });
-      } catch (checkoutError) {
-        console.error("確認訂閱或打開結帳視窗失敗:", checkoutError);
-        throw checkoutError;
-      } finally {
-        isLoading.value = false;
+    try {
+      // 獲取用戶 ID
+      const userId = authStore.user?.id;
+      if (!userId) {
+        throw new Error("無法獲取用戶信息，請先登入");
       }
-    } else {
-      // 免費方案直接更新
-      await updateSubscription(plan.id, billingCycle.value);
-      alert(`成功變更到 ${plan.name} 方案！`);
+
+      // 獲取 API 返回的 plan ID 和 price ID
+      const apiPlanId = plan.apiId;
+      const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
+
+      if (!apiPlanId || !apiPriceId) {
+        throw new Error("無法獲取方案信息，請稍後再試");
+      }
+
+      // 先發送 POST 請求到 /v1/subscriptions 確認是否可以訂閱
+      const confirmResponse = await api.subscription.confirmSubscription({
+        planId: apiPlanId,
+        priceId: apiPriceId,
+        billingCycle: billingCycle.value,
+      });
+
+      // 檢查響應是否成功
+      if (!confirmResponse || confirmResponse.error) {
+        throw new Error(confirmResponse?.message || "無法訂閱此方案，請稍後再試");
+      }
+
+      // 從響應中獲取 Paddle 配置
+      const paddleConfig = confirmResponse.paddle || {};
+
+      // 如果提供了新的 Paddle client_token，使用它初始化 Paddle
+      if (paddleConfig.client_token) {
+        await initPaddle({
+          token: paddleConfig.client_token,
+          environment: paddleConfig.environment,
+        });
+      } else {
+        // 確保 Paddle 已初始化
+        await initPaddle();
+      }
+
+      // 獲取 Paddle 實例
+      const paddle = getPaddle();
+      if (!paddle) {
+        throw new Error("Paddle 尚未初始化，無法進行結帳");
+      }
+
+      // 轉換 items 格式：從字符串數組轉換為 Paddle 需要的格式
+      // API 返回: ["pri_01kaec721413e6j16a749xm9gj"]
+      // Paddle 需要: [{ priceId: "pri_01kaec721413e6j16a749xm9gj", quantity: 1 }]
+      const items = (confirmResponse.items || []).map((priceId) => ({
+        priceId: priceId,
+        quantity: 1,
+      }));
+
+      // 使用 API 返回的資料打開 Paddle 結帳視窗
+      await paddle.Checkout.open({
+        items: items,
+        customer: confirmResponse.customer || {},
+        customData: confirmResponse.customData || {},
+        settings: {
+          displayMode: "overlay",
+          theme: "light",
+          locale: "zh-TW",
+        },
+      });
+    } catch (checkoutError) {
+      console.error("確認訂閱或打開結帳視窗失敗:", checkoutError);
+      throw checkoutError;
+    } finally {
+      isLoading.value = false;
     }
+
   } catch (err) {
     console.error("更新方案失敗:", err);
     error.value = err.message || "更新方案失敗，請稍後再試";
@@ -345,7 +343,8 @@ const initializePaddle = async () => {
         if (planId) {
           try {
             // 更新訂閱方案（使用當前的 billingCycle）
-            await updateSubscription(planId, billingCycle.value);
+            // alert(planId)
+            // await updateSubscription(planId, billingCycle.value);
             alert(
               `付款成功！已成功${getPlanValue({ id: planId }) > getPlanValue(currentPlan.value) ? "升級" : "變更"}到方案！`
             );
@@ -385,11 +384,12 @@ const checkPaymentSuccess = async () => {
 
     // 從 URL 參數獲取方案信息
     const planId = route.query.planId;
+    const priceId = route.query.priceId;
     const cycle = route.query.billingCycle || plansStore.billingCycle;
 
     if (planId) {
       try {
-        await updateSubscription(planId, cycle);
+        await updateSubscription(planId, priceId, cycle);
         alert("付款成功！訂閱已更新。");
 
         // 清除 URL 參數
