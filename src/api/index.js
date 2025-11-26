@@ -218,6 +218,10 @@ const api = {
     createCheckoutSession: (planId, billingCycle) => {
       return client.post("/v1/subscriptions/checkout", { planId, billingCycle });
     },
+    // 更新訂閱狀態 (付款成功後)
+    updateSubscriptionStatus: (subscriptionId, data) => {
+      return client.put(`/v1/subscriptions/${subscriptionId}`, data);
+    },
   },
 };
 

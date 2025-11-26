@@ -184,6 +184,7 @@ const { getPlanPrice, getPlanPriceId, getPlanApiPriceId, getYearlySavings, updat
   plansStore;
 
 const billingCycle = ref("monthly");
+const pendingSubscriptionResponse = ref(null);
 
 // 獲取方案的數值（用於比較）
 const getPlanValue = (plan) => {
@@ -242,7 +243,8 @@ const handlePlanChange = async (plan) => {
 
     // 如果是付費方案，先確認訂閱並獲取 Paddle 配置
 
-    isLoading.value = true;
+    // Paddle 本身也有 loading 的效果，所以先取消 isLoading
+    // isLoading.value = true;
 
     try {
       // 獲取用戶 ID
@@ -265,6 +267,9 @@ const handlePlanChange = async (plan) => {
         priceId: apiPriceId,
         billingCycle: billingCycle.value,
       });
+
+      // 保存確認訂閱的回傳結果
+      pendingSubscriptionResponse.value = confirmResponse;
 
       // 檢查響應是否成功
       if (!confirmResponse || confirmResponse.error) {
@@ -330,44 +335,6 @@ const handlePlanChange = async (plan) => {
 const initializePaddle = async () => {
   try {
     await initPaddle();
-
-    // 設置 Paddle 事件監聽器
-    setupPaddleListeners({
-      onCheckoutCompleted: async (data) => {
-        console.log("Paddle 結帳完成:", data);
-
-        // 從 customData 獲取方案信息
-        const customData = data.customData || {};
-        const planId = customData.planId || route.query.planId;
-
-        if (planId) {
-          try {
-            // 更新訂閱方案（使用當前的 billingCycle）
-            // alert(planId)
-            // await updateSubscription(planId, billingCycle.value);
-            alert(
-              `付款成功！已成功${getPlanValue({ id: planId }) > getPlanValue(currentPlan.value) ? "升級" : "變更"}到方案！`
-            );
-
-            // 刷新訂閱信息
-            await plansStore.fetchCurrentSubscription();
-            await plansStore.updateUsage();
-          } catch (err) {
-            console.error("更新訂閱失敗:", err);
-            error.value = "付款成功，但更新訂閱失敗，請聯繫客服";
-          }
-        }
-      },
-      onCheckoutClosed: (data) => {
-        console.log("Paddle 結帳視窗關閉:", data);
-        isLoading.value = false;
-      },
-      onError: (err) => {
-        console.error("Paddle 結帳錯誤:", err);
-        error.value = err.message || "付款過程中發生錯誤";
-        isLoading.value = false;
-      },
-    });
   } catch (err) {
     console.error("初始化 Paddle 失敗:", err);
     // 不阻止應用運行，只是付款功能無法使用

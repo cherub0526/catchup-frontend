@@ -10,7 +10,7 @@ const handleCheckoutCompleted = async (eventData) => {
 
     // 將 Paddle 事件的 callback data 傳送到 /v1/subscriptions
     const api = await import("@/api");
-    await api.default.subscription.updateSubscription(eventData);
+    await api.default.subscription.updateSubscriptionStatus(eventData.custom_data.subscriptionId, eventData);
 
     console.log("已將 Paddle 結帳數據傳送到後端");
 
