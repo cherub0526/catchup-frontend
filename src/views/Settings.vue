@@ -5,28 +5,28 @@
         <font-awesome-icon icon="arrow-left" />
         返回
       </button>
-      <h2>設定</h2>
+      <h2>{{ t('settings') }}</h2>
     </div>
     <div class="settings-container">
       <div class="settings-section">
-        <h3>帳號設定</h3>
+        <h3>{{ t('account_settings') }}</h3>
         <div v-if="loading" class="loading-state">
           載入中...
         </div>
         <template v-else>
           <div class="settings-item">
-            <label>使用者名稱</label>
+            <label>{{ t('username') }}</label>
             <input type="text" v-model="username" placeholder="請輸入使用者名稱" :disabled="loading" />
           </div>
           <div class="settings-item">
-            <label>電子郵件</label>
+            <label>{{ t('email') }}</label>
             <input type="email" v-model="email" placeholder="請輸入電子郵件" :disabled="loading" />
           </div>
         </template>
       </div>
 
       <div class="settings-section">
-        <h3>應用程式設定</h3>
+        <h3>{{ t('app_settings') }}</h3>
         <div class="settings-item checkbox-item">
           <label>
             <input type="checkbox" v-model="notifications" />
@@ -39,13 +39,20 @@
             <span>自動播放影片</span>
           </label>
         </div>
+        <div class="settings-item">
+          <label>{{ t('language') }}</label>
+          <select v-model="locale" class="language-select">
+            <option value="zh-TW">繁體中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
       </div>
 
       <div class="settings-actions">
         <button class="btn-primary" @click="saveSettings" :disabled="loading || saving">
-          {{ saving ? '儲存中...' : '儲存設定' }}
+          {{ saving ? '儲存中...' : t('save') }}
         </button>
-        <button class="btn-secondary" @click="cancelSettings" :disabled="loading || saving">取消</button>
+        <button class="btn-secondary" @click="cancelSettings" :disabled="loading || saving">{{ t('cancel') }}</button>
       </div>
     </div>
 
@@ -70,11 +77,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import api from '@/api'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t, locale } = useI18n()
 
 const username = ref('')
 const email = ref('')
@@ -534,6 +543,23 @@ onUnmounted(() => {
 .message-fade-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+
+.language-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.language-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 </style>
 

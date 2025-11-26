@@ -1,0 +1,11 @@
+{
+  "hello": "你好",
+  "settings": "設定",
+  "language": "語言",
+  "account_settings": "帳號設定",
+  "app_settings": "應用程式設定",
+  "username": "使用者名稱",
+  "email": "電子郵件",
+  "save": "儲存設定",
+  "cancel": "取消"
+}

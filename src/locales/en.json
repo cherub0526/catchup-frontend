@@ -1,0 +1,11 @@
+{
+  "hello": "Hello",
+  "settings": "Settings",
+  "language": "Language",
+  "account_settings": "Account Settings",
+  "app_settings": "Application Settings",
+  "username": "Username",
+  "email": "Email",
+  "save": "Save Settings",
+  "cancel": "Cancel"
+}
