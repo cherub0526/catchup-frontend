@@ -6,14 +6,14 @@
         <div class="logo-section">
           <img src="@/assets/logo.png" alt="Logo" class="logo-image" />
           <h1>{{ appName }}</h1>
-          <p class="slogan">{{ appSlogan }}</p>
+          <p class="slogan">{{ $t('login.slogan') }}</p>
         </div>
 
         <!-- 標籤切換 -->
         <div class="tab-container">
-          <button class="tab-btn" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">登入</button>
+          <button class="tab-btn" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">{{ $t('login.tab_login') }}</button>
           <button class="tab-btn" :class="{ active: activeTab === 'register' }" @click="activeTab = 'register'">
-            註冊
+            {{ $t('login.tab_register') }}
           </button>
         </div>
 
@@ -23,39 +23,39 @@
 
           <form @submit.prevent="handleLogin">
             <div class="input-group">
-              <label for="login-account">帳號</label>
-              <input type="text" id="login-account" v-model="loginForm.account" placeholder="請輸入您的帳號" required />
+              <label for="login-account">{{ $t('login.account') }}</label>
+              <input type="text" id="login-account" v-model="loginForm.account" :placeholder="$t('login.account_placeholder')" required />
             </div>
             <div class="input-group">
-              <label for="login-password">密碼</label>
-              <input type="password" id="login-password" v-model="loginForm.password" placeholder="請輸入您的密碼" required />
+              <label for="login-password">{{ $t('login.password') }}</label>
+              <input type="password" id="login-password" v-model="loginForm.password" :placeholder="$t('login.password_placeholder')" required />
             </div>
             <div class="options">
               <label class="checkbox-container">
                 <input type="checkbox" v-model="loginForm.rememberMe" />
-                <span>記住我</span>
+                <span>{{ $t('login.remember_me') }}</span>
               </label>
-              <a href="#" class="forgot-password" @click.prevent="showForgotPassword">忘記密碼？</a>
+              <a href="#" class="forgot-password" @click.prevent="showForgotPassword">{{ $t('login.forgot_password') }}</a>
             </div>
             <button type="submit" class="btn-primary" :disabled="isLoading">
-              {{ isLoading ? "登入中..." : "登入" }}
+              {{ isLoading ? $t('login.logging_in') : $t('login.login_btn') }}
             </button>
           </form>
 
           <!-- 分隔線 -->
           <div class="divider">
-            <span>或</span>
+            <span>{{ $t('login.or') }}</span>
           </div>
 
           <!-- 社群登入按鈕 -->
           <div class="social-login">
             <button class="btn-social btn-google" @click="handleOAuthLogin('google')">
               <font-awesome-icon :icon="['fab', 'google']" class="social-icon" />
-              使用 Google 繼續
+              {{ $t('login.continue_with_google') }}
             </button>
             <button class="btn-social btn-facebook" @click="handleOAuthLogin('facebook')">
               <font-awesome-icon :icon="['fab', 'facebook']" class="social-icon" />
-              使用 Facebook 繼續
+              {{ $t('login.continue_with_facebook') }}
             </button>
           </div>
         </div>
@@ -66,48 +66,48 @@
 
           <form @submit.prevent="handleRegister">
             <div class="input-group">
-              <label for="register-account">帳號</label>
-              <input type="text" id="register-account" v-model="registerForm.account" placeholder="請輸入您的帳號" required />
+              <label for="register-account">{{ $t('login.account') }}</label>
+              <input type="text" id="register-account" v-model="registerForm.account" :placeholder="$t('login.account_placeholder')" required />
             </div>
             <div class="input-group">
-              <label for="register-email">電子郵件</label>
-              <input type="email" id="register-email" v-model="registerForm.email" placeholder="請輸入您的電子郵件" required />
+              <label for="register-email">{{ $t('login.email') }}</label>
+              <input type="email" id="register-email" v-model="registerForm.email" :placeholder="$t('login.email_placeholder')" required />
             </div>
             <div class="input-group">
-              <label for="register-password">密碼</label>
+              <label for="register-password">{{ $t('login.password') }}</label>
               <input type="password" id="register-password" v-model="registerForm.password"
-                placeholder="請輸入密碼（至少 8 個字元）" required minlength="8" />
+                :placeholder="$t('login.password_min_length')" required minlength="8" />
             </div>
             <div class="input-group">
-              <label for="register-confirm-password">確認密碼</label>
+              <label for="register-confirm-password">{{ $t('login.confirm_password') }}</label>
               <input type="password" id="register-confirm-password" v-model="registerForm.confirmPassword"
-                placeholder="請再次輸入密碼" required />
+                :placeholder="$t('login.confirm_password_placeholder')" required />
             </div>
             <div class="options">
               <label class="checkbox-container">
                 <input type="checkbox" v-model="registerForm.agreeTerms" required />
-                <span>我同意<a href="#" class="link">服務條款</a>和<a href="#" class="link">隱私政策</a></span>
+                <span>{{ $t('login.agree') }}<a href="#" class="link">{{ $t('login.terms') }}</a>{{ $t('login.and') }}<a href="#" class="link">{{ $t('login.privacy') }}</a></span>
               </label>
             </div>
             <button type="submit" class="btn-primary" :disabled="isLoading">
-              {{ isLoading ? "註冊中..." : "註冊" }}
+              {{ isLoading ? $t('login.registering') : $t('login.register_btn') }}
             </button>
           </form>
 
           <!-- 分隔線 -->
           <div class="divider">
-            <span>或</span>
+            <span>{{ $t('login.or') }}</span>
           </div>
 
           <!-- 社群登入按鈕 -->
           <div class="social-login">
             <button class="btn-social btn-google" @click="handleOAuthLogin('google')">
               <font-awesome-icon :icon="['fab', 'google']" class="social-icon" />
-              使用 Google 繼續
+              {{ $t('login.continue_with_google') }}
             </button>
             <button class="btn-social btn-facebook" @click="handleOAuthLogin('facebook')">
               <font-awesome-icon :icon="['fab', 'facebook']" class="social-icon" />
-              使用 Facebook 繼續
+              {{ $t('login.continue_with_facebook') }}
             </button>
           </div>
         </div>
@@ -117,17 +117,17 @@
           <div v-if="message" :class="messageClass">{{ message }}</div>
 
           <div class="forgot-password-header">
-            <h2>忘記密碼？</h2>
-            <p>請輸入您的電子郵件地址，我們將發送重設密碼的連結給您。</p>
+            <h2>{{ $t('login.forgot_password_title') }}</h2>
+            <p>{{ $t('login.forgot_password_desc') }}</p>
           </div>
           <form @submit.prevent="handleForgotPassword">
             <div class="input-group">
-              <label for="forgot-email">電子郵件</label>
-              <input type="email" id="forgot-email" v-model="forgotPasswordForm.email" placeholder="請輸入您的電子郵件"
+              <label for="forgot-email">{{ $t('login.email') }}</label>
+              <input type="email" id="forgot-email" v-model="forgotPasswordForm.email" :placeholder="$t('login.email_placeholder')"
                 required />
             </div>
             <button type="submit" class="btn-primary" :disabled="isLoading">
-              {{ isLoading ? "發送中..." : "發送重設連結" }}
+              {{ isLoading ? $t('login.sending') : $t('login.send_reset_link') }}
             </button>
             <button type="button" class="btn-secondary" @click="activeTab = 'login'" style="
                 margin-top: 10px;
@@ -139,7 +139,7 @@
                 cursor: pointer;
                 font-weight: 600;
               ">
-              返回登入
+              {{ $t('login.back_to_login') }}
             </button>
           </form>
         </div>
@@ -151,15 +151,16 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
-import { APP_NAME, APP_SLOGAN } from "@/config/app";
+import { APP_NAME } from "@/config/app";
 
 const router = useRouter();
+const { t } = useI18n();
 const authStore = useAuthStore();
 
 // 應用配置
 const appName = ref(APP_NAME);
-const appSlogan = ref(APP_SLOGAN.zh);
 
 const activeTab = ref("login");
 const isLoading = ref(false);
@@ -169,7 +170,7 @@ const messageType = ref("");
 const loginForm = ref({
   account: "",
   password: "",
-  rememberMe: false,
+  rememberMe: true,
 });
 
 const registerForm = ref({
@@ -177,7 +178,7 @@ const registerForm = ref({
   email: "",
   password: "",
   confirmPassword: "",
-  agreeTerms: false,
+  agreeTerms: true,
 });
 
 const forgotPasswordForm = ref({
@@ -208,7 +209,7 @@ const handleLogin = async () => {
   try {
     await authStore.login(loginForm.value.account, loginForm.value.password);
     await authStore.initAuth();
-    showMessage("登入成功！", "success");
+    showMessage(t('login.login_success'), "success");
 
     setTimeout(() => {
       const redirectPath = router.currentRoute.value.query.redirect;
@@ -237,17 +238,17 @@ const handleRegister = async () => {
 
   // 驗證密碼
   if (registerForm.value.password !== registerForm.value.confirmPassword) {
-    showMessage("密碼與確認密碼不符", "error");
+    showMessage(t('login.password_mismatch'), "error");
     return;
   }
 
   if (registerForm.value.password.length < 8) {
-    showMessage("密碼長度至少需要 8 個字元", "error");
+    showMessage(t('login.password_length_error'), "error");
     return;
   }
 
   if (!registerForm.value.agreeTerms) {
-    showMessage("請同意服務條款和隱私政策", "error");
+    showMessage(t('login.agree_error'), "error");
     return;
   }
 
@@ -261,7 +262,9 @@ const handleRegister = async () => {
       password_confirmation: registerForm.value.confirmPassword,
     });
 
-    showMessage("註冊成功！請登入", "success");
+
+
+    showMessage(t('login.register_success'), "success");
 
     setTimeout(() => {
       activeTab.value = "login";
@@ -280,7 +283,7 @@ const handleForgotPassword = async () => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(forgotPasswordForm.value.email)) {
-    showMessage("請輸入有效的電子郵件地址", "error");
+    showMessage(t('login.email_invalid'), "error");
     return;
   }
 
@@ -290,14 +293,14 @@ const handleForgotPassword = async () => {
     // 模擬 API 呼叫
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    showMessage("重設密碼連結已發送到您的信箱，請檢查您的電子郵件", "success");
+    showMessage(t('login.reset_link_sent'), "success");
 
     setTimeout(() => {
       forgotPasswordForm.value.email = "";
     }, 2000);
   } catch (error) {
     const errorMessage = getApiErrorMessage(error);
-    showMessage("發送失敗：" + errorMessage, "error");
+    showMessage(t('login.send_failed') + errorMessage, "error");
   } finally {
     isLoading.value = false;
   }
@@ -308,7 +311,7 @@ const handleOAuthLogin = async (provider) => {
 
   try {
     await authStore.oauthLogin(provider);
-    showMessage("登入成功！", "success");
+    showMessage(t('login.login_success'), "success");
 
     setTimeout(() => {
       const redirectPath = router.currentRoute.value.query.redirect;
@@ -325,7 +328,7 @@ const handleOAuthLogin = async (provider) => {
       }
     }, 1000);
   } catch (error) {
-    showMessage(`${provider === "google" ? "Google" : "Facebook"} 登入失敗：${error.message}`, "error");
+    showMessage((provider === "google" ? t('login.google_login_failed') : t('login.facebook_login_failed')) + error.message, "error");
   }
 };
 
@@ -353,7 +356,7 @@ const getApiErrorMessage = (error) => {
     }
   }
 
-  return error.message || "發生未知錯誤";
+  return error.message || t('login.unknown_error');
 };
 </script>
 

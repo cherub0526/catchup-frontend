@@ -95,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import api from '@/api'
@@ -106,6 +106,11 @@ const router = useRouter()
 const authStore = useAuthStore()
 const plansStore = usePlansStore()
 const { t, locale } = useI18n()
+
+// 監聽語言變更並儲存到 localStorage
+watch(locale, (newLocale) => {
+  localStorage.setItem('user-locale', newLocale)
+})
 
 const username = ref('')
 const email = ref('')
