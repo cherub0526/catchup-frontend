@@ -3,7 +3,7 @@
     <div class="settings-header">
       <button class="back-btn" @click="goBack">
         <font-awesome-icon icon="arrow-left" />
-        返回
+        {{ t('back') }}
       </button>
       <h2>{{ t('settings') }}</h2>
     </div>
@@ -20,7 +20,7 @@
               @click="handleCancelSubscription"
               :disabled="cancelingSubscription"
             >
-              {{ cancelingSubscription ? 'Processing...' : t('cancel_subscription') }}
+              {{ cancelingSubscription ? t('processing') : t('cancel_subscription') }}
             </button>
           </div>
         </div>
@@ -29,16 +29,16 @@
       <div class="settings-section">
         <h3>{{ t('account_settings') }}</h3>
         <div v-if="loading" class="loading-state">
-          載入中...
+          {{ t('loading') }}
         </div>
         <template v-else>
           <div class="settings-item">
             <label>{{ t('username') }}</label>
-            <input type="text" v-model="username" placeholder="請輸入使用者名稱" :disabled="loading" />
+            <input type="text" v-model="username" :placeholder="t('username_placeholder')" :disabled="loading" />
           </div>
           <div class="settings-item">
             <label>{{ t('email') }}</label>
-            <input type="email" v-model="email" placeholder="請輸入電子郵件" :disabled="loading" />
+            <input type="email" v-model="email" :placeholder="t('email_placeholder')" :disabled="loading" />
           </div>
         </template>
       </div>
@@ -50,27 +50,27 @@
         <div class="settings-item checkbox-item">
           <label>
             <input type="checkbox" v-model="notifications" />
-            <span>啟用通知</span>
+            <span>{{ t('enable_notifications') }}</span>
           </label>
         </div>
         <div class="settings-item checkbox-item">
           <label>
             <input type="checkbox" v-model="autoPlay" />
-            <span>自動播放影片</span>
+            <span>{{ t('auto_play_videos') }}</span>
           </label>
         </div>
         <div class="settings-item">
           <label>{{ t('language') }}</label>
           <select v-model="locale" class="language-select">
-            <option value="zh-TW">繁體中文</option>
-            <option value="en">English</option>
+            <option value="zh-TW">{{ t('language_zh_tw') }}</option>
+            <option value="en">{{ t('language_en') }}</option>
           </select>
         </div>
       </div>
 
       <div class="settings-actions">
         <button class="btn-primary" @click="saveSettings" :disabled="loading || saving">
-          {{ saving ? '儲存中...' : t('save') }}
+          {{ saving ? t('saving') : t('save') }}
         </button>
         <button class="btn-secondary" @click="cancelSettings" :disabled="loading || saving">{{ t('cancel') }}</button>
       </div>
@@ -139,7 +139,7 @@ const fetchUserData = async () => {
       authStore.user = userData
     }
   } catch (error) {
-    console.error('獲取使用者資料失敗:', error)
+    console.error(t('fetch_user_failed'), error)
     // 如果 API 失敗，嘗試從 auth store 獲取
     if (authStore.user) {
       username.value = authStore.user.name || authStore.user.username || ''
@@ -211,22 +211,22 @@ const getErrorMessage = (error) => {
   // 根據 HTTP 狀態碼提供預設訊息
   if (error?.status) {
     if (error.status === 400) {
-      return '請求資料格式錯誤，請檢查輸入內容'
+      return t('error_400')
     } else if (error.status === 401) {
-      return '登入已過期，請重新登入'
+      return t('error_401')
     } else if (error.status === 403) {
-      return '沒有權限執行此操作'
+      return t('error_403')
     } else if (error.status === 404) {
-      return '找不到請求的資源'
+      return t('error_404')
     } else if (error.status === 409) {
-      return '資料衝突，可能是電子郵件已被使用'
+      return t('error_409')
     } else if (error.status >= 500) {
-      return '伺服器錯誤，請稍後再試'
+      return t('error_500')
     }
   }
   
   // 預設錯誤訊息
-  return '儲存設定失敗，請稍後再試'
+  return t('settings_save_failed')
 }
 
 const goBack = () => {
@@ -236,19 +236,19 @@ const goBack = () => {
 const saveSettings = async () => {
   // 基本驗證
   if (!username.value.trim()) {
-    showMessage('請輸入使用者名稱', 'error')
+    showMessage(t('username_required'), 'error')
     return
   }
   
   if (!email.value.trim()) {
-    showMessage('請輸入電子郵件', 'error')
+    showMessage(t('email_required'), 'error')
     return
   }
   
   // 驗證電子郵件格式
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email.value)) {
-    showMessage('請輸入有效的電子郵件地址', 'error')
+    showMessage(t('email_invalid'), 'error')
     return
   }
   
@@ -273,7 +273,7 @@ const saveSettings = async () => {
     }
     
     // 顯示成功訊息
-    showMessage('設定已成功儲存！', 'success')
+    showMessage(t('settings_saved'), 'success')
   } catch (error) {
     console.error('儲存設定失敗:', error)
     
