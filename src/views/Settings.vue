@@ -9,6 +9,24 @@
     </div>
     <div class="settings-container">
       <div class="settings-section">
+        <h3>{{ t('subscription_settings') }}</h3>
+        <div class="settings-item">
+          <label>{{ t('current_plan') }}</label>
+          <div class="plan-info">
+            <span class="plan-name">{{ plansStore.currentPlan?.name || 'Free' }}</span>
+            <button 
+              v-if="plansStore.currentPlan?.id !== 'free'" 
+              class="btn-danger" 
+              @click="handleCancelSubscription"
+              :disabled="cancelingSubscription"
+            >
+              {{ cancelingSubscription ? 'Processing...' : t('cancel_subscription') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
         <h3>{{ t('account_settings') }}</h3>
         <div v-if="loading" class="loading-state">
           載入中...
@@ -24,6 +42,8 @@
           </div>
         </template>
       </div>
+
+      
 
       <div class="settings-section">
         <h3>{{ t('app_settings') }}</h3>
@@ -80,9 +100,11 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import api from '@/api'
 import { useAuthStore } from '@/stores/auth'
+import { usePlansStore } from '@/stores/plans'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const plansStore = usePlansStore()
 const { t, locale } = useI18n()
 
 const username = ref('')
@@ -91,6 +113,7 @@ const notifications = ref(true)
 const autoPlay = ref(false)
 const loading = ref(false)
 const saving = ref(false)
+const cancelingSubscription = ref(false)
 const message = ref({ text: '', type: 'success' })
 let messageTimer = null
 
@@ -257,6 +280,21 @@ const saveSettings = async () => {
   }
 }
 
+const handleCancelSubscription = async () => {
+  if (!confirm(t('cancel_subscription_confirm'))) return
+  
+  cancelingSubscription.value = true
+  try {
+    await plansStore.cancelSubscription()
+    showMessage(t('subscription_canceled'), 'success')
+  } catch (error) {
+    console.error(error)
+    showMessage(getErrorMessage(error), 'error')
+  } finally {
+    cancelingSubscription.value = false
+  }
+}
+
 const cancelSettings = () => {
   // 取消時重新載入原始資料
   fetchUserData()
@@ -266,6 +304,7 @@ const cancelSettings = () => {
 // 組件掛載時載入使用者資料
 onMounted(() => {
   fetchUserData()
+  plansStore.fetchCurrentSubscription()
 })
 
 // 組件卸載時清理計時器
@@ -434,6 +473,44 @@ onUnmounted(() => {
 .btn-secondary:hover {
   background: #f8f9fa;
   border-color: #d0d0d0;
+}
+
+.btn-danger {
+  padding: 8px 16px;
+  background-color: #fff;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.plan-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.plan-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
 }
 
 .btn-primary:disabled,

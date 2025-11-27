@@ -7,5 +7,10 @@
   "username": "使用者名稱",
   "email": "電子郵件",
   "save": "儲存設定",
-  "cancel": "取消"
+  "cancel": "取消",
+  "subscription_settings": "訂閱設定",
+  "current_plan": "目前方案",
+  "cancel_subscription": "取消訂閱",
+  "cancel_subscription_confirm": "確定要取消訂閱嗎？取消後您將無法使用進階功能。",
+  "subscription_canceled": "訂閱已取消"
 }
