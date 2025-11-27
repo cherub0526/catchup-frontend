@@ -36,6 +36,23 @@ client.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 加入語系 header
+    let locale = localStorage.getItem("user-locale");
+    if (!locale) {
+      // 如果沒有儲存的語系，偵測瀏覽器語言
+      const browserLocale = navigator.language || navigator.userLanguage;
+      // 如果是繁體中文 (zh-TW, zh-HK)，使用 zh-TW，否則使用 en
+      if (browserLocale.toLowerCase().includes('zh-tw') || browserLocale.toLowerCase().includes('zh-hk')) {
+        locale = 'zh-TW';
+      } else {
+        locale = 'en';
+      }
+      // 儲存到 localStorage 供後續使用
+      localStorage.setItem("user-locale", locale);
+    }
+    config.headers["Accept-Language"] = locale;
+
     return config;
   },
   (error) => {
