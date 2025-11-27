@@ -148,5 +148,65 @@
     "terms": "Terms of Service",
     "cookie": "Cookie Policy",
     "rights_reserved": "All rights reserved."
+  },
+  "subscription": {
+    "title": "Subscription Plans",
+    "subtitle": "Choose the plan that suits you best",
+    "billing": {
+      "monthly": "Monthly",
+      "annually": "Annually",
+      "save20": "Save 20%"
+    },
+    "current_plan": {
+      "title": "Your Current Plan: {planName}"
+    },
+    "usage": {
+      "channels": "Subscribed Channels",
+      "media": "Media Count"
+    },
+    "plan_name": {
+      "free": "Free",
+      "basic": "Basic",
+      "advance": "Advance"
+    },
+    "features": {
+      "priority_support": "Priority Support"
+    },
+    "plan": {
+      "recommended": "Recommended",
+      "per_month": "/ Month",
+      "per_year": "/ Year",
+      "yearly_savings": "Save ${amount} per year",
+      "limits": {
+        "channels": "Up to {count} subscribed channels",
+        "media": "Up to {count} media items"
+      }
+    },
+    "button": {
+      "subscribe": "Subscribe",
+      "current": "Current Plan",
+      "upgrade": "Upgrade",
+      "downgrade": "Downgrade"
+    },
+    "comparison": {
+      "title": "Plan Comparison",
+      "feature": "Feature",
+      "priority_support": "Priority Support"
+    },
+    "confirm": {
+      "downgrade": "Are you sure you want to downgrade to the free plan? You will lose current subscription features."
+    },
+    "alert": {
+      "change_success": "Successfully changed to {planName} plan!",
+      "payment_success": "Payment successful! Subscription updated."
+    },
+    "error": {
+      "no_user": "Cannot get user info, please login first",
+      "no_plan_info": "Cannot get plan info, please try again later",
+      "subscribe_failed": "Cannot subscribe to this plan, please try again later",
+      "paddle_not_init": "Paddle not initialized, cannot proceed with checkout",
+      "update_failed": "Update plan failed, please try again later",
+      "payment_success_update_failed": "Payment successful, but subscription update failed. Please contact support."
+    }
   }
 }

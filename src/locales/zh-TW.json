@@ -148,5 +148,65 @@
     "terms": "服務條款",
     "cookie": "Cookie 政策",
     "rights_reserved": "All rights reserved."
+  },
+  "subscription": {
+    "title": "訂閱方案",
+    "subtitle": "選擇最適合您的方案",
+    "billing": {
+      "monthly": "月付",
+      "annually": "年付",
+      "save20": "省 20%"
+    },
+    "current_plan": {
+      "title": "您目前的方案：{planName}"
+    },
+    "usage": {
+      "channels": "訂閱頻道",
+      "media": "影音數量"
+    },
+    "plan_name": {
+      "free": "免費版",
+      "basic": "基礎版",
+      "advance": "進階版"
+    },
+    "features": {
+      "priority_support": "優先客服支援"
+    },
+    "plan": {
+      "recommended": "推薦",
+      "per_month": "/ 月",
+      "per_year": "/ 年",
+      "yearly_savings": "每年節省 ${amount}",
+      "limits": {
+        "channels": "最多 {count} 個訂閱頻道",
+        "media": "最多 {count} 隻影音"
+      }
+    },
+    "button": {
+      "subscribe": "訂閱",
+      "current": "目前方案",
+      "upgrade": "升級",
+      "downgrade": "降級"
+    },
+    "comparison": {
+      "title": "方案比較",
+      "feature": "功能",
+      "priority_support": "優先客服支援"
+    },
+    "confirm": {
+      "downgrade": "確定要降級到免費方案嗎？您將失去目前的訂閱功能。"
+    },
+    "alert": {
+      "change_success": "成功變更到 {planName} 方案！",
+      "payment_success": "付款成功！訂閱已更新。"
+    },
+    "error": {
+      "no_user": "無法獲取用戶信息，請先登入",
+      "no_plan_info": "無法獲取方案信息，請稍後再試",
+      "subscribe_failed": "無法訂閱此方案，請稍後再試",
+      "paddle_not_init": "Paddle 尚未初始化，無法進行結帳",
+      "update_failed": "更新方案失敗，請稍後再試",
+      "payment_success_update_failed": "付款成功，但更新訂閱失敗，請聯繫客服"
+    }
   }
 }

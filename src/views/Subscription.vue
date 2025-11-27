@@ -4,28 +4,28 @@
     <div class="subscription-container">
 
       <div class="subscription-header">
-        <h1>訂閱方案</h1>
-        <p class="subtitle">選擇最適合您的方案</p>
+        <h1>{{ $t('subscription.title') }}</h1>
+        <p class="subtitle">{{ $t('subscription.subtitle') }}</p>
       </div>
 
       <!-- 計費週期切換 -->
       <div class="billing-toggle">
         <button :class="['toggle-btn', { active: billingCycle === 'monthly' }]" @click="billingCycle = 'monthly'">
-          月付
+          {{ $t('subscription.billing.monthly') }}
         </button>
         <button :class="['toggle-btn', { active: billingCycle === 'annually' }]" @click="billingCycle = 'annually'">
-          年付
-          <span class="savings-badge">省 20%</span>
+          {{ $t('subscription.billing.annually') }}
+          <span class="savings-badge">{{ $t('subscription.billing.save20') }}</span>
         </button>
       </div>
 
       <!-- 當前使用情況 -->
       <div v-if="currentPlan" class="current-plan-info">
         <div class="info-card">
-          <h3>您目前的方案：{{ currentPlan.name }}</h3>
+          <h3>{{ $t('subscription.current_plan.title', { planName: currentPlan.name }) }}</h3>
           <div class="usage-stats">
             <div class="usage-item">
-              <span class="usage-label">訂閱頻道</span>
+              <span class="usage-label">{{ $t('subscription.usage.channels') }}</span>
               <span class="usage-value">{{ usage.channels }} / {{ currentLimits.channels }}</span>
               <div class="usage-bar">
                 <div class="usage-progress" :style="{ width: `${(usage.channels / currentLimits.channels) * 100}%` }"
@@ -33,7 +33,7 @@
               </div>
             </div>
             <div class="usage-item">
-              <span class="usage-label">影音數量</span>
+              <span class="usage-label">{{ $t('subscription.usage.media') }}</span>
               <span class="usage-value">{{ usage.media }} / {{ currentLimits.media }}</span>
               <div class="usage-bar">
                 <div class="usage-progress" :style="{ width: `${(usage.media / currentLimits.media) * 100}%` }"
@@ -53,27 +53,27 @@
             recommended: plan.id === 'basic',
           },
         ]">
-          <div v-if="plan.id === 'basic'" class="recommended-badge">推薦</div>
+          <div v-if="plan.id === 'basic'" class="recommended-badge">{{ $t('subscription.plan.recommended') }}</div>
 
           <div class="plan-header">
             <h2 class="plan-name">{{ plan.name }}</h2>
             <div class="plan-price">
               <span class="price-amount">${{ getPlanPrice(plan, billingCycle) }}</span>
-              <span class="price-period">/ {{ billingCycle === "monthly" ? "月" : "年" }}</span>
+              <span class="price-period">{{ billingCycle === "monthly" ? $t('subscription.plan.per_month') : $t('subscription.plan.per_year') }}</span>
             </div>
             <div v-if="billingCycle === 'annually' && plan.price.monthly?.price > 0" class="yearly-savings">
-              每年節省 ${{ getYearlySavings(plan) }}
+              {{ $t('subscription.plan.yearly_savings', { amount: getYearlySavings(plan) }) }}
             </div>
           </div>
 
           <div class="plan-limits">
             <div class="limit-item">
               <font-awesome-icon icon="users" class="icon" />
-              <span>最多 {{ plan.limits.channels }} 個訂閱頻道</span>
+              <span>{{ $t('subscription.plan.limits.channels', { count: plan.limits.channels }) }}</span>
             </div>
             <div class="limit-item">
               <font-awesome-icon icon="video" class="icon" />
-              <span>最多 {{ plan.limits.media }} 隻影音</span>
+              <span>{{ $t('subscription.plan.limits.media', { count: plan.limits.media }) }}</span>
             </div>
           </div>
 
@@ -92,36 +92,36 @@
               downgrade: !isCurrentPlan(plan) && getPlanValue(currentPlan) > getPlanValue(plan),
             },
           ]" @click="handlePlanChange(plan)" :disabled="isLoading || isCurrentPlan(plan)">
-            <span v-if="!authStore.isAuthenticated">訂閱</span>
-            <span v-else-if="isCurrentPlan(plan)">目前方案</span>
-            <span v-else-if="!currentPlan || getPlanValue(currentPlan) < getPlanValue(plan)">升級</span>
-            <span v-else-if="getPlanValue(currentPlan) > getPlanValue(plan)">降級</span>
+            <span v-if="!authStore.isAuthenticated">{{ $t('subscription.button.subscribe') }}</span>
+            <span v-else-if="isCurrentPlan(plan)">{{ $t('subscription.button.current') }}</span>
+            <span v-else-if="!currentPlan || getPlanValue(currentPlan) < getPlanValue(plan)">{{ $t('subscription.button.upgrade') }}</span>
+            <span v-else-if="getPlanValue(currentPlan) > getPlanValue(plan)">{{ $t('subscription.button.downgrade') }}</span>
           </button>
         </div>
       </div>
 
       <!-- 方案比較表 -->
       <div class="comparison-section">
-        <h2>方案比較</h2>
+        <h2>{{ $t('subscription.comparison.title') }}</h2>
         <div class="comparison-table">
           <table>
             <thead>
               <tr>
-                <th>功能</th>
+                <th>{{ $t('subscription.comparison.feature') }}</th>
                 <th v-for="plan in allPlans" :key="plan.id">{{ plan.name }}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>訂閱頻道</td>
-                <td v-for="plan in allPlans" :key="plan.id">{{ plan.limits.channels }} 個</td>
+                <td>{{ $t('subscription.usage.channels') }}</td>
+                <td v-for="plan in allPlans" :key="plan.id">{{ plan.limits.channels }}</td>
               </tr>
               <tr>
-                <td>影音數量</td>
-                <td v-for="plan in allPlans" :key="plan.id">{{ plan.limits.media }} 隻</td>
+                <td>{{ $t('subscription.usage.media') }}</td>
+                <td v-for="plan in allPlans" :key="plan.id">{{ plan.limits.media }}</td>
               </tr>
               <tr>
-                <td>優先客服支援</td>
+                <td>{{ $t('subscription.comparison.priority_support') }}</td>
                 <td v-for="plan in allPlans" :key="plan.id">
                   <font-awesome-icon v-if="plan.id === 'advance'" icon="check" class="check-icon" />
                   <font-awesome-icon v-else icon="times" class="x-icon" />
@@ -155,6 +155,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { usePlansStore } from "@/stores/plans";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
@@ -165,6 +166,7 @@ import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
 const route = useRoute();
+const { t } = useI18n();
 const plansStore = usePlansStore();
 const authStore = useAuthStore();
 
@@ -232,12 +234,12 @@ const handlePlanChange = async (plan) => {
 
     // 如果是免費方案，顯示確認對話框
     if (isFree) {
-      const confirmed = confirm("確定要降級到免費方案嗎？您將失去目前的訂閱功能。");
+      const confirmed = confirm(t('subscription.confirm.downgrade'));
       if (!confirmed) return;
 
       // 免費方案直接更新
       await updateSubscription(plan.apiId, plan.price[billingCycle.value].id, billingCycle.value);
-      alert(`成功變更到 ${plan.name} 方案！`);
+      alert(t('subscription.alert.change_success', { planName: plan.name }));
       return;
     }
 
@@ -250,7 +252,7 @@ const handlePlanChange = async (plan) => {
       // 獲取用戶 ID
       const userId = authStore.user?.id;
       if (!userId) {
-        throw new Error("無法獲取用戶信息，請先登入");
+        throw new Error(t('subscription.error.no_user'));
       }
 
       // 獲取 API 返回的 plan ID 和 price ID
@@ -258,7 +260,7 @@ const handlePlanChange = async (plan) => {
       const apiPriceId = getPlanApiPriceId(plan, billingCycle.value);
 
       if (!apiPlanId || !apiPriceId) {
-        throw new Error("無法獲取方案信息，請稍後再試");
+        throw new Error(t('subscription.error.no_plan_info'));
       }
 
       // 先發送 POST 請求到 /v1/subscriptions 確認是否可以訂閱
@@ -273,7 +275,7 @@ const handlePlanChange = async (plan) => {
 
       // 檢查響應是否成功
       if (!confirmResponse || confirmResponse.error) {
-        throw new Error(confirmResponse?.message || "無法訂閱此方案，請稍後再試");
+        throw new Error(confirmResponse?.message || t('subscription.error.subscribe_failed'));
       }
 
       // 從響應中獲取 Paddle 配置
@@ -293,7 +295,7 @@ const handlePlanChange = async (plan) => {
       // 獲取 Paddle 實例
       const paddle = getPaddle();
       if (!paddle) {
-        throw new Error("Paddle 尚未初始化，無法進行結帳");
+        throw new Error(t('subscription.error.paddle_not_init'));
       }
 
       // 轉換 items 格式：從字符串數組轉換為 Paddle 需要的格式
@@ -324,7 +326,7 @@ const handlePlanChange = async (plan) => {
 
   } catch (err) {
     console.error("更新方案失敗:", err);
-    error.value = err.message || "更新方案失敗，請稍後再試";
+    error.value = err.message || t('subscription.error.update_failed');
     setTimeout(() => {
       error.value = null;
     }, 5000);
@@ -357,7 +359,7 @@ const checkPaymentSuccess = async () => {
     if (planId) {
       try {
         await updateSubscription(planId, priceId, cycle);
-        alert("付款成功！訂閱已更新。");
+        alert(t('subscription.alert.payment_success'));
 
         // 清除 URL 參數
         router.replace({ path: "/subscription", query: {} });
@@ -367,7 +369,7 @@ const checkPaymentSuccess = async () => {
         await plansStore.updateUsage();
       } catch (err) {
         console.error("更新訂閱失敗:", err);
-        error.value = "付款成功，但更新訂閱失敗，請聯繫客服";
+        error.value = t('subscription.error.payment_success_update_failed');
       }
     }
   }
