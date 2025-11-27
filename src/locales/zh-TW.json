@@ -208,5 +208,67 @@
       "update_failed": "更新方案失敗，請稍後再試",
       "payment_success_update_failed": "付款成功，但更新訂閱失敗，請聯繫客服"
     }
+  },
+  "dashboard": {
+    "header": {
+      "subscription_plan": "訂閱方案",
+      "logout": "登出",
+      "manage_plan": "管理方案"
+    },
+    "sidebar": {
+      "media_sources": "影音來源",
+      "subscriptions_count": "{count} 個訂閱"
+    },
+    "content": {
+      "manage_channels": "管理頻道",
+      "latest_videos": "最新影片"
+    },
+    "filters": {
+      "all": "全部",
+      "today": "今天",
+      "week": "一週",
+      "month": "一個月"
+    },
+    "empty": {
+      "no_channels": "尚未新增頻道",
+      "no_channels_desc": "點擊「管理頻道」按鈕來新增您的第一個訂閱頻道",
+      "add_channel": "新增頻道",
+      "no_content": "暫無新內容",
+      "no_content_desc": "您訂閱的頻道尚未有新的內容發佈"
+    },
+    "loading": {
+      "loading_more": "載入更多內容...",
+      "loading_subscriptions": "正在載入訂閱列表...",
+      "all_loaded": "已經載入所有內容（共 {total} 項）"
+    },
+    "modal": {
+      "title": "管理頻道 - {source}",
+      "channel_name": "頻道名稱",
+      "channel_name_placeholder": "請輸入頻道名稱",
+      "channel_url": "頻道連結",
+      "channel_url_placeholder": "請輸入頻道連結",
+      "add_channel": "新增頻道",
+      "cancel": "取消",
+      "current_subscriptions": "目前訂閱",
+      "no_subscriptions": "尚無訂閱",
+      "delete": "刪除"
+    },
+    "sources": {
+      "youtube": {
+        "name": "YouTube",
+        "subtitle": "管理您的 YouTube 訂閱頻道"
+      }
+    },
+    "notifications": {
+      "subscription_added": "訂閱新增成功！",
+      "subscription_deleted": "已取消訂閱",
+      "fill_all_fields": "請填寫所有欄位",
+      "add_failed": "新增失敗，請稍後再試",
+      "delete_failed": "刪除訂閱失敗，請稍後再試"
+    },
+    "confirm": {
+      "logout": "確定要登出嗎？",
+      "delete_subscription": "確定要取消訂閱「{name}」嗎？"
+    }
   }
 }

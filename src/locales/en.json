@@ -208,5 +208,67 @@
       "update_failed": "Update plan failed, please try again later",
       "payment_success_update_failed": "Payment successful, but subscription update failed. Please contact support."
     }
+  },
+  "dashboard": {
+    "header": {
+      "subscription_plan": "Subscription Plan",
+      "logout": "Logout",
+      "manage_plan": "Manage Plan"
+    },
+    "sidebar": {
+      "media_sources": "Media Sources",
+      "subscriptions_count": "{count} subscriptions"
+    },
+    "content": {
+      "manage_channels": "Manage Channels",
+      "latest_videos": "Latest Videos"
+    },
+    "filters": {
+      "all": "All",
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month"
+    },
+    "empty": {
+      "no_channels": "No channels added yet",
+      "no_channels_desc": "Click 'Manage Channels' button to add your first subscription",
+      "add_channel": "Add Channel",
+      "no_content": "No new content",
+      "no_content_desc": "Your subscribed channels haven't published new content yet"
+    },
+    "loading": {
+      "loading_more": "Loading more content...",
+      "loading_subscriptions": "Loading subscription list...",
+      "all_loaded": "All content loaded ({total} items)"
+    },
+    "modal": {
+      "title": "Manage Channels - {source}",
+      "channel_name": "Channel Name",
+      "channel_name_placeholder": "Enter channel name",
+      "channel_url": "Channel URL",
+      "channel_url_placeholder": "Enter channel URL",
+      "add_channel": "Add Channel",
+      "cancel": "Cancel",
+      "current_subscriptions": "Current Subscriptions",
+      "no_subscriptions": "No subscriptions yet",
+      "delete": "Delete"
+    },
+    "sources": {
+      "youtube": {
+        "name": "YouTube",
+        "subtitle": "Manage your YouTube subscriptions"
+      }
+    },
+    "notifications": {
+      "subscription_added": "Subscription added successfully!",
+      "subscription_deleted": "Subscription cancelled",
+      "fill_all_fields": "Please fill in all fields",
+      "add_failed": "Failed to add, please try again later",
+      "delete_failed": "Failed to delete subscription, please try again later"
+    },
+    "confirm": {
+      "logout": "Are you sure you want to logout?",
+      "delete_subscription": "Are you sure you want to unsubscribe from '{name}'?"
+    }
   }
 }

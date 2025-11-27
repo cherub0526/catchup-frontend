@@ -9,7 +9,7 @@
       <div class="header-right">
         <button class="subscription-link-btn" @click="router.push('/subscription')">
           <font-awesome-icon icon="credit-card" />
-          <span>訂閱方案</span>
+          <span>{{ $t('dashboard.header.subscription_plan') }}</span>
         </button>
 
         <!-- 使用者資料區 with popup -->
@@ -25,14 +25,14 @@
               <div class="plan-badge" :class="`plan-${currentPlan?.id || 'free'}`">
                 {{ currentPlan?.name || "Free" }}
               </div>
-              <router-link to="/subscription" class="popup-manage-link"> 管理方案 </router-link>
+              <router-link to="/subscription" class="popup-manage-link">{{ $t('dashboard.header.manage_plan') }}</router-link>
             </div>
 
             <div class="popup-usage">
               <div class="popup-usage-item">
                 <div class="popup-usage-header">
                   <font-awesome-icon icon="users" class="popup-icon" />
-                  <span class="popup-label">訂閱頻道</span>
+                  <span class="popup-label">{{ $t('subscription.usage.channels') }}</span>
                 </div>
                 <div class="popup-stats">
                   <span class="popup-current">{{ usage.channels }}</span>
@@ -50,7 +50,7 @@
               <div class="popup-usage-item">
                 <div class="popup-usage-header">
                   <font-awesome-icon icon="video" class="popup-icon" />
-                  <span class="popup-label">影音數量</span>
+                  <span class="popup-label">{{ $t('subscription.usage.media') }}</span>
                 </div>
                 <div class="popup-stats">
                   <span class="popup-current">{{ usage.media }}</span>
@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <button class="logout-btn" @click="handleLogout">登出</button>
+        <button class="logout-btn" @click="handleLogout">{{ $t('dashboard.header.logout') }}</button>
       </div>
     </header>
 
@@ -77,7 +77,7 @@
       <!-- 左側邊欄 -->
       <aside class="sidebar">
         <div class="sidebar-header">
-          <div class="sidebar-title">影音來源</div>
+          <div class="sidebar-title">{{ $t('dashboard.sidebar.media_sources') }}</div>
         </div>
 
         <ul class="source-list">
@@ -98,7 +98,7 @@
             </div>
             <div class="source-info">
               <div class="source-name">{{ source.name }}</div>
-              <div class="source-count">{{ subscriptionsData[source.id].length }} 個訂閱</div>
+              <div class="source-count">{{ $t('dashboard.sidebar.subscriptions_count', { count: subscriptionsData[source.id].length }) }}</div>
             </div>
             <span class="source-badge">{{ mediaData[source.id].length }}</span>
           </li>
@@ -137,7 +137,7 @@
                 <path
                   d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
               </svg>
-              <span>管理頻道</span>
+              <span>{{ $t('dashboard.content.manage_channels') }}</span>
             </button>
           </div>
         </div>
@@ -149,7 +149,7 @@
 
         <div class="subscriptions-container">
           <div class="subscriptions-header">
-            <h3>最新影片</h3>
+            <h3>{{ $t('dashboard.content.latest_videos') }}</h3>
             <div class="filter-group">
               <button
                 v-for="filter in filters"
@@ -167,19 +167,19 @@
             <!-- 空狀態 -->
             <div v-if="currentSubscriptions.length === 0" class="empty-state">
               <div class="empty-icon">{{ currentSourceConfig.emptyIcon }}</div>
-              <h3>尚未新增頻道</h3>
-              <p>點擊「管理頻道」按鈕來新增您的第一個訂閱頻道</p>
+              <h3>{{ $t('dashboard.empty.no_channels') }}</h3>
+              <p>{{ $t('dashboard.empty.no_channels_desc') }}</p>
               <button class="add-subscription-btn" @click="openManageModal">
                 <font-awesome-icon icon="plus" />
-                <span>新增頻道</span>
+                <span>{{ $t('dashboard.empty.add_channel') }}</span>
               </button>
             </div>
 
             <!-- 影片網格 -->
             <div v-else-if="currentVideos.length === 0" class="empty-state">
               <div class="empty-icon">{{ currentSourceConfig.emptyIcon }}</div>
-              <h3>暫無新內容</h3>
-              <p>您訂閱的頻道尚未有新的內容發佈</p>
+              <h3>{{ $t('dashboard.empty.no_content') }}</h3>
+              <p>{{ $t('dashboard.empty.no_content_desc') }}</p>
             </div>
 
             <div v-else>
@@ -210,12 +210,12 @@
               <!-- 載入更多提示 -->
               <div v-if="isLoading" class="loading-more">
                 <div class="loading-spinner"></div>
-                <p>載入更多內容...</p>
+                <p>{{ $t('dashboard.loading.loading_more') }}</p>
               </div>
 
               <!-- 沒有更多內容提示 -->
               <div v-else-if="!currentPagination.hasNextPage && currentVideos.length > 0" class="no-more-content">
-                <p>已經載入所有內容（共 {{ currentPagination.total }} 項）</p>
+                <p>{{ $t('dashboard.loading.all_loaded', { total: currentPagination.total }) }}</p>
               </div>
             </div>
           </div>
@@ -227,9 +227,7 @@
     <div class="modal" :class="{ show: isModalOpen }" @click="closeModalOutside">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>
-            管理頻道 - <span>{{ currentSourceConfig.name }}</span>
-          </h3>
+          <h3>{{ $t('dashboard.modal.title', { source: currentSourceConfig.name }) }}</h3>
           <button class="close-modal" @click="closeManageModal">
             <font-awesome-icon icon="times" />
           </button>
@@ -238,38 +236,38 @@
           <!-- 新增頻道表單 -->
           <form class="subscription-form" @submit.prevent="handleAddSubscription">
             <div class="form-group">
-              <label for="channel-name">頻道名稱</label>
+              <label for="channel-name">{{ $t('dashboard.modal.channel_name') }}</label>
               <input
                 type="text"
                 id="channel-name"
                 v-model="subscriptionForm.name"
-                placeholder="請輸入頻道名稱"
+                :placeholder="$t('dashboard.modal.channel_name_placeholder')"
                 required />
             </div>
             <div class="form-group">
-              <label for="channel">頻道連結</label>
-              <input type="text" id="channel" v-model="subscriptionForm.url" placeholder="請輸入頻道連結" required />
+              <label for="channel">{{ $t('dashboard.modal.channel_url') }}</label>
+              <input type="text" id="channel" v-model="subscriptionForm.url" :placeholder="$t('dashboard.modal.channel_url_placeholder')" required />
             </div>
             <div class="form-actions">
-              <button type="submit" class="btn-primary">新增頻道</button>
-              <button type="button" class="btn-secondary" @click="resetForm">取消</button>
+              <button type="submit" class="btn-primary">{{ $t('dashboard.modal.add_channel') }}</button>
+              <button type="button" class="btn-secondary" @click="resetForm">{{ $t('dashboard.modal.cancel') }}</button>
             </div>
           </form>
 
           <!-- 訂閱列表 -->
           <div style="margin-top: 30px">
-            <h4 style="margin-bottom: 15px; color: #333; font-size: 16px">目前訂閱</h4>
+            <h4 style="margin-bottom: 15px; color: #333; font-size: 16px">{{ $t('dashboard.modal.current_subscriptions') }}</h4>
 
             <!-- 載入狀態 -->
             <div v-if="subscriptionsStore.isLoading" class="loading-state">
               <div class="loading-spinner"></div>
-              <p>正在載入訂閱列表...</p>
+              <p>{{ $t('dashboard.loading.loading_subscriptions') }}</p>
             </div>
 
             <!-- 訂閱列表 -->
             <div v-else class="subscriptions-list">
               <p v-if="currentSubscriptions.length === 0" style="text-align: center; color: #999; padding: 20px">
-                尚無訂閱
+                {{ $t('dashboard.modal.no_subscriptions') }}
               </p>
               <div v-for="(sub, index) in currentSubscriptions" :key="index" class="subscription-item">
                 <div class="subscription-avatar">{{ sub.title.charAt(0).toUpperCase() }}</div>
@@ -277,7 +275,7 @@
                   <div class="subscription-name">{{ sub.title }}</div>
                   <div class="subscription-url">{{ sub.url }}</div>
                 </div>
-                <button class="delete-subscription-btn" @click="deleteSubscription(index)">刪除</button>
+                <button class="delete-subscription-btn" @click="deleteSubscription(index)">{{ $t('dashboard.modal.delete') }}</button>
               </div>
             </div>
           </div>
@@ -290,6 +288,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useSubscriptionsStore } from "@/stores/subscriptions";
 import { useMediaStore } from "@/stores/media";
@@ -306,6 +305,7 @@ dayjs.extend(relativeTime);
 dayjs.locale("zh-tw");
 
 const router = useRouter();
+const { t } = useI18n();
 const authStore = useAuthStore();
 const subscriptionsStore = useSubscriptionsStore();
 const mediaStore = useMediaStore();
@@ -336,20 +336,20 @@ const subscriptionForm = ref({
   url: "",
 });
 
-const filters = [
-  { label: "全部", value: "all" },
-  { label: "今天", value: "today" },
-  { label: "一週", value: "week" },
-  { label: "一個月", value: "month" },
-];
+const filters = computed(() => [
+  { label: t('dashboard.filters.all'), value: "all" },
+  { label: t('dashboard.filters.today'), value: "today" },
+  { label: t('dashboard.filters.week'), value: "week" },
+  { label: t('dashboard.filters.month'), value: "month" },
+]);
 
-const sources = [
+const sources = computed(() => [
   {
     id: "youtube",
-    name: "YouTube",
+    name: t('dashboard.sources.youtube.name'),
     icon: ["fab", "youtube"],
     color: "#ff0000",
-    subtitle: "管理您的 YouTube 訂閱頻道",
+    subtitle: t('dashboard.sources.youtube.subtitle'),
     emptyIcon: "📺",
     contentType: "影片",
   },
@@ -408,10 +408,10 @@ const sources = [
   //   emptyIcon: "🎥",
   //   contentType: "影片",
   // },
-];
+]);
 
 const currentSourceConfig = computed(() => {
-  return sources.find((s) => s.id === currentSource.value) || sources[0];
+  return sources.value.find((s) => s.id === currentSource.value) || sources.value[0];
 });
 
 const currentSubscriptions = computed(() => subscriptionsStore.currentSubscriptions);
@@ -492,7 +492,7 @@ const resetForm = () => {
 
 const handleAddSubscription = async () => {
   if (!subscriptionForm.value.name || !subscriptionForm.value.url) {
-    alert("請填寫所有欄位");
+    alert(t('dashboard.notifications.fill_all_fields'));
     return;
   }
 
@@ -500,11 +500,11 @@ const handleAddSubscription = async () => {
     await subscriptionsStore.addSubscription(subscriptionForm.value);
     // 重新載入影片列表（重置為第一頁）
     await mediaStore.fetchMedia(currentSource.value, true);
-    showNotification("訂閱新增成功！");
+    showNotification(t('dashboard.notifications.subscription_added'));
     resetForm();
   } catch (error) {
     console.error("新增訂閱失敗:", error);
-    alert(error.message || "新增失敗，請稍後再試");
+    alert(error.message || t('dashboard.notifications.add_failed'));
   }
 };
 
@@ -512,15 +512,15 @@ const deleteSubscription = async (index) => {
   const subscription = currentSubscriptions.value[index];
   const subscriptionName = subscription.title || subscription.name || "此頻道";
 
-  if (confirm(`確定要取消訂閱「${subscriptionName}」嗎？`)) {
+  if (confirm(t('dashboard.confirm.delete_subscription', { name: subscriptionName }))) {
     try {
       await subscriptionsStore.deleteSubscription(index);
       // 重新載入影片列表（重置為第一頁）
       await mediaStore.fetchMedia(currentSource.value, true);
-      showNotification("已取消訂閱");
+      showNotification(t('dashboard.notifications.subscription_deleted'));
     } catch (error) {
       console.error("刪除訂閱失敗:", error);
-      alert("刪除訂閱失敗，請稍後再試");
+      alert(t('dashboard.notifications.delete_failed'));
     }
   }
 };
@@ -538,7 +538,7 @@ const openVideo = (video) => {
 };
 
 const handleLogout = () => {
-  if (confirm("確定要登出嗎？")) {
+  if (confirm(t('dashboard.confirm.logout'))) {
     authStore.logout();
     router.push("/login");
   }
