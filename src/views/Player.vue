@@ -5,18 +5,18 @@
       <div class="header-left">
         <button class="back-btn" @click="goBack">
           <font-awesome-icon icon="arrow-left" />
-          <span>返回</span>
+          <span>{{ $t('player.header.back') }}</span>
         </button>
         <h1 class="video-title">{{ videoData.title }}</h1>
       </div>
       <div class="header-right">
         <button class="header-btn" @click="handleDownload">
           <span>⬇️</span>
-          <span>下載</span>
+          <span>{{ $t('player.header.download') }}</span>
         </button>
         <button class="header-btn" @click="handleShare">
           <span>🔗</span>
-          <span>分享</span>
+          <span>{{ $t('player.header.share') }}</span>
         </button>
       </div>
     </header>
@@ -36,14 +36,14 @@
               :data-plyr-embed-id="videoData.videoId"></div>
             <video v-else id="player" playsinline controls>
               <source v-if="videoData.url" :src="videoData.url" type="video/mp4" />
-              <track kind="captions" label="繁體中文" srclang="zh-TW" default />
+              <track kind="captions" :label="$t('player.captions.traditional_chinese')" srclang="zh-TW" default />
             </video>
           </div>
 
           <!-- 載入狀態覆蓋層 -->
           <div v-if="isLoadingMedia" class="player-placeholder overlay">
             <div class="player-placeholder-icon">⏳</div>
-            <div class="player-placeholder-text">正在載入媒體資料...</div>
+            <div class="player-placeholder-text">{{ $t('player.loading.media') }}</div>
           </div>
           <div v-else-if="mediaLoadError" class="player-placeholder overlay">
             <div class="player-placeholder-icon">❌</div>
@@ -51,7 +51,7 @@
           </div>
           <div v-else-if="!videoLoaded" class="player-placeholder overlay">
             <div class="player-placeholder-icon">🎬</div>
-            <div class="player-placeholder-text">正在載入影片...</div>
+            <div class="player-placeholder-text">{{ $t('player.loading.video') }}</div>
           </div>
         </div>
 
@@ -64,10 +64,10 @@
         <!-- 聊天區域 -->
         <div class="chat-wrapper">
           <div class="chat-header">
-            <h3>AI 助手</h3>
+            <h3>{{ $t('player.chat.title') }}</h3>
             <div class="chat-status">
               <span class="status-dot"></span>
-              <span>線上</span>
+              <span>{{ $t('player.chat.status_online') }}</span>
             </div>
           </div>
 
@@ -75,7 +75,7 @@
             <!-- 歡迎訊息 -->
             <div class="message">
               <div class="message-avatar">🤖</div>
-              <div class="message-content">您好！我是 AI 助手，我可以回答您關於這部影片的任何問題。請隨時提問！</div>
+              <div class="message-content">{{ $t('player.chat.welcome') }}</div>
             </div>
 
             <!-- 聊天訊息 -->
@@ -106,11 +106,11 @@
                 type="text"
                 class="chat-input"
                 v-model="chatInput"
-                placeholder="詢問關於影片的問題..."
+                :placeholder="$t('player.chat.input_placeholder')"
                 autocomplete="off"
                 :disabled="isThinking" />
               <button type="submit" class="send-btn" :disabled="isThinking || !chatInput.trim()">
-                {{ isThinking ? "思考中..." : "發送" }}
+                {{ isThinking ? $t('player.chat.thinking') : $t('player.chat.send') }}
               </button>
             </form>
           </div>
@@ -130,25 +130,25 @@
           <div class="tab-navigation">
             <button :class="['tab-btn', { active: activeTab === 'summary' }]" @click="activeTab = 'summary'">
               <span class="tab-icon">✨</span>
-              <span>AI 總結</span>
+              <span>{{ $t('player.tabs.summary') }}</span>
             </button>
             <button :class="['tab-btn', { active: activeTab === 'timeline' }]" @click="activeTab = 'timeline'">
               <span class="tab-icon">⏱️</span>
-              <span>時間軸</span>
+              <span>{{ $t('player.tabs.timeline') }}</span>
             </button>
           </div>
 
           <!-- AI 總結內容 -->
           <div v-show="activeTab === 'summary'" class="tab-content active">
             <div class="tab-header">
-              <p>由 AI 自動生成</p>
+              <p>{{ $t('player.summary.generated_by_ai') }}</p>
             </div>
 
             <!-- 載入狀態 -->
             <div v-if="isLoadingSummary" class="summary-content">
               <div class="summary-text" style="text-align: center; color: #9ca3af">
                 <div style="font-size: 32px; margin-bottom: 10px">⏳</div>
-                <div>載入 AI 總結中...</div>
+                <div>{{ $t('player.loading.summary') }}</div>
               </div>
             </div>
 
@@ -164,13 +164,13 @@
             <div v-else class="summary-content">
               <!-- 摘要 -->
               <div class="summary-section">
-                <h4><span class="summary-section-icon">📝</span>內容摘要</h4>
+                <h4><span class="summary-section-icon">📝</span>{{ $t('player.summary.content_summary') }}</h4>
                 <div class="summary-text markdown-content" v-html="summaryHtml"></div>
               </div>
 
               <!-- 重點 -->
               <div class="summary-section" v-if="aiSummary.keypoints && aiSummary.keypoints.length > 0">
-                <h4><span class="summary-section-icon">⭐</span>重點整理</h4>
+                <h4><span class="summary-section-icon">⭐</span>{{ $t('player.summary.key_points') }}</h4>
                 <ul class="summary-list">
                   <li v-for="(point, index) in aiSummary.keypoints" :key="index">{{ point }}</li>
                 </ul>
@@ -183,7 +183,7 @@
             <div class="timeline-header-bar fixed-header">
               <button :class="['follow-toggle-btn', { active: autoFollowTimeline }]" @click="handleFollowToggle">
                 <span class="follow-icon">{{ autoFollowTimeline ? "📍" : "📌" }}</span>
-                <span>{{ autoFollowTimeline ? "跟隨中" : "跟隨" }}</span>
+                <span>{{ autoFollowTimeline ? $t('player.timeline.following') : $t('player.timeline.follow') }}</span>
               </button>
               <div class="timeline-selector-wrapper">
                 <select
@@ -192,21 +192,21 @@
                   v-model="selectedCaption"
                   @change="handleCaptionChange">
                   <option v-for="caption in captionsList" :key="caption.id" :value="caption">
-                    {{ caption.locale || caption.name || caption.language || `字幕 ${caption.id}` }}
+                    {{ caption.locale || caption.name || caption.language || `${$t('player.timeline.subtitle')} ${caption.id}` }}
                   </option>
                 </select>
                 <div v-else class="no-captions-hint">
                   <span>📝</span>
-                  <span>暫無字幕</span>
+                  <span>{{ $t('player.timeline.no_captions') }}</span>
                 </div>
               </div>
             </div>
             <div class="timeline-content scrollable">
-              <div v-if="timelineLoading" class="summary-text">載入中...</div>
+              <div v-if="timelineLoading" class="summary-text">{{ $t('player.timeline.loading') }}</div>
               <div v-else-if="timelineError" class="summary-text" style="color: #ef4444">
                 {{ timelineError }}
               </div>
-              <div v-else-if="timelineData.length === 0" class="summary-text" style="color: #9ca3af">尚無字幕內容</div>
+              <div v-else-if="timelineData.length === 0" class="summary-text" style="color: #9ca3af">{{ $t('player.timeline.no_content') }}</div>
               <div v-else>
                 <div
                   v-for="(item, index) in timelineData"
@@ -231,6 +231,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { usePlansStore } from "@/stores/plans";
 import api from "@/api";
 import Plyr from "plyr";
@@ -240,6 +241,7 @@ import { marked } from "marked";
 const route = useRoute();
 const router = useRouter();
 const plansStore = usePlansStore();
+const { t } = useI18n();
 
 // 配置 marked 選項
 marked.setOptions({
@@ -263,7 +265,7 @@ const resizeType = ref(null); // 'vertical' 或 'horizontal'
 
 // 影片資料
 const videoData = ref({
-  title: "載入中...",
+  title: t('player.loading.title'),
   videoId: "",
   url: "",
   duration: 600,
@@ -304,7 +306,7 @@ const autoFollowTimeline = ref(true); // 預設啟用時間軸跟隨
 
 // AI 總結資料
 const aiSummary = ref({
-  overview: "載入中...",
+  overview: t('player.loading.title'),
   keypoints: [],
 });
 
@@ -320,8 +322,8 @@ const progressPercent = computed(() => {
 const summaryHtml = computed(() => {
   if (
     !aiSummary.value.overview ||
-    aiSummary.value.overview === "載入中..." ||
-    aiSummary.value.overview === "暫無 AI 總結"
+    aiSummary.value.overview === t('player.loading.title') ||
+    aiSummary.value.overview === t('player.summary.no_summary')
   ) {
     return aiSummary.value.overview;
   }
@@ -341,7 +343,7 @@ onMounted(async () => {
 
   // 從 URL 參數獲取影片資訊
   const mediaId = route.query.mediaId;
-  const title = route.query.title || "範例影片";
+  const title = route.query.title || t('player.loading.title');
   const url = route.query.url || "";
 
   videoData.value.title = title;
@@ -422,8 +424,8 @@ const fetchMediaDetails = async (mediaId) => {
           await nextTick();
           initPlyrPlayer();
         } else {
-          mediaLoadError.value = "無法從 URL 中提取 YouTube 影片 ID";
-          showNotification("無法載入影片：缺少有效的 YouTube URL");
+          mediaLoadError.value = t('player.errors.no_youtube_id');
+          showNotification(t('player.notifications.video_data_failed'));
         }
       } else {
         // 其他類型的媒體
@@ -439,8 +441,8 @@ const fetchMediaDetails = async (mediaId) => {
     }
   } catch (error) {
     console.error("獲取媒體詳細資料失敗:", error);
-    mediaLoadError.value = error.message || "獲取媒體資料失敗";
-    showNotification("無法載入影片資料，請稍後再試");
+    mediaLoadError.value = error.message || t('player.errors.media_load_failed');
+    showNotification(t('player.notifications.video_data_failed'));
   } finally {
     isLoadingMedia.value = false;
   }
@@ -467,7 +469,7 @@ const fetchAISummary = async () => {
         const longSummary = response.text.long_summary;
 
         // 更新內容摘要 - 顯示 long_summary.content
-        aiSummary.value.overview = longSummary.content || "暫無總結內容";
+        aiSummary.value.overview = longSummary.content || t('player.summary.no_summary');
 
         // 更新重點整理 - 顯示 long_summary.key_points
         aiSummary.value.keypoints = Array.isArray(longSummary.key_points) ? longSummary.key_points : [];
@@ -478,14 +480,14 @@ const fetchAISummary = async () => {
         aiSummary.value.overview = response.text.short_summary;
         aiSummary.value.keypoints = [];
       } else {
-        summaryLoadError.value = "總結數據格式不正確";
-        aiSummary.value.overview = "總結數據格式不正確";
+        summaryLoadError.value = t('player.errors.summary_format_error');
+        aiSummary.value.overview = t('player.errors.summary_format_error');
       }
     }
   } catch (error) {
     console.error("獲取 AI 總結失敗:", error);
     summaryLoadError.value = error.message || "無法載入 AI 總結";
-    aiSummary.value.overview = "暫無 AI 總結";
+    aiSummary.value.overview = t('player.summary.no_summary');
     aiSummary.value.keypoints = [];
     // 不顯示錯誤通知，因為沒有總結是正常的情況
   } finally {
@@ -502,7 +504,7 @@ const initPlyrPlayer = () => {
     const playerElement = document.getElementById("player");
     if (!playerElement) {
       console.error("Player element not found");
-      showNotification("無法載入影片：播放器元素不存在");
+      showNotification(t('player.notifications.video_load_failed'));
       return;
     }
 
@@ -546,7 +548,7 @@ const initPlyrPlayer = () => {
       console.log("Plyr 播放器就緒");
       videoLoaded.value = true;
       duration.value = player.duration || 0;
-      showNotification("影片載入完成");
+      showNotification(t('player.notifications.video_ready'));
     });
 
     player.on("play", () => {
@@ -559,7 +561,7 @@ const initPlyrPlayer = () => {
 
     player.on("ended", () => {
       isPlaying.value = false;
-      showNotification("影片播放完畢");
+      showNotification(t('player.notifications.video_ended'));
     });
 
     player.on("timeupdate", () => {
@@ -570,15 +572,15 @@ const initPlyrPlayer = () => {
 
     player.on("error", (event) => {
       console.error("Plyr 播放器錯誤:", event);
-      mediaLoadError.value = "播放器發生錯誤";
-      showNotification("播放器發生錯誤，請稍後再試");
+      mediaLoadError.value = t('player.errors.player_error');
+      showNotification(t('player.notifications.player_error'));
     });
 
     console.log("Plyr 播放器已創建:", player);
   } catch (error) {
     console.error("初始化 Plyr 播放器失敗:", error);
-    mediaLoadError.value = "初始化播放器失敗";
-    showNotification("初始化播放器失敗，請重新整理頁面");
+    mediaLoadError.value = t('player.errors.player_init_failed');
+    showNotification(t('player.notifications.player_init_failed'));
   }
 };
 
@@ -637,7 +639,7 @@ const seekToTime = (seconds) => {
   if (!player.playing) {
     player.play();
   }
-  showNotification(`已跳轉至 ${formatTime(seconds)}`);
+  showNotification(t('player.notifications.jumped_to', { time: formatTime(seconds) }));
 };
 
 const toggleMute = () => {
@@ -663,11 +665,11 @@ const handleProgressClick = (e) => {
 };
 
 const handleDownload = () => {
-  showNotification("下載功能開發中...");
+  showNotification(t('player.notifications.download_dev'));
 };
 
 const handleShare = () => {
-  showNotification("分享連結已複製到剪貼簿");
+  showNotification(t('player.notifications.share_copied'));
 };
 
 // 將 markdown 轉換為 HTML
@@ -687,7 +689,7 @@ const handleChatSubmit = async () => {
 
   // 檢查是否有 mediaId
   if (!videoData.value.mediaId) {
-    showNotification("無法使用聊天功能：缺少媒體 ID");
+    showNotification(t('player.notifications.chat_no_media'));
     return;
   }
 
@@ -736,8 +738,8 @@ const handleChatSubmit = async () => {
       // 如果回應格式不正確，顯示錯誤訊息
       chatMessages.value.push({
         role: "assistant",
-        content: "抱歉，我無法理解這個回應。請稍後再試。",
-        rawContent: "抱歉，我無法理解這個回應。請稍後再試。",
+        content: t('player.errors.chat_invalid_response'),
+        rawContent: t('player.errors.chat_invalid_response'),
       });
     }
   } catch (error) {
@@ -746,11 +748,11 @@ const handleChatSubmit = async () => {
     // 添加錯誤訊息
     chatMessages.value.push({
       role: "assistant",
-      content: "抱歉，發生錯誤。請稍後再試。",
-      rawContent: "抱歉，發生錯誤。請稍後再試。",
+      content: t('player.errors.chat_error'),
+      rawContent: t('player.errors.chat_error'),
     });
 
-    showNotification("聊天請求失敗，請稍後再試");
+    showNotification(t('player.notifications.chat_failed'));
   } finally {
     isThinking.value = false;
 
@@ -816,7 +818,7 @@ const fetchCaptionContent = async (captionId) => {
           label: segment.text || "",
           description: "",
         }));
-        showNotification("字幕載入成功");
+        showNotification(t('player.notifications.captions_loaded'));
       }
       // 如果是舊的 data 包裝格式
       else if (response?.data?.segments && Array.isArray(response.data.segments)) {
@@ -825,7 +827,7 @@ const fetchCaptionContent = async (captionId) => {
           label: segment.text || "",
           description: "",
         }));
-        showNotification("字幕載入成功");
+        showNotification(t('player.notifications.captions_loaded'));
       }
       // 如果是簡單的陣列格式
       else if (Array.isArray(response.data)) {
@@ -834,19 +836,19 @@ const fetchCaptionContent = async (captionId) => {
           label: item.text || item.content || "",
           description: item.description || "",
         }));
-        showNotification("字幕載入成功");
+        showNotification(t('player.notifications.captions_loaded'));
       }
       // 如果是包含 content 的物件格式（字幕文件內容）
       else if (response.data?.content) {
         parseSubtitles(response.data.content);
-        showNotification("字幕載入成功");
+        showNotification(t('player.notifications.captions_loaded'));
       } else {
-        timelineError.value = "不支援的字幕格式";
+        timelineError.value = t('player.errors.unsupported_caption_format');
       }
     }
   } catch (error) {
     console.error("獲取字幕內容失敗:", error);
-    timelineError.value = "無法載入字幕內容";
+    timelineError.value = t('player.errors.caption_load_failed');
   } finally {
     timelineLoading.value = false;
   }
@@ -898,7 +900,7 @@ const parseSubtitles = (content) => {
     timelineData.value = subtitles;
   } catch (error) {
     console.error("解析字幕失敗:", error);
-    timelineError.value = "解析字幕格式失敗";
+    timelineError.value = t('player.errors.caption_parse_failed');
   }
 };
 
@@ -978,7 +980,7 @@ const loadTimeline = async () => {
     // timelineData.value = await response.json();
   } catch (error) {
     console.error("Error loading timeline:", error);
-    timelineError.value = "無法載入時間軸";
+    timelineError.value = t('player.errors.timeline_load_failed');
   } finally {
     timelineLoading.value = false;
   }

@@ -270,5 +270,74 @@
       "logout": "確定要登出嗎？",
       "delete_subscription": "確定要取消訂閱「{name}」嗎？"
     }
+  },
+  "player": {
+    "header": {
+      "back": "返回",
+      "download": "下載",
+      "share": "分享"
+    },
+    "loading": {
+      "title": "載入中...",
+      "media": "正在載入媒體資料...",
+      "video": "正在載入影片...",
+      "summary": "載入 AI 總結中..."
+    },
+    "chat": {
+      "title": "AI 助手",
+      "status_online": "線上",
+      "welcome": "您好！我是 AI 助手，我可以回答您關於這部影片的任何問題。請隨時提問！",
+      "input_placeholder": "詢問關於影片的問題...",
+      "send": "發送",
+      "thinking": "思考中..."
+    },
+    "tabs": {
+      "summary": "AI 總結",
+      "timeline": "時間軸"
+    },
+    "summary": {
+      "generated_by_ai": "由 AI 自動生成",
+      "content_summary": "內容摘要",
+      "key_points": "重點整理",
+      "no_summary": "暫無 AI 總結"
+    },
+    "timeline": {
+      "follow": "跟隨",
+      "following": "跟隨中",
+      "no_captions": "暫無字幕",
+      "subtitle": "字幕",
+      "loading": "載入中...",
+      "no_content": "尚無字幕內容"
+    },
+    "notifications": {
+      "video_ready": "影片載入完成",
+      "video_ended": "影片播放完畢",
+      "jumped_to": "已跳轉至 {time}",
+      "download_dev": "下載功能開發中...",
+      "share_copied": "分享連結已複製到剪貼簿",
+      "chat_no_media": "無法使用聊天功能：缺少媒體 ID",
+      "chat_failed": "聊天請求失敗，請稍後再試",
+      "captions_loaded": "字幕載入成功",
+      "video_load_failed": "無法載入影片：播放器元素不存在",
+      "player_error": "播放器發生錯誤，請稍後再試",
+      "player_init_failed": "初始化播放器失敗，請重新整理頁面",
+      "video_data_failed": "無法載入影片資料，請稍後再試"
+    },
+    "errors": {
+      "media_load_failed": "獲取媒體資料失敗",
+      "no_youtube_id": "無法從 URL 中提取 YouTube 影片 ID",
+      "summary_format_error": "總結數據格式不正確",
+      "unsupported_caption_format": "不支援的字幕格式",
+      "caption_load_failed": "無法載入字幕內容",
+      "caption_parse_failed": "解析字幕格式失敗",
+      "timeline_load_failed": "無法載入時間軸",
+      "player_error": "播放器發生錯誤",
+      "player_init_failed": "初始化播放器失敗",
+      "chat_error": "抱歉，發生錯誤。請稍後再試。",
+      "chat_invalid_response": "抱歉，我無法理解這個回應。請稍後再試。"
+    },
+    "captions": {
+      "traditional_chinese": "繁體中文"
+    }
   }
 }
