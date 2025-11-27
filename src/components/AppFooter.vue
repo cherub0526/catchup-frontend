@@ -7,33 +7,33 @@
                         <img src="@/assets/logo.png" alt="Logo" class="footer-logo" />
                         <span class="footer-title">{{ appName }}</span>
                     </div>
-                    <p class="footer-desc">{{ appDescription }}</p>
+                    <p class="footer-desc">{{ $t('app.description') }}</p>
                 </div>
 
                 <div class="footer-nav-col">
-                    <h4 class="footer-heading">產品</h4>
+                    <h4 class="footer-heading">{{ $t('footer.products') }}</h4>
                     <ul class="footer-links">
-                        <li><a href="#">功能特色</a></li>
-                        <li><router-link to="/subscription">價格方案</router-link></li>
+                        <li><a href="#">{{ $t('footer.features') }}</a></li>
+                        <li><router-link to="/subscription">{{ $t('footer.pricing') }}</router-link></li>
                     </ul>
                 </div>
 
                 <div class="footer-nav-col">
-                    <h4 class="footer-heading">資源</h4>
+                    <h4 class="footer-heading">{{ $t('footer.resources') }}</h4>
                     <ul class="footer-links">
-                        <li><a href="#">使用教學</a></li>
-                        <li><router-link to="/faq">常見問答</router-link></li>
-                        <li><a href="#">部落格</a></li>
-                        <li><a href="#">聯絡我們</a></li>
+                        <li><a href="#">{{ $t('footer.tutorials') }}</a></li>
+                        <li><router-link to="/faq">{{ $t('footer.faq') }}</router-link></li>
+                        <li><a href="#">{{ $t('footer.blog') }}</a></li>
+                        <li><a href="#">{{ $t('footer.contact') }}</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-newsletter-col">
-                    <h4 class="footer-heading">訂閱電子報</h4>
-                    <p class="newsletter-desc">訂閱我們的電子報，獲取最新的產品更新和科技新知。</p>
+                    <h4 class="footer-heading">{{ $t('footer.newsletter') }}</h4>
+                    <p class="newsletter-desc">{{ $t('footer.newsletter_desc') }}</p>
                     <form class="newsletter-form" @submit.prevent>
                         <div class="input-group">
-                            <input type="email" placeholder="輸入您的 Email" class="newsletter-input" />
+                            <input type="email" :placeholder="$t('footer.email_placeholder')" class="newsletter-input" />
                             <button type="submit" class="newsletter-btn">
                                 <font-awesome-icon icon="arrow-right" />
                             </button>
@@ -44,21 +44,20 @@
 
             <div class="footer-bottom">
                 <div class="footer-legal">
-                    <router-link to="/privacy-policy">隱私政策</router-link>
-                    <router-link to="/terms-of-service">服務條款</router-link>
-                    <router-link to="/cookie-policy">Cookie 政策</router-link>
+                    <router-link to="/privacy-policy">{{ $t('footer.privacy') }}</router-link>
+                    <router-link to="/terms-of-service">{{ $t('footer.terms') }}</router-link>
+                    <router-link to="/cookie-policy">{{ $t('footer.cookie') }}</router-link>
                 </div>
-                <p class="copyright">&copy; {{ new Date().getFullYear() }} {{ appName }}. All rights reserved.</p>
+                <p class="copyright">&copy; {{ new Date().getFullYear() }} {{ appName }}. {{ $t('footer.rights_reserved') }}</p>
             </div>
         </div>
     </footer>
 </template>
 
 <script setup>
-import { APP_NAME, APP_DESCRIPTION } from "@/config/app";
+import { APP_NAME } from "@/config/app";
 
 const appName = APP_NAME;
-const appDescription = APP_DESCRIPTION;
 </script>
 
 <style scoped>

@@ -13,6 +13,9 @@
   "cancel_subscription": "取消訂閱",
   "cancel_subscription_confirm": "確定要取消訂閱嗎？取消後您將無法使用進階功能。",
   "subscription_canceled": "訂閱已取消",
+  "app": {
+    "description": "自動化總結訂閱頻道內容的智能助理"
+  },
   "login": {
     "slogan": "輕鬆跟上節奏，不再錯過精彩",
     "tab_login": "登入",
@@ -55,5 +58,95 @@
     "google_login_failed": "Google 登入失敗：",
     "facebook_login_failed": "Facebook 登入失敗：",
     "unknown_error": "發生未知錯誤"
+  },
+  "home": {
+    "hero": {
+      "badge": "智能訂閱助理",
+      "app_preview_alt": "應用程式預覽",
+      "title_line1": "輕鬆跟上節奏，",
+      "title_line2": "不再錯過精彩",
+      "subtitle": "自動化總結訂閱頻道內容的智能助理，讓您隨時掌握最新資訊，節省時間，專注於真正重要的事情。",
+      "start_now": "立即開始",
+      "dashboard": "進入儀表板",
+      "learn_more": "了解更多",
+      "active_users": "活躍用戶",
+      "supported_channels": "支援頻道",
+      "latest_videos": "最新影片",
+      "just_updated": "剛剛更新",
+      "smart_analysis": "智能分析",
+      "summaries_completed": "已完成摘要"
+    },
+    "features": {
+      "title": "為什麼選擇 CatchUp？",
+      "subtitle": "強大的功能，簡單的使用體驗，為您打造最佳的閱讀環境",
+      "items": {
+        "multi_platform": {
+          "title": "多平台整合",
+          "desc": "一站式管理 YouTube、Spotify、Firstory 等多個平台的訂閱內容，讓資訊獲取更有效率。"
+        },
+        "real_time": {
+          "title": "即時更新",
+          "desc": "自動追蹤頻道最新動態，第一時間推送通知，確保您不錯過任何重要資訊。"
+        },
+        "ai_summary": {
+          "title": "AI 智能摘要",
+          "desc": "運用先進 AI 技術自動生成內容摘要，讓您在幾分鐘內掌握長影片的重點精華。"
+        },
+        "smart_filter": {
+          "title": "智慧篩選",
+          "desc": "強大的篩選工具，可依據時間、類型、關鍵字快速找到您感興趣的內容。"
+        },
+        "personal_notification": {
+          "title": "個人化通知",
+          "desc": "完全自訂的通知設定，只在您真正關心的主題更新時打擾您。"
+        },
+        "privacy": {
+          "title": "隱私安全",
+          "desc": "採用企業級加密技術，嚴格保護您的個人資料與訂閱習慣。"
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "如何使用",
+      "subtitle": "三個簡單步驟，立即開始您的智能閱讀之旅",
+      "steps": {
+        "register": {
+          "title": "註冊帳號",
+          "desc": "使用 Email 或社群帳號快速註冊，立即開啟您的智能閱讀體驗。"
+        },
+        "connect": {
+          "title": "連結頻道",
+          "desc": "簡單幾步連結您喜愛的 YouTube 或 Podcast 頻道，支援批次匯入。"
+        },
+        "enjoy": {
+          "title": "享受服務",
+          "desc": "坐下來放鬆，讓 AI 為您整理重點，隨時隨地掌握最新資訊。"
+        }
+      }
+    },
+    "cta": {
+      "title": "準備好提升效率了嗎？",
+      "subtitle": "加入數萬名使用者的行列，體驗 AI 帶來的資訊革命",
+      "start_free": "免費開始使用",
+      "dashboard": "進入儀表板"
+    },
+    "logout_confirm": "確定要登出嗎？"
+  },
+  "footer": {
+    "products": "產品",
+    "features": "功能特色",
+    "pricing": "價格方案",
+    "resources": "資源",
+    "tutorials": "使用教學",
+    "faq": "常見問答",
+    "blog": "部落格",
+    "contact": "聯絡我們",
+    "newsletter": "訂閱電子報",
+    "newsletter_desc": "訂閱我們的電子報，獲取最新的產品更新和科技新知。",
+    "email_placeholder": "輸入您的 Email",
+    "privacy": "隱私政策",
+    "terms": "服務條款",
+    "cookie": "Cookie 政策",
+    "rights_reserved": "All rights reserved."
   }
 }

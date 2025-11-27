@@ -13,6 +13,9 @@
   "cancel_subscription": "Cancel Subscription",
   "cancel_subscription_confirm": "Are you sure you want to cancel? You will lose access to premium features.",
   "subscription_canceled": "Subscription canceled",
+  "app": {
+    "description": "An intelligent assistant that automatically summarizes subscribed channel content."
+  },
   "login": {
     "slogan": "Stay caught up, without the catch.",
     "tab_login": "Login",
@@ -55,5 +58,95 @@
     "google_login_failed": "Google login failed: ",
     "facebook_login_failed": "Facebook login failed: ",
     "unknown_error": "Unknown error occurred"
+  },
+  "home": {
+    "hero": {
+      "badge": "Smart Subscription Assistant",
+      "app_preview_alt": "App Preview",
+      "title_line1": "Stay in the loop,",
+      "title_line2": "Never miss a beat",
+      "subtitle": "An intelligent assistant that automatically summarizes your subscription content, keeping you up-to-date, saving time, and letting you focus on what matters most.",
+      "start_now": "Start Now",
+      "dashboard": "Go to Dashboard",
+      "learn_more": "Learn More",
+      "active_users": "Active Users",
+      "supported_channels": "Supported Channels",
+      "latest_videos": "Latest Videos",
+      "just_updated": "Just Updated",
+      "smart_analysis": "Smart Analysis",
+      "summaries_completed": "Summaries Completed"
+    },
+    "features": {
+      "title": "Why Choose CatchUp?",
+      "subtitle": "Powerful features, simple experience, creating the best reading environment for you.",
+      "items": {
+        "multi_platform": {
+          "title": "Multi-platform Integration",
+          "desc": "Manage subscriptions from YouTube, Spotify, Firstory, and more in one place for efficient information retrieval."
+        },
+        "real_time": {
+          "title": "Real-time Updates",
+          "desc": "Automatically track channel updates and send notifications instantly so you never miss important info."
+        },
+        "ai_summary": {
+          "title": "AI Smart Summary",
+          "desc": "Use advanced AI to automatically generate content summaries, letting you grasp the key points of long videos in minutes."
+        },
+        "smart_filter": {
+          "title": "Smart Filtering",
+          "desc": "Powerful filtering tools to quickly find content you care about based on time, type, and keywords."
+        },
+        "personal_notification": {
+          "title": "Personalized Notifications",
+          "desc": "Fully customizable notification settings, only disturbing you when topics you truly care about are updated."
+        },
+        "privacy": {
+          "title": "Privacy & Security",
+          "desc": "Enterprise-grade encryption to strictly protect your personal data and subscription habits."
+        }
+      }
+    },
+    "how_it_works": {
+      "title": "How It Works",
+      "subtitle": "Three simple steps to start your smart reading journey.",
+      "steps": {
+        "register": {
+          "title": "Register Account",
+          "desc": "Quickly register with Email or social accounts to start your smart reading experience immediately."
+        },
+        "connect": {
+          "title": "Connect Channels",
+          "desc": "Connect your favorite YouTube or Podcast channels in a few steps, supporting batch import."
+        },
+        "enjoy": {
+          "title": "Enjoy Service",
+          "desc": "Sit back and relax, let AI organize the key points for you, and stay updated anytime, anywhere."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to boost efficiency?",
+      "subtitle": "Join tens of thousands of users and experience the information revolution brought by AI.",
+      "start_free": "Start for Free",
+      "dashboard": "Go to Dashboard"
+    },
+    "logout_confirm": "Are you sure you want to logout?"
+  },
+  "footer": {
+    "products": "Products",
+    "features": "Features",
+    "pricing": "Pricing",
+    "resources": "Resources",
+    "tutorials": "Tutorials",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "contact": "Contact Us",
+    "newsletter": "Subscribe to Newsletter",
+    "newsletter_desc": "Subscribe to our newsletter for the latest product updates and tech news.",
+    "email_placeholder": "Enter your Email",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookie": "Cookie Policy",
+    "rights_reserved": "All rights reserved."
   }
 }

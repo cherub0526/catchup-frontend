@@ -10,53 +10,53 @@
         <div class="hero-content">
           <div class="hero-badge">
             <span class="badge-dot"></span>
-            智能訂閱助理
+            {{ $t('home.hero.badge') }}
           </div>
           <h1 class="hero-title">
-            輕鬆跟上節奏，<br />
-            <span class="gradient-text">不再錯過精彩</span>
+            {{ $t('home.hero.title_line1') }}<br />
+            <span class="gradient-text">{{ $t('home.hero.title_line2') }}</span>
           </h1>
           <p class="hero-subtitle">
-            自動化總結訂閱頻道內容的智能助理，讓您隨時掌握最新資訊，節省時間，專注於真正重要的事情。
+            {{ $t('home.hero.subtitle') }}
           </p>
           <div class="hero-actions">
             <button v-if="!isAuthenticated" class="btn-lg btn-primary" @click="router.push('/login')">
-              <span>立即開始</span>
+              <span>{{ $t('home.hero.start_now') }}</span>
               <font-awesome-icon icon="arrow-right" />
             </button>
             <button v-else class="btn-lg btn-primary" @click="router.push('/dashboard')">
-              <span>進入儀表板</span>
+              <span>{{ $t('home.hero.dashboard') }}</span>
               <font-awesome-icon icon="arrow-right" />
             </button>
             <button class="btn-lg btn-secondary" @click="scrollToFeatures">
-              <span>了解更多</span>
+              <span>{{ $t('home.hero.learn_more') }}</span>
               <font-awesome-icon icon="chevron-down" />
             </button>
           </div>
           <div class="hero-stats">
             <div class="stat-item">
               <span class="stat-value">10k+</span>
-              <span class="stat-label">活躍用戶</span>
+              <span class="stat-label">{{ $t('home.hero.active_users') }}</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
               <span class="stat-value">500+</span>
-              <span class="stat-label">支援頻道</span>
+              <span class="stat-label">{{ $t('home.hero.supported_channels') }}</span>
             </div>
           </div>
         </div>
         <div class="hero-image-container">
           <div class="hero-blob"></div>
           <div class="hero-image-wrapper">
-            <img src="@/assets/logo2.png" alt="App Preview" class="hero-img" />
+            <img src="@/assets/logo2.png" :alt="$t('home.hero.app_preview_alt')" class="hero-img" />
             <!-- Floating Cards -->
             <div class="floating-card card-video">
               <div class="card-icon icon-video">
                 <font-awesome-icon icon="video" />
               </div>
               <div class="card-content">
-                <span class="card-label">最新影片</span>
-                <span class="card-value">剛剛更新</span>
+                <span class="card-label">{{ $t('home.hero.latest_videos') }}</span>
+                <span class="card-value">{{ $t('home.hero.just_updated') }}</span>
               </div>
             </div>
             <div class="floating-card card-analytics">
@@ -64,8 +64,8 @@
                 <font-awesome-icon icon="chart-bar" />
               </div>
               <div class="card-content">
-                <span class="card-label">智能分析</span>
-                <span class="card-value">已完成摘要</span>
+                <span class="card-label">{{ $t('home.hero.smart_analysis') }}</span>
+                <span class="card-value">{{ $t('home.hero.summaries_completed') }}</span>
               </div>
             </div>
           </div>
@@ -77,8 +77,8 @@
     <section class="features-section" ref="featuresSection">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">為什麼選擇 CatchUp？</h2>
-          <p class="section-subtitle">強大的功能，簡單的使用體驗，為您打造最佳的閱讀環境</p>
+          <h2 class="section-title">{{ $t('home.features.title') }}</h2>
+          <p class="section-subtitle">{{ $t('home.features.subtitle') }}</p>
         </div>
 
         <div class="features-grid">
@@ -97,8 +97,8 @@
     <section class="how-it-works-section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">如何使用</h2>
-          <p class="section-subtitle">三個簡單步驟，立即開始您的智能閱讀之旅</p>
+          <h2 class="section-title">{{ $t('home.how_it_works.title') }}</h2>
+          <p class="section-subtitle">{{ $t('home.how_it_works.subtitle') }}</p>
         </div>
 
         <div class="steps-wrapper">
@@ -117,14 +117,14 @@
     <!-- CTA 區塊 -->
     <section class="cta-section">
       <div class="cta-content">
-        <h2 class="cta-title">準備好提升效率了嗎？</h2>
-        <p class="cta-subtitle">加入數萬名使用者的行列，體驗 AI 帶來的資訊革命</p>
+        <h2 class="cta-title">{{ $t('home.cta.title') }}</h2>
+        <p class="cta-subtitle">{{ $t('home.cta.subtitle') }}</p>
         <button v-if="!isAuthenticated" class="btn-lg btn-white" @click="router.push('/login')">
-          <span>免費開始使用</span>
+          <span>{{ $t('home.cta.start_free') }}</span>
           <font-awesome-icon icon="arrow-right" />
         </button>
         <button v-else class="btn-lg btn-white" @click="router.push('/dashboard')">
-          <span>進入儀表板</span>
+          <span>{{ $t('home.cta.dashboard') }}</span>
           <font-awesome-icon icon="arrow-right" />
         </button>
       </div>
@@ -138,12 +138,14 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { APP_NAME, APP_DESCRIPTION } from "@/config/app";
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
 
 const router = useRouter();
+const { t } = useI18n();
 const authStore = useAuthStore();
 const appName = APP_NAME;
 const appDescription = APP_DESCRIPTION;
@@ -164,7 +166,7 @@ onUnmounted(() => {
 });
 
 const handleLogout = () => {
-  if (confirm("確定要登出嗎？")) {
+  if (confirm(t('home.logout_confirm'))) {
     authStore.logout();
     router.push("/login");
   }
@@ -172,65 +174,65 @@ const handleLogout = () => {
 
 const featuresSection = ref(null);
 
-const features = [
+const features = computed(() => [
   {
     icon: "video",
-    title: "多平台整合",
-    description: "一站式管理 YouTube、Spotify、Firstory 等多個平台的訂閱內容，讓資訊獲取更有效率。",
+    title: t('home.features.items.multi_platform.title'),
+    description: t('home.features.items.multi_platform.desc'),
     color: "#4f46e5",
     bg: "#eef2ff",
   },
   {
     icon: "bolt",
-    title: "即時更新",
-    description: "自動追蹤頻道最新動態，第一時間推送通知，確保您不錯過任何重要資訊。",
+    title: t('home.features.items.real_time.title'),
+    description: t('home.features.items.real_time.desc'),
     color: "#ec4899",
     bg: "#fce7f3",
   },
   {
     icon: "magic",
-    title: "AI 智能摘要",
-    description: "運用先進 AI 技術自動生成內容摘要，讓您在幾分鐘內掌握長影片的重點精華。",
+    title: t('home.features.items.ai_summary.title'),
+    description: t('home.features.items.ai_summary.desc'),
     color: "#06b6d4",
     bg: "#cffafe",
   },
   {
     icon: "filter",
-    title: "智慧篩選",
-    description: "強大的篩選工具，可依據時間、類型、關鍵字快速找到您感興趣的內容。",
+    title: t('home.features.items.smart_filter.title'),
+    description: t('home.features.items.smart_filter.desc'),
     color: "#10b981",
     bg: "#d1fae5",
   },
   {
     icon: "bell",
-    title: "個人化通知",
-    description: "完全自訂的通知設定，只在您真正關心的主題更新時打擾您。",
+    title: t('home.features.items.personal_notification.title'),
+    description: t('home.features.items.personal_notification.desc'),
     color: "#f59e0b",
     bg: "#fef3c7",
   },
   {
     icon: "shield-alt",
-    title: "隱私安全",
-    description: "採用企業級加密技術，嚴格保護您的個人資料與訂閱習慣。",
+    title: t('home.features.items.privacy.title'),
+    description: t('home.features.items.privacy.desc'),
     color: "#8b5cf6",
     bg: "#ede9fe",
   },
-];
+]);
 
-const steps = [
+const steps = computed(() => [
   {
-    title: "註冊帳號",
-    description: "使用 Email 或社群帳號快速註冊，立即開啟您的智能閱讀體驗。",
+    title: t('home.how_it_works.steps.register.title'),
+    description: t('home.how_it_works.steps.register.desc'),
   },
   {
-    title: "連結頻道",
-    description: "簡單幾步連結您喜愛的 YouTube 或 Podcast 頻道，支援批次匯入。",
+    title: t('home.how_it_works.steps.connect.title'),
+    description: t('home.how_it_works.steps.connect.desc'),
   },
   {
-    title: "享受服務",
-    description: "坐下來放鬆，讓 AI 為您整理重點，隨時隨地掌握最新資訊。",
+    title: t('home.how_it_works.steps.enjoy.title'),
+    description: t('home.how_it_works.steps.enjoy.desc'),
   },
-];
+]);
 
 const scrollToFeatures = () => {
   if (featuresSection.value) {
