@@ -2,17 +2,17 @@
     <nav class="navbar" :class="{ 'navbar-scrolled': isScrolled }">
         <div class="nav-container">
             <div class="nav-brand" @click="router.push('/')" style="cursor: pointer">
-                <img src="@/assets/logo.png" alt="Logo" class="nav-logo" />
+                <img src="@/assets/logo.png" :alt="t('header.logo_alt')" class="nav-logo" />
                 <span class="nav-title">{{ appName }}</span>
             </div>
             <div class="nav-actions">
                 <template v-if="!isAuthenticated">
-                    <button class="nav-btn nav-btn-text" @click="router.push('/login')">登入</button>
-                    <button class="nav-btn nav-btn-primary" @click="router.push('/login')">開始使用</button>
+                    <button class="nav-btn nav-btn-text" @click="router.push('/login')">{{ t('header.login') }}</button>
+                    <button class="nav-btn nav-btn-primary" @click="router.push('/login')">{{ t('header.start_now') }}</button>
                 </template>
                 <template v-else>
-                    <button class="nav-btn nav-btn-text" @click="handleLogout">登出</button>
-                    <button class="nav-btn nav-btn-primary" @click="router.push('/dashboard')">進入儀表板</button>
+                    <button class="nav-btn nav-btn-text" @click="handleLogout">{{ t('header.logout') }}</button>
+                    <button class="nav-btn nav-btn-primary" @click="router.push('/dashboard')">{{ t('header.dashboard') }}</button>
                 </template>
             </div>
         </div>
@@ -22,10 +22,12 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { APP_NAME } from "@/config/app";
 
 const router = useRouter();
+const { t } = useI18n();
 const authStore = useAuthStore();
 const appName = APP_NAME;
 
@@ -45,7 +47,7 @@ onUnmounted(() => {
 });
 
 const handleLogout = () => {
-    if (confirm("確定要登出嗎？")) {
+    if (confirm(t('header.logout_confirm'))) {
         authStore.logout();
         router.push("/login");
     }

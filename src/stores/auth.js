@@ -34,6 +34,15 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const forgotPassword = async (account) => {
+    try {
+      const response = await api.auth.forgotPassword(account);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = () => {
     token.value = null;
     isAuthenticated.value = false;
@@ -107,6 +116,7 @@ export const useAuthStore = defineStore("auth", () => {
     isInitialized,
     login,
     register,
+    forgotPassword,
     logout,
     oauthLogin,
     initAuth,

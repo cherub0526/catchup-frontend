@@ -60,8 +60,8 @@
           </label>
         </div>
         <div class="settings-item">
-          <label>{{ t('language') }}</label>
-          <select v-model="locale" class="language-select">
+          <label>{{ t('ai_response_language') }}</label>
+          <select v-model="preferredLanguage" class="language-select">
             <option value="zh-TW">{{ t('language_zh_tw') }}</option>
             <option value="en">{{ t('language_en') }}</option>
           </select>
@@ -107,13 +107,9 @@ const authStore = useAuthStore()
 const plansStore = usePlansStore()
 const { t, locale } = useI18n()
 
-// 監聽語言變更並儲存到 localStorage
-watch(locale, (newLocale) => {
-  localStorage.setItem('user-locale', newLocale)
-})
-
 const username = ref('')
 const email = ref('')
+const preferredLanguage = ref('zh-TW')
 const notifications = ref(true)
 const autoPlay = ref(false)
 const loading = ref(false)
@@ -137,6 +133,11 @@ const fetchUserData = async () => {
       email.value = userData.email || ''
       // 更新 auth store
       authStore.user = userData
+    }
+    
+    // 設定偏好語言
+    if (authStore.user) {
+      preferredLanguage.value = authStore.user.preferred_language || locale.value
     }
   } catch (error) {
     console.error(t('fetch_user_failed'), error)
@@ -260,6 +261,7 @@ const saveSettings = async () => {
     const updateData = {
       name: username.value.trim(),
       email: email.value.trim(),
+      preferred_language: preferredLanguage.value
     }
     
     const response = await api.user.updateProfile(updateData)

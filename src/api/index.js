@@ -163,6 +163,9 @@ const api = {
     logout: () => {
       return client.post("/v1/logout");
     },
+    forgotPassword: (account) => {
+      return client.post("/v1/auth/forgot-password", { account });
+    },
   },
   user: {
     getCurrentUser: () => {

@@ -48,6 +48,12 @@
                     <router-link to="/terms-of-service">{{ $t('footer.terms') }}</router-link>
                     <router-link to="/cookie-policy">{{ $t('footer.cookie') }}</router-link>
                 </div>
+                <div class="footer-lang">
+                    <select v-model="locale" class="lang-select">
+                        <option value="zh-TW">繁體中文</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
                 <p class="copyright">&copy; {{ new Date().getFullYear() }} {{ appName }}. {{ $t('footer.rights_reserved') }}</p>
             </div>
         </div>
@@ -56,8 +62,15 @@
 
 <script setup>
 import { APP_NAME } from "@/config/app";
+import { useI18n } from "vue-i18n";
+import { watch } from "vue";
 
+const { t, locale } = useI18n();
 const appName = APP_NAME;
+
+watch(locale, (newLocale) => {
+    localStorage.setItem('user-locale', newLocale);
+});
 </script>
 
 <style scoped>
@@ -239,5 +252,27 @@ const appName = APP_NAME;
     .footer-legal {
         justify-content: center;
     }
+}
+
+.lang-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.lang-select:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.lang-select option {
+    background: #0f172a;
+    color: white;
 }
 </style>

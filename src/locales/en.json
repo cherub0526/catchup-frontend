@@ -1,9 +1,18 @@
 {
   "hello": "Hello",
+  "header": {
+    "login": "Login",
+    "logo_alt": "Logo",
+    "start_now": "Start Now",
+    "logout": "Logout",
+    "dashboard": "Go to Dashboard",
+    "logout_confirm": "Are you sure you want to logout?"
+  },
   "settings": "Settings",
   "language": "Language",
   "account_settings": "Account Settings",
   "app_settings": "Application Settings",
+  "ai_response_language": "AI Response Language",
   "username": "Username",
   "email": "Email",
   "save": "Save Settings",
@@ -65,7 +74,7 @@
     "register_btn": "Register",
     "registering": "Registering...",
     "forgot_password_title": "Forgot Password?",
-    "forgot_password_desc": "Enter your email address and we will send you a link to reset your password.",
+    "forgot_password_desc": "Enter your account and we will send you a link to reset your password.",
     "send_reset_link": "Send Reset Link",
     "sending": "Sending...",
     "back_to_login": "Back to Login",
@@ -83,7 +92,7 @@
   },
   "home": {
     "hero": {
-      "badge": "Smart Subscription Assistant",
+      "badge": "Smart Assistant",
       "app_preview_alt": "App Preview",
       "title_line1": "Stay in the loop,",
       "title_line2": "Never miss a beat",
@@ -169,6 +178,7 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "cookie": "Cookie Policy",
+    "language": "Language",
     "rights_reserved": "All rights reserved."
   },
   "subscription": {

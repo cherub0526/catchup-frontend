@@ -122,8 +122,8 @@
           </div>
           <form @submit.prevent="handleForgotPassword">
             <div class="input-group">
-              <label for="forgot-email">{{ $t('login.email') }}</label>
-              <input type="email" id="forgot-email" v-model="forgotPasswordForm.email" :placeholder="$t('login.email_placeholder')"
+              <label for="forgot-account">{{ $t('login.account') }}</label>
+              <input type="text" id="forgot-account" v-model="forgotPasswordForm.account" :placeholder="$t('login.account_placeholder')"
                 required />
             </div>
             <button type="submit" class="btn-primary" :disabled="isLoading">
@@ -182,7 +182,7 @@ const registerForm = ref({
 });
 
 const forgotPasswordForm = ref({
-  email: "",
+  account: "",
 });
 
 const messageClass = computed(() => ({
@@ -281,22 +281,19 @@ const handleRegister = async () => {
 const handleForgotPassword = async () => {
   message.value = "";
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(forgotPasswordForm.value.email)) {
-    showMessage(t('login.email_invalid'), "error");
+  if (!forgotPasswordForm.value.account) {
     return;
   }
 
   isLoading.value = true;
 
   try {
-    // 模擬 API 呼叫
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await authStore.forgotPassword(forgotPasswordForm.value.account);
 
     showMessage(t('login.reset_link_sent'), "success");
 
     setTimeout(() => {
-      forgotPasswordForm.value.email = "";
+      forgotPasswordForm.value.account = "";
     }, 2000);
   } catch (error) {
     const errorMessage = getApiErrorMessage(error);
