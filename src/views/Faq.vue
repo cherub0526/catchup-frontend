@@ -91,14 +91,14 @@ const toggleItem = (index) => {
 }
 
 .faq-header h1 {
-    font-size: 2.5rem;
+    font-size: 2.625rem;
     font-weight: 700;
     color: #1a1a1a;
     margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     color: #666;
 }
 
@@ -130,7 +130,7 @@ const toggleItem = (index) => {
 }
 
 .faq-question h3 {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #1f2937;
     margin: 0;

@@ -207,14 +207,14 @@ const getApiErrorMessage = (error) => {
 }
 
 .logo-section h1 {
-  font-size: 2rem;
+  font-size: 2.125rem;
   color: #333;
   margin-bottom: 8px;
   font-weight: 700;
 }
 
 .logo-section .slogan {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #667eea;
   font-weight: 500;
   margin: 0;
@@ -242,7 +242,7 @@ const getApiErrorMessage = (error) => {
   display: block;
   margin-bottom: 8px;
   color: #333;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
@@ -251,7 +251,7 @@ const getApiErrorMessage = (error) => {
   padding: 12px 16px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
 }
 
@@ -272,7 +272,7 @@ const getApiErrorMessage = (error) => {
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -299,7 +299,7 @@ const getApiErrorMessage = (error) => {
   color: #666;
   border: none;
   border-radius: 10px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -314,7 +314,7 @@ const getApiErrorMessage = (error) => {
   align-items: center;
   margin: 20px 0;
   color: #999;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .divider::before,
@@ -335,7 +335,7 @@ const getApiErrorMessage = (error) => {
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   animation: shake 0.3s ease-in-out;
 }
 
@@ -351,7 +351,7 @@ const getApiErrorMessage = (error) => {
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -361,7 +361,7 @@ const getApiErrorMessage = (error) => {
 }
 
 .reset-password-header h2 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   color: #333;
   margin-bottom: 10px;
   font-weight: 700;
@@ -369,7 +369,7 @@ const getApiErrorMessage = (error) => {
 
 .reset-password-header p {
   color: #666;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.6;
 }
 

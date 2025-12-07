@@ -75,7 +75,7 @@ const appName = APP_NAME;
     background: #0f172a;
     color: #94a3b8;
     padding: 80px 0 32px;
-    font-size: 0.9375rem;
+    font-size: 1.0625rem;
 }
 
 .footer-top {
@@ -102,7 +102,7 @@ const appName = APP_NAME;
 }
 
 .footer-title {
-    font-size: 1.5rem;
+    font-size: 1.625rem;
     font-weight: 700;
     color: white;
 }
@@ -114,7 +114,7 @@ const appName = APP_NAME;
 
 .footer-heading {
     color: white;
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -158,7 +158,7 @@ const appName = APP_NAME;
     padding: 12px 16px;
     border-radius: 12px;
     color: white;
-    font-size: 0.875rem;
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 
@@ -205,7 +205,7 @@ const appName = APP_NAME;
 .footer-legal a {
     color: #94a3b8;
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: 1rem;
     transition: color 0.2s ease;
 }
 
@@ -215,7 +215,7 @@ const appName = APP_NAME;
 
 .copyright {
     color: #64748b;
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
 @media (max-width: 1024px) {

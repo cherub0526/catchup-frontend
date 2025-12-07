@@ -91,7 +91,7 @@ const videoUsagePercentage = computed(() => {
   padding: 6px 16px;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -117,7 +117,7 @@ const videoUsagePercentage = computed(() => {
   color: #2563eb;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: color 0.2s ease;
 }
 
@@ -153,7 +153,7 @@ const videoUsagePercentage = computed(() => {
 }
 
 .usage-label {
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   color: #6b7280;
   font-weight: 600;
 }
@@ -166,18 +166,18 @@ const videoUsagePercentage = computed(() => {
 }
 
 .usage-current {
-  font-size: 1.375rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
 }
 
 .usage-separator {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: #9ca3af;
 }
 
 .usage-limit {
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
   color: #6b7280;
   font-weight: 600;
 }

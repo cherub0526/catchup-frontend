@@ -74,7 +74,7 @@ import AppFooter from "@/components/AppFooter.vue";
 }
 
 .policy-header h1 {
-    font-size: 2.5rem;
+    font-size: 2.625rem;
     font-weight: 700;
     color: #1a1a1a;
     margin-bottom: 10px;
@@ -92,7 +92,7 @@ section {
 }
 
 h2 {
-    font-size: 1.5rem;
+    font-size: 1.625rem;
     font-weight: 600;
     color: #1f2937;
     margin-bottom: 16px;

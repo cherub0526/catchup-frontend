@@ -410,14 +410,14 @@ const getApiErrorMessage = (error) => {
 }
 
 .logo-section h1 {
-  font-size: 2rem;
+  font-size: 2.125rem;
   color: #333;
   margin-bottom: 8px;
   font-weight: 700;
 }
 
 .logo-section .slogan {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #667eea;
   font-weight: 500;
   margin: 0;
@@ -439,7 +439,7 @@ const getApiErrorMessage = (error) => {
   border: none;
   background: transparent;
   border-radius: 8px;
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
   font-weight: 600;
   color: #666;
   cursor: pointer;
@@ -474,7 +474,7 @@ const getApiErrorMessage = (error) => {
   display: block;
   margin-bottom: 8px;
   color: #333;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
@@ -483,7 +483,7 @@ const getApiErrorMessage = (error) => {
   padding: 12px 16px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
 }
 
@@ -502,7 +502,7 @@ const getApiErrorMessage = (error) => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .checkbox-container {
@@ -536,7 +536,7 @@ const getApiErrorMessage = (error) => {
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -561,7 +561,7 @@ const getApiErrorMessage = (error) => {
   align-items: center;
   margin: 25px 0 20px 0;
   color: #999;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
 }
 
 .divider::before,
@@ -592,7 +592,7 @@ const getApiErrorMessage = (error) => {
   border: 2px solid #e0e0e0;
   border-radius: 10px;
   background: white;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -607,7 +607,7 @@ const getApiErrorMessage = (error) => {
 
 .btn-social .social-icon {
   flex-shrink: 0;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 
 .btn-google .social-icon {
@@ -624,7 +624,7 @@ const getApiErrorMessage = (error) => {
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   animation: shake 0.3s ease-in-out;
 }
 
@@ -650,7 +650,7 @@ const getApiErrorMessage = (error) => {
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -660,7 +660,7 @@ const getApiErrorMessage = (error) => {
 }
 
 .forgot-password-header h2 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   color: #333;
   margin-bottom: 10px;
   font-weight: 700;
@@ -668,7 +668,7 @@ const getApiErrorMessage = (error) => {
 
 .forgot-password-header p {
   color: #666;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.6;
 }
 
@@ -678,7 +678,7 @@ const getApiErrorMessage = (error) => {
   }
 
   .logo-section h1 {
-    font-size: 1.5rem;
+    font-size: 1.625rem;
   }
 
   .options {

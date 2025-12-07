@@ -124,14 +124,14 @@ watch([isChannelLimitReached, isMediaLimitReached], () => {
 }
 
 .warning-text h4 {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
   color: #854d0e;
   margin: 0 0 4px 0;
 }
 
 .warning-text p {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #92400e;
   margin: 0;
 }
@@ -143,7 +143,7 @@ watch([isChannelLimitReached, isMediaLimitReached], () => {
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
@@ -160,7 +160,7 @@ watch([isChannelLimitReached, isMediaLimitReached], () => {
   right: 8px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   color: #92400e;
   cursor: pointer;
   width: 24px;

@@ -417,14 +417,14 @@ onBeforeUnmount(() => {
 }
 
 .subscription-header h1 {
-  font-size: 2.5rem;
+  font-size: 2.625rem;
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 10px;
 }
 
 .subtitle {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: #666;
 }
 
@@ -446,7 +446,7 @@ onBeforeUnmount(() => {
   border: none;
   background: transparent;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -466,7 +466,7 @@ onBeforeUnmount(() => {
   right: -8px;
   background: #10b981;
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   padding: 2px 6px;
   border-radius: 8px;
   font-weight: 700;
@@ -485,7 +485,7 @@ onBeforeUnmount(() => {
 }
 
 .info-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   margin-bottom: 20px;
   font-weight: 600;
 }
@@ -505,14 +505,14 @@ onBeforeUnmount(() => {
 
 .usage-label {
   display: block;
-  font-size: 0.875rem;
+  font-size: 1rem;
   opacity: 0.9;
   margin-bottom: 8px;
 }
 
 .usage-value {
   display: block;
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 700;
   margin-bottom: 12px;
 }
@@ -576,7 +576,7 @@ onBeforeUnmount(() => {
   color: white;
   padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 700;
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
@@ -589,7 +589,7 @@ onBeforeUnmount(() => {
 }
 
 .plan-name {
-  font-size: 1.875rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #1a1a1a;
   margin-bottom: 16px;
@@ -603,13 +603,13 @@ onBeforeUnmount(() => {
 }
 
 .price-amount {
-  font-size: 3rem;
+  font-size: 3.125rem;
   font-weight: 700;
   color: #2563eb;
 }
 
 .price-period {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: #666;
 }
 
@@ -617,7 +617,7 @@ onBeforeUnmount(() => {
   margin-top: 8px;
   color: #10b981;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .plan-limits {
@@ -668,7 +668,7 @@ onBeforeUnmount(() => {
   padding: 16px;
   border: none;
   border-radius: 12px;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -706,7 +706,7 @@ onBeforeUnmount(() => {
 }
 
 .comparison-section h2 {
-  font-size: 2rem;
+  font-size: 2.125rem;
   font-weight: 700;
   text-align: center;
   margin-bottom: 30px;
@@ -734,7 +734,7 @@ th {
   padding: 20px;
   text-align: left;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 
 td {

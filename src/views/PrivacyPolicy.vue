@@ -104,7 +104,7 @@ const router = useRouter();
 }
 
 h3 {
-    font-size: 1.5rem;
+    font-size: 1.625rem;
     font-weight: 600;
     color: #1f2937;
     margin-top: 24px;

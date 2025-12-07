@@ -256,7 +256,7 @@
 
           <!-- 訂閱列表 -->
           <div style="margin-top: 30px">
-            <h4 style="margin-bottom: 15px; color: #333; font-size: 1rem;">{{ $t('dashboard.modal.current_subscriptions') }}</h4>
+            <h4 style="margin-bottom: 15px; color: #333; font-size: 1.125rem;">{{ $t('dashboard.modal.current_subscriptions') }}</h4>
 
             <!-- 載入狀態 -->
             <div v-if="subscriptionsStore.isLoading" class="loading-state">
@@ -692,7 +692,7 @@ onUnmounted(() => {
 }
 
 .app-title {
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -715,7 +715,7 @@ onUnmounted(() => {
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -755,11 +755,11 @@ onUnmounted(() => {
   justify-content: center;
   color: white;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .user-name {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #333;
 }

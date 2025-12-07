@@ -352,7 +352,7 @@ onUnmounted(() => {
   color: #333;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
@@ -361,7 +361,7 @@ onUnmounted(() => {
 }
 
 .settings-header h2 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 700;
   color: #333;
 }
@@ -384,7 +384,7 @@ onUnmounted(() => {
 }
 
 .settings-section h3 {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 20px;
@@ -402,7 +402,7 @@ onUnmounted(() => {
 
 .settings-item label {
   display: block;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 8px;
@@ -414,7 +414,7 @@ onUnmounted(() => {
   padding: 12px 16px;
   border: 2px solid #e9ecef;
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
 }
 
@@ -454,7 +454,7 @@ onUnmounted(() => {
   flex: 1;
   padding: 14px;
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -488,7 +488,7 @@ onUnmounted(() => {
   color: #ef4444;
   border: 1px solid #ef4444;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -517,7 +517,7 @@ onUnmounted(() => {
 .plan-name {
   font-weight: 600;
   color: #333;
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .btn-primary:disabled,
@@ -531,7 +531,7 @@ onUnmounted(() => {
   padding: 20px;
   text-align: center;
   color: #666;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .settings-item input:disabled {
@@ -575,12 +575,12 @@ onUnmounted(() => {
 }
 
 .message-icon {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   flex-shrink: 0;
 }
 
 .message-text {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -634,7 +634,7 @@ onUnmounted(() => {
   padding: 12px 16px;
   border: 2px solid #e9ecef;
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   background-color: white;
   cursor: pointer;
   transition: all 0.3s ease;

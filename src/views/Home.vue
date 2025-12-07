@@ -307,7 +307,7 @@ const scrollToFeatures = () => {
 }
 
 .nav-title {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.5px;
@@ -323,7 +323,7 @@ const scrollToFeatures = () => {
   padding: 10px 20px;
   border-radius: 99px;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
@@ -375,7 +375,7 @@ const scrollToFeatures = () => {
   background: #eef2ff;
   color: #4338ca;
   border-radius: 99px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 24px;
 }
@@ -389,7 +389,7 @@ const scrollToFeatures = () => {
 }
 
 .hero-title {
-  font-size: 4rem;
+  font-size: 4.125rem;
   line-height: 1.1;
   font-weight: 800;
   color: #0f172a;
@@ -405,7 +405,7 @@ const scrollToFeatures = () => {
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   line-height: 1.6;
   color: #64748b;
   margin-bottom: 40px;
@@ -421,7 +421,7 @@ const scrollToFeatures = () => {
 .btn-lg {
   padding: 16px 32px;
   border-radius: 16px;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -467,13 +467,13 @@ const scrollToFeatures = () => {
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 800;
   color: #0f172a;
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #64748b;
 }
 
@@ -546,7 +546,7 @@ const scrollToFeatures = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.375rem;
 }
 
 .icon-video {
@@ -565,13 +565,13 @@ const scrollToFeatures = () => {
 }
 
 .card-label {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #0f172a;
 }
 
 .card-value {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: #64748b;
 }
 
@@ -607,7 +607,7 @@ const scrollToFeatures = () => {
 }
 
 .section-title {
-  font-size: 2.625rem;
+  font-size: 2.75rem;
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 20px;
@@ -615,7 +615,7 @@ const scrollToFeatures = () => {
 }
 
 .section-subtitle {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: #64748b;
   line-height: 1.6;
 }
@@ -665,7 +665,7 @@ const scrollToFeatures = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   margin-bottom: 32px;
   transition: transform 0.3s ease;
 }
@@ -675,14 +675,14 @@ const scrollToFeatures = () => {
 }
 
 .feature-title {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 16px;
 }
 
 .feature-description {
-  font-size: 1rem;
+  font-size: 1.125rem;
   color: #64748b;
   line-height: 1.7;
 }
@@ -737,7 +737,7 @@ const scrollToFeatures = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 2.125rem;
   font-weight: 800;
   color: #4338ca;
   margin: 0 auto 32px;
@@ -745,14 +745,14 @@ const scrollToFeatures = () => {
 }
 
 .step-title {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 16px;
 }
 
 .step-description {
-  font-size: 1rem;
+  font-size: 1.125rem;
   color: #64748b;
   line-height: 1.6;
 }
@@ -771,14 +771,14 @@ const scrollToFeatures = () => {
 }
 
 .cta-title {
-  font-size: 3rem;
+  font-size: 3.125rem;
   font-weight: 800;
   margin-bottom: 24px;
   letter-spacing: -1px;
 }
 
 .cta-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   margin-bottom: 48px;
   opacity: 0.9;
 }
