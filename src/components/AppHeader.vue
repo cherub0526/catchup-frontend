@@ -6,6 +6,10 @@
                 <span class="nav-title">{{ appName }}</span>
             </div>
             <div class="nav-actions">
+                <select v-model="locale" class="lang-select">
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="en">English</option>
+                </select>
                 <template v-if="!isAuthenticated">
                     <button class="nav-btn nav-btn-text" @click="router.push('/login')">{{ t('header.login') }}</button>
                     <button class="nav-btn nav-btn-primary" @click="router.push('/login')">{{ t('header.start_now') }}</button>
@@ -20,14 +24,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { APP_NAME } from "@/config/app";
 
 const router = useRouter();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const authStore = useAuthStore();
 const appName = APP_NAME;
 
@@ -37,6 +41,10 @@ const isScrolled = ref(false);
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 20;
 };
+
+watch(locale, (newLocale) => {
+    localStorage.setItem('user-locale', newLocale);
+});
 
 onMounted(() => {
     window.addEventListener("scroll", handleScroll);
@@ -134,5 +142,22 @@ const handleLogout = () => {
 .nav-btn-primary:hover {
     background: #3730a3;
     transform: translateY(-1px);
+}
+
+.lang-select {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.lang-select:hover {
+    border-color: #cbd5e1;
+    color: #0f172a;
 }
 </style>
