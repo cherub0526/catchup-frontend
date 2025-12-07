@@ -53,17 +53,19 @@ import AppFooter from "@/components/AppFooter.vue";
 <style scoped>
 .policy-page {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     background: #f5f7fa;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .policy-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 120px 20px 80px;
-    flex: 1;
+    flex: 1 0 auto;
 }
 
 .policy-header {

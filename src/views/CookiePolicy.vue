@@ -64,12 +64,15 @@ const router = useRouter();
 .policy-page {
     width: 100%;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
     background: #f5f7fa;
 }
 
 .policy-container {
+    flex: 1 0 auto;
     max-width: 1200px;
     margin: 0 auto;
     padding: 120px 20px 80px;

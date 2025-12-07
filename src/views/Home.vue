@@ -4,8 +4,10 @@
     <!-- 導航欄 -->
     <AppHeader />
 
-    <!-- 英雄區塊 -->
-    <section class="hero-section">
+    <!-- 內容區塊 -->
+    <main class="home-content">
+      <!-- 英雄區塊 -->
+      <section class="hero-section">
       <div class="hero-container">
         <div class="hero-content">
           <div class="hero-badge">
@@ -130,6 +132,7 @@
       </div>
     </section>
 
+    </main>
     <!-- 頁尾 -->
     <AppFooter />
   </div>
@@ -246,10 +249,16 @@ const scrollToFeatures = () => {
 .home-page {
   width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
   color: #1e293b;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+}
+
+.home-content {
+  flex: 1;
 }
 
 .container {
