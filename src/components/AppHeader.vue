@@ -102,7 +102,7 @@ const handleLogout = () => {
 }
 
 .nav-title {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.5px;
@@ -118,7 +118,7 @@ const handleLogout = () => {
     padding: 10px 20px;
     border-radius: 99px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 0.9375rem;
     cursor: pointer;
     transition: all 0.2s ease;
     border: none;
@@ -150,7 +150,7 @@ const handleLogout = () => {
     color: #64748b;
     padding: 8px 12px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 0.875rem;
     cursor: pointer;
     outline: none;
     transition: all 0.2s ease;

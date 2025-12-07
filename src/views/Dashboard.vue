@@ -256,7 +256,7 @@
 
           <!-- 訂閱列表 -->
           <div style="margin-top: 30px">
-            <h4 style="margin-bottom: 15px; color: #333; font-size: 16px">{{ $t('dashboard.modal.current_subscriptions') }}</h4>
+            <h4 style="margin-bottom: 15px; color: #333; font-size: 1rem;">{{ $t('dashboard.modal.current_subscriptions') }}</h4>
 
             <!-- 載入狀態 -->
             <div v-if="subscriptionsStore.isLoading" class="loading-state">
@@ -692,7 +692,7 @@ onUnmounted(() => {
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -715,7 +715,7 @@ onUnmounted(() => {
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -755,11 +755,11 @@ onUnmounted(() => {
   justify-content: center;
   color: white;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .user-name {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #333;
 }
@@ -932,7 +932,7 @@ onUnmounted(() => {
   border: 2px solid #667eea;
   border-radius: 8px;
   color: #667eea;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -965,7 +965,7 @@ onUnmounted(() => {
 }
 
 .sidebar-title {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   color: #999;
   text-transform: uppercase;
@@ -1021,21 +1021,21 @@ onUnmounted(() => {
 }
 
 .source-name {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 2px;
 }
 
 .source-count {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #999;
 }
 
 .source-badge {
   background: #667eea;
   color: white;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 12px;
@@ -1082,13 +1082,13 @@ onUnmounted(() => {
 }
 
 .content-title-text h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   color: #333;
   margin-bottom: 4px;
 }
 
 .content-title-text p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #999;
 }
 
@@ -1098,7 +1098,7 @@ onUnmounted(() => {
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -1132,7 +1132,7 @@ onUnmounted(() => {
 }
 
 .subscriptions-header h3 {
-  font-size: 18px;
+  font-size: 1.125rem;
   color: #333;
   font-weight: 600;
 }
@@ -1148,7 +1148,7 @@ onUnmounted(() => {
   border: 1px solid #e9ecef;
   border-radius: 8px;
   color: #666;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1208,7 +1208,7 @@ onUnmounted(() => {
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -1217,12 +1217,13 @@ onUnmounted(() => {
 }
 
 .video-title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.4;
@@ -1243,11 +1244,11 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .channel-name {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #666;
   font-weight: 500;
 }
@@ -1256,7 +1257,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #999;
 }
 
@@ -1271,19 +1272,19 @@ onUnmounted(() => {
 }
 
 .empty-icon {
-  font-size: 64px;
+  font-size: 4rem;
   margin-bottom: 20px;
   opacity: 0.5;
 }
 
 .empty-state h3 {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #333;
   margin-bottom: 10px;
 }
 
 .empty-state p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #999;
   margin-bottom: 25px;
 }
@@ -1294,7 +1295,7 @@ onUnmounted(() => {
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1373,7 +1374,7 @@ onUnmounted(() => {
 }
 
 .modal-header h3 {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #333;
   font-weight: 700;
 }
@@ -1388,7 +1389,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #666;
   transition: all 0.2s ease;
 }
@@ -1415,7 +1416,7 @@ onUnmounted(() => {
 }
 
 .form-group label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #333;
 }
@@ -1424,7 +1425,7 @@ onUnmounted(() => {
   padding: 12px 16px;
   border: 2px solid #e9ecef;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
 }
 
@@ -1445,7 +1446,7 @@ onUnmounted(() => {
   flex: 1;
   padding: 12px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1511,7 +1512,7 @@ onUnmounted(() => {
   justify-content: center;
   color: white;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 1.125rem;
   flex-shrink: 0;
 }
 
@@ -1520,14 +1521,14 @@ onUnmounted(() => {
 }
 
 .subscription-name {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 4px;
 }
 
 .subscription-url {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #999;
   word-break: break-all;
 }
@@ -1538,7 +1539,7 @@ onUnmounted(() => {
   border: 2px solid #e74c3c;
   border-radius: 6px;
   color: #e74c3c;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1596,7 +1597,7 @@ onUnmounted(() => {
 }
 
 .loading-state p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #666;
 }
 
@@ -1620,7 +1621,7 @@ onUnmounted(() => {
 }
 
 .loading-more p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #666;
 }
 
@@ -1631,7 +1632,7 @@ onUnmounted(() => {
 }
 
 .no-more-content p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #999;
   opacity: 0.7;
 }

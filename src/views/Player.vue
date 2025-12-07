@@ -147,7 +147,7 @@
             <!-- 載入狀態 -->
             <div v-if="isLoadingSummary" class="summary-content">
               <div class="summary-text" style="text-align: center; color: #9ca3af">
-                <div style="font-size: 32px; margin-bottom: 10px">⏳</div>
+                <div style="font-size: 2rem; margin-bottom: 10px">⏳</div>
                 <div>{{ $t('player.loading.summary') }}</div>
               </div>
             </div>
@@ -155,7 +155,7 @@
             <!-- 錯誤狀態 -->
             <div v-else-if="summaryLoadError" class="summary-content">
               <div class="summary-text" style="text-align: center; color: #ef4444">
-                <div style="font-size: 32px; margin-bottom: 10px">❌</div>
+                <div style="font-size: 2rem; margin-bottom: 10px">❌</div>
                 <div>{{ summaryLoadError }}</div>
               </div>
             </div>
@@ -1184,7 +1184,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: #fff;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1196,7 +1196,7 @@ window.seekToTime = seekToTime;
 }
 
 .video-title {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #fff;
   max-width: 600px;
@@ -1220,7 +1220,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(102, 126, 234, 0.3);
   border-radius: 8px;
   color: #667eea;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1361,12 +1361,12 @@ window.seekToTime = seekToTime;
 }
 
 .player-placeholder-icon {
-  font-size: 80px;
+  font-size: 5rem;
   opacity: 0.5;
 }
 
 .player-placeholder-text {
-  font-size: 16px;
+  font-size: 1rem;
   color: #999;
 }
 
@@ -1390,7 +1390,7 @@ window.seekToTime = seekToTime;
 }
 
 .chat-header h3 {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   color: #fff;
 }
@@ -1399,7 +1399,7 @@ window.seekToTime = seekToTime;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #10b981;
 }
 
@@ -1460,7 +1460,7 @@ window.seekToTime = seekToTime;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -1474,7 +1474,7 @@ window.seekToTime = seekToTime;
   background: rgba(255, 255, 255, 0.05);
   padding: 12px 16px;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.6;
   color: #e5e7eb;
 }
@@ -1499,7 +1499,7 @@ window.seekToTime = seekToTime;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .message-content.markdown-content :deep(pre) {
@@ -1567,15 +1567,15 @@ window.seekToTime = seekToTime;
 }
 
 .message-content.markdown-content :deep(h1) {
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .message-content.markdown-content :deep(h2) {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .message-content.markdown-content :deep(h3) {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .message-content.markdown-content :deep(hr) {
@@ -1666,7 +1666,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(102, 126, 234, 0.5);
   border-radius: 4px;
   color: #667eea;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   cursor: pointer;
   margin: 0 4px;
@@ -1700,7 +1700,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #fff;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
 }
 
@@ -1726,7 +1726,7 @@ window.seekToTime = seekToTime;
   border: none;
   border-radius: 8px;
   color: #fff;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1782,7 +1782,7 @@ window.seekToTime = seekToTime;
   border: none;
   border-bottom: 2px solid transparent;
   color: #9ca3af;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1804,7 +1804,7 @@ window.seekToTime = seekToTime;
 }
 
 .tab-icon {
-  font-size: 18px;
+  font-size: 1.125rem;
   transition: transform 0.3s ease;
 }
 
@@ -1833,7 +1833,7 @@ window.seekToTime = seekToTime;
 }
 
 .tab-header p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #9ca3af;
 }
 
@@ -1870,7 +1870,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: #9ca3af;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1899,7 +1899,7 @@ window.seekToTime = seekToTime;
 }
 
 .follow-icon {
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
 }
@@ -1929,7 +1929,7 @@ window.seekToTime = seekToTime;
 }
 
 .summary-section h4 {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #fff;
   margin-bottom: 12px;
@@ -1939,11 +1939,11 @@ window.seekToTime = seekToTime;
 }
 
 .summary-section-icon {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .summary-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.7;
   color: #d1d5db;
 }
@@ -1963,29 +1963,29 @@ window.seekToTime = seekToTime;
 }
 
 .markdown-content :deep(h1) {
-  font-size: 20px;
+  font-size: 1.25rem;
   border-bottom: 2px solid rgba(102, 126, 234, 0.3);
   padding-bottom: 8px;
 }
 
 .markdown-content :deep(h2) {
-  font-size: 18px;
+  font-size: 1.125rem;
   border-bottom: 1px solid rgba(102, 126, 234, 0.2);
   padding-bottom: 6px;
 }
 
 .markdown-content :deep(h3) {
-  font-size: 16px;
+  font-size: 1rem;
   color: #8b9bff;
 }
 
 .markdown-content :deep(h4) {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .markdown-content :deep(h5),
 .markdown-content :deep(h6) {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .markdown-content :deep(h1):first-child,
@@ -2030,7 +2030,7 @@ window.seekToTime = seekToTime;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .markdown-content :deep(pre) {
@@ -2081,7 +2081,7 @@ window.seekToTime = seekToTime;
 }
 
 .summary-list li {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #d1d5db;
   line-height: 1.6;
   padding-left: 20px;
@@ -2103,7 +2103,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: #fff;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
   outline: none;
@@ -2137,7 +2137,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: #9ca3af;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
 }
 
@@ -2148,7 +2148,7 @@ window.seekToTime = seekToTime;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: #fff;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
   outline: none;
@@ -2205,7 +2205,7 @@ window.seekToTime = seekToTime;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #d1d5db;
   margin-bottom: 6px;
   border: 1px solid transparent;
@@ -2219,7 +2219,7 @@ window.seekToTime = seekToTime;
 }
 
 .timestamp-link span:first-child {
-  font-size: 16px;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
@@ -2239,7 +2239,7 @@ window.seekToTime = seekToTime;
 
 .timeline-description {
   margin-left: 46px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.7;
   color: #9ca3af;
   padding: 0 14px;
