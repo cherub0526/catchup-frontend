@@ -13,9 +13,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "build:win": "electron-builder --win --x64",
-    "build:mac": "electron-builder --mac --x64",
-    "build:linux": "electron-builder --linux --x64"
+    "build:win": "vite build && electron-builder --win --x64",
+    "build:mac": "vite build && electron-builder --mac --x64",
+    "build:linux": "vite build && electron-builder --linux --x64"
   },
   "author": "",
   "license": "MIT",

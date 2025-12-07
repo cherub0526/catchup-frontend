@@ -3,61 +3,67 @@
         <AppHeader />
         <div class="policy-container">
 
-            <div class="policy-header">
-                <h1>{{ $t('privacy_policy.title') }}</h1>
-                <p class="last-updated">{{ $t('privacy_policy.last_updated') }}</p>
-            </div>
-
             <div class="policy-content">
-                <section>
-                    <p>{{ $t('privacy_policy.intro') }}</p>
-                </section>
+                <!-- Last Updated -->
+                <p v-html="$t('privacy_policy.last_updated')"></p>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.scope.title') }}</h2>
-                    <p>{{ $t('privacy_policy.sections.scope.content') }}</p>
-                </section>
+                <!-- Introduction -->
+                <h3 id="heading-introduction">{{ $t('privacy_policy.intro.title') }}</h3>
+                <p v-html="$t('privacy_policy.intro.content')"></p>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.collection.title') }}</h2>
-                    <p v-for="(paragraph, index) in $tm('privacy_policy.sections.collection.content')" :key="index">
-                        {{ paragraph }}
-                    </p>
-                </section>
+                <!-- Data Controller -->
+                <h3 id="heading-data-controller">{{ $t('privacy_policy.controller.title') }}</h3>
+                <p>{{ $t('privacy_policy.controller.content') }}</p>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.protection.title') }}</h2>
-                    <p v-for="(paragraph, index) in $tm('privacy_policy.sections.protection.content')" :key="index">
-                        {{ paragraph }}
-                    </p>
-                </section>
+                <!-- Information Collection -->
+                <h3 id="heading-information-collection">{{ $t('privacy_policy.collection.title') }}</h3>
+                <p>{{ $t('privacy_policy.collection.intro') }}</p>
+                <p v-html="$t('privacy_policy.collection.personal')"></p>
+                <p v-html="$t('privacy_policy.collection.derivative')"></p>
+                <p v-html="$t('privacy_policy.collection.social')"></p>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.links.title') }}</h2>
-                    <p>{{ $t('privacy_policy.sections.links.content') }}</p>
-                </section>
+                <!-- Use of Information -->
+                <h3 id="heading-use-of-your-information">{{ $t('privacy_policy.use.title') }}</h3>
+                <p>{{ $t('privacy_policy.use.intro') }}</p>
+                <ul>
+                    <li v-for="(item, index) in $tm('privacy_policy.use.list')" :key="index">
+                        <p>{{ item }}</p>
+                    </li>
+                </ul>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.sharing.title') }}</h2>
-                    <p v-for="(paragraph, index) in $tm('privacy_policy.sections.sharing.content')" :key="index">
-                        {{ paragraph }}
-                    </p>
-                    <ul>
-                        <li v-for="(item, index) in $tm('privacy_policy.sections.sharing.list')" :key="index">
-                            {{ item }}
-                        </li>
-                    </ul>
-                </section>
+                <!-- Disclosure -->
+                <h3 id="heading-disclosure-of-your-information">{{ $t('privacy_policy.disclosure.title') }}</h3>
+                <p>{{ $t('privacy_policy.disclosure.intro') }}</p>
+                <p v-for="(item, index) in $tm('privacy_policy.disclosure.items')" :key="index" v-html="item"></p>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.cookies.title') }}</h2>
-                    <p>{{ $t('privacy_policy.sections.cookies.content') }}</p>
-                </section>
+                <!-- Security -->
+                <h3 id="heading-security-of-your-information">{{ $t('privacy_policy.security.title') }}</h3>
+                <p>{{ $t('privacy_policy.security.content') }}</p>
 
-                <section>
-                    <h2>{{ $t('privacy_policy.sections.amendment.title') }}</h2>
-                    <p>{{ $t('privacy_policy.sections.amendment.content') }}</p>
-                </section>
+                <!-- Children -->
+                <h3 id="heading-policy-for-children">{{ $t('privacy_policy.children.title') }}</h3>
+                <p>{{ $t('privacy_policy.children.content') }}</p>
+
+                <!-- User Rights -->
+                <h3 id="heading-user-rights">{{ $t('privacy_policy.rights.title') }}</h3>
+                <p>{{ $t('privacy_policy.rights.intro') }}</p>
+                <ul>
+                    <li v-for="(item, index) in $tm('privacy_policy.rights.list')" :key="index">
+                        <p v-html="item"></p>
+                    </li>
+                </ul>
+                <p>{{ $t('privacy_policy.rights.footer') }}</p>
+
+                <!-- Changes -->
+                <h3 id="heading-changes-to-this-privacy-policy">{{ $t('privacy_policy.changes.title') }}</h3>
+                <p>{{ $t('privacy_policy.changes.content') }}</p>
+
+                <!-- Contact -->
+                <!-- <h3 id="heading-contact-us">{{ $t('privacy_policy.contact.title') }}</h3>
+                <p>{{ $t('privacy_policy.contact.content') }}</p>
+                <p v-html="$t('privacy_policy.contact.info')"></p>
+                <p v-html="$t('privacy_policy.contact.dpo')"></p> -->
+
             </div>
         </div>
         <AppFooter />
@@ -87,23 +93,6 @@ const router = useRouter();
     padding: 120px 20px 80px;
 }
 
-.policy-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.policy-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 10px;
-}
-
-.last-updated {
-    font-size: 0.875rem;
-    color: #666;
-}
-
 .policy-content {
     background: white;
     padding: 40px;
@@ -111,14 +100,11 @@ const router = useRouter();
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-section {
-    margin-bottom: 30px;
-}
-
-h2 {
+h3 {
     font-size: 1.5rem;
     font-weight: 600;
     color: #1f2937;
+    margin-top: 24px;
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid #e5e7eb;
@@ -135,13 +121,17 @@ ul {
     padding-left: 24px;
     color: #4b5563;
     line-height: 1.7;
+    margin-bottom: 16px;
 }
 
 li {
     margin-bottom: 8px;
 }
 
-strong {
+/* Deep selector to style v-html content */
+:deep(strong) {
     color: #374151;
+    font-weight: 600;
 }
+
 </style>

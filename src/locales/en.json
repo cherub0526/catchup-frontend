@@ -380,59 +380,73 @@
     }
   },
   "privacy_policy": {
-    "title": "Privacy Policy",
-    "last_updated": "Last Updated: November 24, 2025",
-    "intro": "Welcome to 'CatchUp' (hereinafter referred to as 'this Website'). To ensure that you can use the services and information of this Website with peace of mind, we hereby explain the privacy protection policy of this Website to protect your rights. Please read the following content carefully:",
-    "sections": {
-      "scope": {
-        "title": "1. Scope of Privacy Protection Policy",
-        "content": "The content of the privacy protection policy covers how this Website handles personally identifiable information collected when you use the website services. The privacy protection policy does not apply to related linked websites outside of this Website, nor does it apply to personnel not commissioned or involved in the management of this Website."
-      },
-      "collection": {
-        "title": "2. Collection, Processing, and Use of Personal Data",
-        "content": [
-          "When you visit this Website or use the functional services provided by this Website, we will ask you to provide necessary personal data depending on the nature of the service function, and process and use your personal data within the scope of that specific purpose; without your written consent, this Website will not use personal data for other purposes.",
-          "This Website will retain your name, email address, contact information, and usage time when you use interactive functions such as service mailboxes and questionnaires.",
-          "During general browsing, the server will automatically record relevant actions, including the IP address of the connecting device, usage time, browser used, browsing and clicking data records, etc., as a reference for us to improve website services. This record is for internal application and will never be released to the outside world.",
-          "To provide precise services, we will conduct statistics and analysis on the collected questionnaire contents. The statistical data or explanatory text of the analysis results will be presented. In addition to internal research, we will publish statistical data and explanatory text as needed, but it will not involve specific personal data.",
-          "You may request us to correct or delete your account or personal data collected by this Website at any time. Please see the contact channel at the bottom for contact information."
-        ]
-      },
-      "protection": {
-        "title": "3. Protection of Data",
-        "content": [
-          "The hosts of this Website are equipped with various information security equipment such as firewalls and antivirus systems and necessary security protection measures to protect the website and your personal data using strict protection measures. Only authorized personnel can access your personal data. Relevant processing personnel have signed confidentiality agreements. Anyone who violates confidentiality obligations will be subject to relevant legal penalties.",
-          "If it is necessary to entrust other units to provide services due to business needs, this Website will also strictly require them to comply with confidentiality obligations and take necessary inspection procedures to ensure that they will indeed comply."
-        ]
-      },
-      "links": {
-        "title": "4. Related Links to the Outside World",
-        "content": "The web pages of this Website provide internet links to other websites. You can also click to enter other websites through the links provided by this Website. However, the privacy protection policy of this Website does not apply to the linked website. You must refer to the privacy protection policy in the linked website."
-      },
-      "sharing": {
-        "title": "5. Policy on Sharing Personal Data with Third Parties",
-        "content": [
-          "This Website will never provide, exchange, rent, or sell any of your personal data to other individuals, groups, private enterprises, or public agencies, unless there is a legal basis or contractual obligation.",
-          "The circumstances of the proviso in the preceding paragraph include but are not limited to:"
-        ],
-        "list": [
-          "With your written consent.",
-          "Expressly provided by law.",
-          "To eliminate danger to your life, body, freedom, or property.",
-          "Cooperation with public agencies or academic research institutions is necessary for statistics or academic research based on public interest, and the data has been processed by the provider or collected in a way that the specific party cannot be identified by its disclosure method.",
-          "When your behavior on the website violates the terms of service or may damage or hinder the rights and interests of the website and other users or cause damage to anyone, the website management unit analyzes and discloses your personal data as necessary to identify, contact, or take legal action.",
-          "Conducive to your rights and interests.",
-          "When this Website commissions manufacturers to assist in collecting, processing, or using your personal data, it will fulfill its responsibility of supervision and management of the outsourced manufacturers or individuals."
-        ]
-      },
-      "cookies": {
-        "title": "6. Use of Cookies",
-        "content": "In order to provide you with the best service, this Website will place and access our Cookies on your computer. If you do not wish to accept the writing of Cookies, you can set the privacy level to high in the browser functions you use to reject the writing of Cookies, but it may lead to some functions of the website not executing properly."
-      },
-      "amendment": {
-        "title": "7. Amendment of Privacy Protection Policy",
-        "content": "The privacy protection policy of this Website will be amended at any time in response to needs, and the amended terms will be published on the website."
-      }
+    "last_updated": "<strong>Last updated:</strong>December 07, 2025",
+    "intro": {
+      "title": "Introduction",
+      "content": "Welcome to CatchUp. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site."
+    },
+    "controller": {
+      "title": "Data Controller",
+      "content": "The data controller responsible for your personal data is the company operating this website. For the data controller information, please refer to the \"Contact Us\" section at the end of this policy."
+    },
+    "collection": {
+      "title": "Information Collection",
+      "intro": "We may collect information about you in a variety of ways. The information we may collect on the Site includes:",
+      "personal": "<strong>Personal Data:</strong> Personally identifiable information, such as your name, email address, and telephone number, and demographic information, such as your age, gender, hometown, and interests, that you voluntarily give to us when you register with the Site or when you choose to participate in various activities related to the Site.",
+      "derivative": "<strong>Derivative Data:</strong> Information our servers automatically collect when you access the Site, such as your IP address, your browser type, your operating system, your access times, and the pages you have viewed directly before and after accessing the Site.",
+      "social": "<strong>Data From Social Networks:</strong> User information from social networking sites, including your name, your social network username, email address and profile picture, if you connect your account to such social networks."
+    },
+    "use": {
+      "title": "Use of Your Information",
+      "intro": "Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Site to:",
+      "list": [
+        "Create and manage your account.",
+        "Send you administrative information, such as information about changes to our terms, conditions, and policies.",
+        "Improve our services and operations.",
+        "Understand and analyze how you use our Site and services, which can improve our overall functionality.",
+        "Communicate with you, either directly or through one of our partners, including for customer service, to provide you with updates and other information relating to the Site, and for marketing and promotional purposes.",
+        "Detect and prevent fraudulent transactions and other illegal activities."
+      ]
+    },
+    "disclosure": {
+      "title": "Disclosure of Your Information",
+      "intro": "We may share information we have collected about you in certain situations. Your information may be disclosed as follows:",
+      "items": [
+        "<strong>By Law or to Protect Rights:</strong> If we believe the release of information about you is necessary to respond to legal process, to investigate or remedy potential violations of our policies, or to protect the rights, property, and safety of others, we may share your information as permitted or required by any applicable law, rule, or regulation.",
+        "<strong>Business Transfers:</strong> We may share or transfer your information in connection with, or during negotiations of, any merger, sale of company assets, financing, or acquisition of all or a portion of our business to another company.",
+        "<strong>Third-Party Service Providers:</strong> We may share your information with third parties that perform services for us or on our behalf, including data analysis, email delivery, hosting services, customer service, and marketing assistance."
+      ]
+    },
+    "security": {
+      "title": "Security of Your Information",
+      "content": "We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable, and no method of data transmission can be guaranteed against any interception or other type of misuse."
+    },
+    "children": {
+      "title": "Policy for Children",
+      "content": "We do not knowingly solicit information from or market to children under the age of 13. If we learn that we have collected personal information from a child under age 13 without verification of parental consent, we will delete that information as quickly as possible. If you believe we might have any information from or about a child under 13, please contact us."
+    },
+    "rights": {
+      "title": "User Rights",
+      "intro": "You have the following rights concerning your data:",
+      "list": [
+        "<strong>Right to Access:</strong> You can request information about the personal data we hold about you.",
+        "<strong>Right to Rectification:</strong> You have the right to request correction of inaccurate personal data we have about you.",
+        "<strong>Right to Erasure:</strong> You can request that we delete your personal data.",
+        "<strong>Right to Restrict Processing:</strong> You have the right to request the restriction of processing your personal data.",
+        "<strong>Right to Data Portability:</strong> You can request a copy of your personal data in a structured, commonly used, and machine-readable format.",
+        "<strong>Right to Object:</strong> You have the right to object to the processing of your personal data."
+      ],
+      "footer": "To exercise any of these rights, please contact us using the information provided below."
+    },
+    "changes": {
+      "title": "Changes to This Privacy Policy",
+      "content": "We may update this Privacy Policy from time to time in order to reflect, for example, changes to our practices or for other operational, legal, or regulatory reasons. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "If you have questions or comments about this Privacy Policy, please go to \"Contact Us\" page on this website, or contact us at:",
+      "info": "Company: CatchUp<br>[Address]<br>[City, State, ZIP Code]<br>[Email Address]<br>[Phone Number]",
+      "dpo": "<strong>Data Protection Officer</strong>: [Data Protection Officer &lt;email&gt;]"
     }
   },
   "refund_policy": {
