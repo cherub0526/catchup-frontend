@@ -166,6 +166,9 @@ const api = {
     forgotPassword: (account) => {
       return client.post("/v1/auth/forgot-password", { account });
     },
+    resetPassword: (data, params) => {
+      return client.put("/v1/auth/forgot-password", data, { params });
+    },
   },
   user: {
     getCurrentUser: () => {

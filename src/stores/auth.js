@@ -43,6 +43,20 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const resetPassword = async (data, queryParams) => {
+    try {
+      const response = await api.auth.resetPassword(data, queryParams);
+      if (response.access_token) {
+        token.value = response.access_token;
+        isAuthenticated.value = true;
+        localStorage.setItem("token", token.value);
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = () => {
     token.value = null;
     isAuthenticated.value = false;
@@ -117,6 +131,7 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     register,
     forgotPassword,
+    resetPassword,
     logout,
     oauthLogin,
     initAuth,

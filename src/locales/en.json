@@ -88,7 +88,13 @@
     "send_failed": "Send failed: ",
     "google_login_failed": "Google login failed: ",
     "facebook_login_failed": "Facebook login failed: ",
-    "unknown_error": "Unknown error occurred"
+    "unknown_error": "Unknown error occurred",
+    "reset_password": {
+      "title": "Reset Password",
+      "desc": "Please enter your new password.",
+      "submit": "Reset Password",
+      "success": "Password reset successful! Logging you in..."
+    }
   },
   "home": {
     "hero": {
@@ -178,6 +184,7 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "cookie": "Cookie Policy",
+    "refund": "Refund Policy",
     "language": "Language",
     "rights_reserved": "All rights reserved."
   },
@@ -370,6 +377,166 @@
     },
     "captions": {
       "traditional_chinese": "Traditional Chinese"
+    }
+  },
+  "privacy_policy": {
+    "title": "Privacy Policy",
+    "last_updated": "Last Updated: November 24, 2025",
+    "intro": "Welcome to 'CatchUp' (hereinafter referred to as 'this Website'). To ensure that you can use the services and information of this Website with peace of mind, we hereby explain the privacy protection policy of this Website to protect your rights. Please read the following content carefully:",
+    "sections": {
+      "scope": {
+        "title": "1. Scope of Privacy Protection Policy",
+        "content": "The content of the privacy protection policy covers how this Website handles personally identifiable information collected when you use the website services. The privacy protection policy does not apply to related linked websites outside of this Website, nor does it apply to personnel not commissioned or involved in the management of this Website."
+      },
+      "collection": {
+        "title": "2. Collection, Processing, and Use of Personal Data",
+        "content": [
+          "When you visit this Website or use the functional services provided by this Website, we will ask you to provide necessary personal data depending on the nature of the service function, and process and use your personal data within the scope of that specific purpose; without your written consent, this Website will not use personal data for other purposes.",
+          "This Website will retain your name, email address, contact information, and usage time when you use interactive functions such as service mailboxes and questionnaires.",
+          "During general browsing, the server will automatically record relevant actions, including the IP address of the connecting device, usage time, browser used, browsing and clicking data records, etc., as a reference for us to improve website services. This record is for internal application and will never be released to the outside world.",
+          "To provide precise services, we will conduct statistics and analysis on the collected questionnaire contents. The statistical data or explanatory text of the analysis results will be presented. In addition to internal research, we will publish statistical data and explanatory text as needed, but it will not involve specific personal data.",
+          "You may request us to correct or delete your account or personal data collected by this Website at any time. Please see the contact channel at the bottom for contact information."
+        ]
+      },
+      "protection": {
+        "title": "3. Protection of Data",
+        "content": [
+          "The hosts of this Website are equipped with various information security equipment such as firewalls and antivirus systems and necessary security protection measures to protect the website and your personal data using strict protection measures. Only authorized personnel can access your personal data. Relevant processing personnel have signed confidentiality agreements. Anyone who violates confidentiality obligations will be subject to relevant legal penalties.",
+          "If it is necessary to entrust other units to provide services due to business needs, this Website will also strictly require them to comply with confidentiality obligations and take necessary inspection procedures to ensure that they will indeed comply."
+        ]
+      },
+      "links": {
+        "title": "4. Related Links to the Outside World",
+        "content": "The web pages of this Website provide internet links to other websites. You can also click to enter other websites through the links provided by this Website. However, the privacy protection policy of this Website does not apply to the linked website. You must refer to the privacy protection policy in the linked website."
+      },
+      "sharing": {
+        "title": "5. Policy on Sharing Personal Data with Third Parties",
+        "content": [
+          "This Website will never provide, exchange, rent, or sell any of your personal data to other individuals, groups, private enterprises, or public agencies, unless there is a legal basis or contractual obligation.",
+          "The circumstances of the proviso in the preceding paragraph include but are not limited to:"
+        ],
+        "list": [
+          "With your written consent.",
+          "Expressly provided by law.",
+          "To eliminate danger to your life, body, freedom, or property.",
+          "Cooperation with public agencies or academic research institutions is necessary for statistics or academic research based on public interest, and the data has been processed by the provider or collected in a way that the specific party cannot be identified by its disclosure method.",
+          "When your behavior on the website violates the terms of service or may damage or hinder the rights and interests of the website and other users or cause damage to anyone, the website management unit analyzes and discloses your personal data as necessary to identify, contact, or take legal action.",
+          "Conducive to your rights and interests.",
+          "When this Website commissions manufacturers to assist in collecting, processing, or using your personal data, it will fulfill its responsibility of supervision and management of the outsourced manufacturers or individuals."
+        ]
+      },
+      "cookies": {
+        "title": "6. Use of Cookies",
+        "content": "In order to provide you with the best service, this Website will place and access our Cookies on your computer. If you do not wish to accept the writing of Cookies, you can set the privacy level to high in the browser functions you use to reject the writing of Cookies, but it may lead to some functions of the website not executing properly."
+      },
+      "amendment": {
+        "title": "7. Amendment of Privacy Protection Policy",
+        "content": "The privacy protection policy of this Website will be amended at any time in response to needs, and the amended terms will be published on the website."
+      }
+    }
+  },
+  "refund_policy": {
+    "title": "CatchUp Refund Policy",
+    "intro": "Thank you for choosing our product/service. We provide secure payment services through Paddle and are committed to providing customers with a good purchasing experience. The following is our refund policy:",
+    "sections": {
+      "cancellation": {
+        "title": "1. Consumer Cancellation Rights",
+        "content": "If you are a consumer, you have the right to cancel this agreement and return the product within 14 days without giving any reason. The cancellation period will expire 14 days after the day the transaction is completed. To meet the cancellation deadline, you just need to send your communication concerning your exercise of the right to cancel to Paddle before the cancellation period has expired."
+      },
+      "discretion": {
+        "title": "2. Refund Discretion",
+        "content": "Refunds will be determined entirely by our Merchant of Record, Paddle. If you believe you have a valid reason for a refund, please apply at paddle.net. Refund requests may be rejected depending on the circumstances. If Paddle finds evidence of fraud, refund abuse, or other manipulative behavior that entitles Paddle to a counterclaim, Paddle will reject the refund request.\n\nYou can also learn more about refund and dispute policies in Paddle's 'Checkout Buyer Terms and Conditions'."
+      },
+      "process": {
+        "title": "3. Refund Application Process",
+        "content": "If you meet the above refund conditions, please submit an application within 14 days of purchase and provide the following information:",
+        "list": [
+          "Email address used at purchase",
+          "Order number (provided by Paddle)",
+          "Reason for refund and relevant screenshots (if applicable)"
+        ],
+        "note": "Our order and payment process is handled by the online reseller Paddle. Paddle is the Merchant of Record for all our orders. Paddle also handles all customer service-related matters and returns. If you encounter any problems during the payment process, please visit paddle.net."
+      },
+      "merchant": {
+        "title": "4. Paddle as Merchant",
+        "content": "Our payments and order processing are handled by our third-party partner Paddle.com. Paddle is our authorized merchant, and all transaction records and refund processes are handled by Paddle and comply with its policies. In case of disputes or additional refund requests, Paddle may also assist as a neutral party in the review. For detailed consumer rights and service policies, please see Paddle's 'Checkout Buyer Terms and Conditions'."
+      }
+    }
+  },
+  "terms_of_service": {
+    "title": "CatchUp Terms of Service",
+    "last_updated": "Last Updated: December 07, 2025",
+    "intro": "Welcome to CatchUp (hereinafter referred to as 'the Service' or 'we'). The Service provides automated summaries of subscribed channel content and related features. By using the Service, you agree to comply with the following terms. Please read these terms carefully before use.",
+    "sections": {
+      "scope": {
+        "title": "1. Scope and Eligibility",
+        "content": [
+          "The Service is available to users worldwide, allowing access to CatchUp features from anywhere.",
+          "However, you must ensure your use complies with local laws and regulations and assume responsibility for compliance.",
+          "We reserve the right to limit or terminate your access if local regulations change preventing the operation or provision of the Service."
+        ]
+      },
+      "account": {
+        "title": "2. Registration and Account",
+        "content": [
+          "Age Limit: You must be at least 18 years old, or of legal age in your jurisdiction, to register and use the Service.",
+          "Account Info: You must provide accurate and complete personal information during registration and keep it updated.",
+          "Account Security: You are responsible for maintaining the confidentiality of your account credentials (e.g., username, password) and not sharing them. We are not liable for misuse due to your negligence.",
+          "Termination: We reserve the right to suspend or terminate your account if we detect violations (e.g., API abuse, illegal acts, spamming) and may pursue legal action."
+        ]
+      },
+      "payment": {
+        "title": "3. Payment and Subscription",
+        "content": [
+          "Plans: We offer Free and Paid subscription plans. Details and pricing are available on the website or subscription page.",
+          "Payment Methods: We accept credit cards and other payment methods, which may vary by region.",
+          "Refund Policy: Paid amounts are non-refundable, but you retain access until the end of the billing cycle. For refund requests due to disputes, please see our Refund Policy.",
+          "Auto-Renewal: Paid plans automatically renew. Unless cancelled before the expiration date, the system will automatically charge your payment method."
+        ]
+      },
+      "usage": {
+        "title": "4. Usage Regulations",
+        "intro": "Legal Use: You agree to use the Service legally and compliantly. You must NOT:",
+        "list": [
+          "Engage in unauthorized data scraping or API abuse that burdens CatchUp servers.",
+          "Attempt to hack, attack, or disrupt the normal operation of the Service.",
+          "Publish or disseminate illegal or inappropriate content (e.g., hate speech, pornography, violence).",
+          "Infringe upon others' rights (including intellectual property, privacy, trademarks, etc.)."
+        ],
+        "penalty": "Penalty: We reserve the right to suspend or terminate your account for violations and pursue legal action."
+      },
+      "disclaimer": {
+        "title": "5. Disclaimer",
+        "content": [
+          "Data Accuracy: The Service relies on AI and public data. While we strive for accuracy, we cannot guarantee 100% accuracy due to source changes or AI limitations.",
+          "Availability: We strive for stability but are not liable for interruptions due to technical issues, third-party changes, or force majeure. We reserve the right to modify or terminate the Service without compensation.",
+          "Liability Limitation: Use is at your own risk. We are not liable for direct, indirect, incidental, or punitive damages. We are not liable for third-party services (e.g., payment processing)."
+        ]
+      },
+      "changes": {
+        "title": "6. Changes and Termination",
+        "content": [
+          "Changes: We reserve the right to modify these terms at any time. Modified terms will be published on the website and take effect immediately.",
+          "Termination: If you disagree with updated terms, stop using the Service immediately. Continued use implies acceptance. We may terminate your account for violations without notice or refund."
+        ]
+      },
+      "privacy": {
+        "title": "7. Privacy Policy",
+        "content": "We respect your privacy and protect your personal data according to our Privacy Policy. Please refer to our Privacy Policy for details."
+      },
+      "law": {
+        "title": "8. Governing Law and Dispute Resolution",
+        "content": [
+          "These terms apply worldwide. If local law prohibits the Service, we reserve the right to limit it.",
+          "In case of disputes, you agree to first attempt friendly negotiation.",
+          "If negotiation fails, disputes will be submitted to the designated jurisdiction for arbitration or litigation."
+        ]
+      },
+      "contact": {
+        "title": "9. Contact Us",
+        "content": "If you have any questions about these terms, please contact us."
+      },
+      "footer": "Using CatchUp implies you have read, understood, and agreed to these terms. Please check regularly for updates!"
     }
   }
 }

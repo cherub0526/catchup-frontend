@@ -15,6 +15,11 @@ const router = createRouter({
       component: () => import('@/views/Login.vue')
     },
     {
+      path: '/reset-password',
+      name: 'ResetPassword',
+      component: () => import('@/views/ResetPassword.vue')
+    },
+    {
       path: '/dashboard',
       name: 'Dashboard',
       component: () => import('@/views/Dashboard.vue'),
@@ -57,6 +62,11 @@ const router = createRouter({
       path: '/cookie-policy',
       name: 'CookiePolicy',
       component: () => import('@/views/CookiePolicy.vue')
+    },
+    {
+      path: '/refund-policy',
+      name: 'RefundPolicy',
+      component: () => import('@/views/RefundPolicy.vue')
     }
   ]
 })
