@@ -27,7 +27,7 @@ function createWindow() {
   // 開發環境載入 Vite 開發伺服器，生產環境載入打包後的檔案
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools() // 可手動開啟 (Cmd+Option+I / Ctrl+Shift+I) 以避免 Console 顯示 Autofill 錯誤
   } else {
     mainWindow.loadFile(join(__dirname, '../dist/index.html'))
   }

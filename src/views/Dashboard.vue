@@ -100,7 +100,7 @@
               <div class="source-name">{{ source.name }}</div>
               <div class="source-count">{{ $t('dashboard.sidebar.subscriptions_count', { count: subscriptionsData[source.id].length }) }}</div>
             </div>
-            <span class="source-badge">{{ mediaData[source.id].length }}</span>
+            <!-- <span class="source-badge">{{ mediaData[source.id].length }}</span> -->
           </li>
         </ul>
       </aside>
@@ -235,7 +235,7 @@
         <div class="modal-body">
           <!-- 新增頻道表單 -->
           <form class="subscription-form" @submit.prevent="handleAddSubscription">
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="channel-name">{{ $t('dashboard.modal.channel_name') }}</label>
               <input
                 type="text"
@@ -243,7 +243,7 @@
                 v-model="subscriptionForm.name"
                 :placeholder="$t('dashboard.modal.channel_name_placeholder')"
                 required />
-            </div>
+            </div> -->
             <div class="form-group">
               <label for="channel">{{ $t('dashboard.modal.channel_url') }}</label>
               <input type="text" id="channel" v-model="subscriptionForm.url" :placeholder="$t('dashboard.modal.channel_url_placeholder')" required />
@@ -491,7 +491,7 @@ const resetForm = () => {
 };
 
 const handleAddSubscription = async () => {
-  if (!subscriptionForm.value.name || !subscriptionForm.value.url) {
+  if (!subscriptionForm.value.url) {
     alert(t('dashboard.notifications.fill_all_fields'));
     return;
   }
