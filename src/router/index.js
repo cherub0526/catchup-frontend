@@ -75,6 +75,15 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
+  // 檢查是否為 Electron 環境
+  const isElectron = typeof process !== 'undefined' && process.versions && !!process.versions.electron
+
+  // 如果是 Electron App 且訪問首頁，直接重定向到登入頁
+  if (isElectron && to.path === '/') {
+    next('/login')
+    return
+  }
+
   // 等待初始化完成
   if (!authStore.isInitialized) {
     // 如果還沒初始化，先讓路由通過，App.vue 會處理跳轉
