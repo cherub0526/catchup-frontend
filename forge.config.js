@@ -5,9 +5,9 @@ module.exports = {
   packagerConfig: {
     asar: true,
     // 包含 dist 目錄（Vite 建構輸出）
-    extraResource: [
-      'dist'
-    ],
+    // extraResource: [
+    //   'dist'
+    // ],
     ignore: [
       /^\/src/,
       /^\/pages/,

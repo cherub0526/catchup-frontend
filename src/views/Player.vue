@@ -9,16 +9,7 @@
         </button>
         <h1 class="video-title">{{ videoData.title }}</h1>
       </div>
-      <div class="header-right">
-        <button class="header-btn" @click="handleDownload">
-          <span>⬇️</span>
-          <span>{{ $t('player.header.download') }}</span>
-        </button>
-        <button class="header-btn" @click="handleShare">
-          <span>🔗</span>
-          <span>{{ $t('player.header.share') }}</span>
-        </button>
-      </div>
+      
     </header>
 
     <!-- 主要內容區域 -->
