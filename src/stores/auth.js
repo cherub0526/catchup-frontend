@@ -57,11 +57,17 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const logout = () => {
-    token.value = null;
-    isAuthenticated.value = false;
-    user.value = null;
-    localStorage.removeItem("token");
+  const logout = async () => {
+    try {
+      await api.auth.logout();
+    } catch (error) {
+      console.error("Logout API failed:", error);
+    } finally {
+      token.value = null;
+      isAuthenticated.value = false;
+      user.value = null;
+      localStorage.removeItem("token");
+    }
   };
 
   // 更新 token（用於 token 刷新後同步狀態）
