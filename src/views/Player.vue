@@ -539,7 +539,7 @@ const initPlyrPlayer = () => {
       console.log("Plyr 播放器就緒");
       videoLoaded.value = true;
       duration.value = player.duration || 0;
-      showNotification(t('player.notifications.video_ready'));
+
     });
 
     player.on("play", () => {
@@ -809,7 +809,7 @@ const fetchCaptionContent = async (captionId) => {
           label: segment.text || "",
           description: "",
         }));
-        showNotification(t('player.notifications.captions_loaded'));
+
       }
       // 如果是舊的 data 包裝格式
       else if (response?.data?.segments && Array.isArray(response.data.segments)) {
@@ -818,7 +818,7 @@ const fetchCaptionContent = async (captionId) => {
           label: segment.text || "",
           description: "",
         }));
-        showNotification(t('player.notifications.captions_loaded'));
+
       }
       // 如果是簡單的陣列格式
       else if (Array.isArray(response.data)) {
@@ -827,12 +827,12 @@ const fetchCaptionContent = async (captionId) => {
           label: item.text || item.content || "",
           description: item.description || "",
         }));
-        showNotification(t('player.notifications.captions_loaded'));
+
       }
       // 如果是包含 content 的物件格式（字幕文件內容）
       else if (response.data?.content) {
         parseSubtitles(response.data.content);
-        showNotification(t('player.notifications.captions_loaded'));
+
       } else {
         timelineError.value = t('player.errors.unsupported_caption_format');
       }
