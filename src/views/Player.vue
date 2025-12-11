@@ -539,7 +539,6 @@ const initPlyrPlayer = () => {
       console.log("Plyr 播放器就緒");
       videoLoaded.value = true;
       duration.value = player.duration || 0;
-
     });
 
     player.on("play", () => {
@@ -621,15 +620,11 @@ const seekToTime = (seconds) => {
   if (!player) return;
 
   player.currentTime = seconds;
-  // // 確保聲音開啟
-  // if (player.muted) {
-  //   player.muted = false;
-  //   isMuted.value = false;
-  // }
   // 自動播放
   if (!player.playing) {
     player.play();
   }
+  
   showNotification(t('player.notifications.jumped_to', { time: formatTime(seconds) }));
 };
 

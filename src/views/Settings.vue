@@ -370,9 +370,10 @@ onUnmounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 30px;
-  max-width: 800px;
-  margin: 0 auto;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .settings-section {
@@ -381,6 +382,8 @@ onUnmounted(() => {
   padding: 25px;
   margin-bottom: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 800px;
 }
 
 .settings-section h3 {
@@ -447,6 +450,8 @@ onUnmounted(() => {
   display: flex;
   gap: 12px;
   margin-top: 30px;
+  width: 100%;
+  max-width: 800px;
 }
 
 .btn-primary,
