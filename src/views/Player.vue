@@ -65,7 +65,9 @@
           <div class="chat-messages" ref="chatMessagesRef">
             <!-- 歡迎訊息 -->
             <div class="message">
-              <div class="message-avatar">🤖</div>
+              <div class="message-avatar">
+                <img src="@/assets/logo.png" alt="AI" class="ai-avatar-img" />
+              </div>
               <div class="message-content">{{ $t('player.chat.welcome') }}</div>
             </div>
 
@@ -74,13 +76,18 @@
               v-for="(msg, index) in chatMessages"
               :key="index"
               :class="['message', msg.role === 'user' ? 'user' : 'ai']">
-              <div class="message-avatar">{{ msg.role === "user" ? "👤" : "🤖" }}</div>
+              <div class="message-avatar">
+                <span v-if="msg.role === 'user'">👤</span>
+                <img v-else src="@/assets/logo.png" alt="AI" class="ai-avatar-img" />
+              </div>
               <div class="message-content markdown-content" v-html="msg.content"></div>
             </div>
 
             <!-- 等待回應的泡泡 -->
             <div v-if="isThinking" class="message ai">
-              <div class="message-avatar">🤖</div>
+              <div class="message-avatar">
+                <img src="@/assets/logo.png" alt="AI" class="ai-avatar-img" />
+              </div>
               <div class="message-content thinking-bubble">
                 <div class="typing-indicator">
                   <span></span>
@@ -1442,7 +1449,7 @@ window.seekToTime = seekToTime;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1453,6 +1460,13 @@ window.seekToTime = seekToTime;
 
 .message.user .message-avatar {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.ai-avatar-img {
+  width: 100%;
+  /* height: 100%; */
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .message-content {
