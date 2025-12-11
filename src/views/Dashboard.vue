@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <!-- 頂部導航欄 -->
     <header class="header">
-      <div class="header-left">
+      <div class="header-left" @click="router.push('/dashboard')">
         <img src="@/assets/logo.png" alt="Logo" class="app-logo" />
         <h1 class="app-title">{{ appName }}</h1>
       </div>
@@ -683,6 +683,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 15px;
+  cursor: pointer;
 }
 
 .app-logo {

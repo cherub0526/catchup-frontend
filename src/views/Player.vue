@@ -25,7 +25,7 @@
               id="player"
               data-plyr-provider="youtube"
               :data-plyr-embed-id="videoData.videoId"></div>
-            <video v-else id="player" playsinline controls>
+            <video v-else id="player" playsinline controls autoplay>
               <source v-if="videoData.url" :src="videoData.url" type="video/mp4" />
               <track kind="captions" :label="$t('player.captions.traditional_chinese')" srclang="zh-TW" default />
             </video>
