@@ -158,10 +158,10 @@ const api = {
       return client.post("/v1/auth", { account, password });
     },
     register: (data) => {
-      return client.post("/v1/register", data);
+      return client.post("/v1/auth/register", data);
     },
     logout: () => {
-      return client.post("/v1/logout");
+      return client.post("/v1/auth/logout");
     },
     forgotPassword: (account) => {
       return client.post("/v1/auth/forgot-password", { account });

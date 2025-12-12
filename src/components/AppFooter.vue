@@ -5,7 +5,7 @@
                 <div class="footer-legal">
                     <router-link to="/privacy-policy">{{ $t('footer.privacy') }}</router-link>
                     <router-link to="/terms-of-service">{{ $t('footer.terms') }}</router-link>
-                    <router-link to="/cookie-policy">{{ $t('footer.cookie') }}</router-link>
+
                     <router-link to="/refund-policy">{{ $t('footer.refund') }}</router-link>
                 </div>
 
