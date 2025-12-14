@@ -267,12 +267,8 @@ export const usePlansStore = defineStore("plans", () => {
         // API 返回結構: { plan: {channel_limit, video_limit}, usage: {channels, media} }
         if (response.data?.usage) {
           usage.value = {
-            channels: response.data.usage.channels || response.data.usage.channel_count || usage.value.channels,
-            media:
-              response.data.usage.media ||
-              response.data.usage.video_count ||
-              response.data.usage.media_count ||
-              usage.value.media,
+            channels: response.data.usage.channels,
+            media: response.data.usage.media
           };
         }
       }
