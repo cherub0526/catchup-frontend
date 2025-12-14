@@ -43,12 +43,12 @@
           </form>
 
           <!-- 分隔線 -->
-          <div class="divider">
+          <!-- <div class="divider">
             <span>{{ $t('login.or') }}</span>
-          </div>
+          </div> -->
 
           <!-- 社群登入按鈕 -->
-          <div class="social-login">
+          <!-- <div class="social-login">
             <button class="btn-social btn-google" @click="handleOAuthLogin('google')">
               <font-awesome-icon :icon="['fab', 'google']" class="social-icon" />
               {{ $t('login.continue_with_google') }}
@@ -57,7 +57,7 @@
               <font-awesome-icon :icon="['fab', 'facebook']" class="social-icon" />
               {{ $t('login.continue_with_facebook') }}
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- 註冊表單 -->
@@ -86,7 +86,7 @@
             <div class="options">
               <label class="checkbox-container">
                 <input type="checkbox" v-model="registerForm.agreeTerms" required />
-                <span>{{ $t('login.agree') }}<a href="#" class="link">{{ $t('login.terms') }}</a>{{ $t('login.and') }}<a href="#" class="link">{{ $t('login.privacy') }}</a></span>
+                <span>{{ $t('login.agree') }}<router-link to="/terms-of-service" class="link" target="_blank">{{ $t('login.terms') }}</router-link>{{ $t('login.and') }}<router-link to="/privacy-policy" class="link" target="_blank">{{ $t('login.privacy') }}</router-link></span>
               </label>
             </div>
             <button type="submit" class="btn-primary" :disabled="isLoading">
@@ -95,12 +95,12 @@
           </form>
 
           <!-- 分隔線 -->
-          <div class="divider">
+          <!-- <div class="divider">
             <span>{{ $t('login.or') }}</span>
-          </div>
+          </div> -->
 
           <!-- 社群登入按鈕 -->
-          <div class="social-login">
+          <!-- <div class="social-login">
             <button class="btn-social btn-google" @click="handleOAuthLogin('google')">
               <font-awesome-icon :icon="['fab', 'google']" class="social-icon" />
               {{ $t('login.continue_with_google') }}
@@ -109,7 +109,7 @@
               <font-awesome-icon :icon="['fab', 'facebook']" class="social-icon" />
               {{ $t('login.continue_with_facebook') }}
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- 忘記密碼表單 -->
