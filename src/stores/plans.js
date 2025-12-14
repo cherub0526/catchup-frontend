@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import api from "@/api";
 
 // 將 API 返回的方案資料轉換為應用程式格式
@@ -145,9 +145,27 @@ export const usePlansStore = defineStore("plans", () => {
     const authStore = useAuthStore();
 
     if (!authStore.isAuthenticated) {
-      currentSubscriptionData.value = null;
-      currentPlan.value = null;
-      return null;
+      // 如果尚未初始化完成，等待初始化
+      if (!authStore.isInitialized) {
+        await new Promise((resolve) => {
+          const stop = watch(
+            () => authStore.isInitialized,
+            (val) => {
+              if (val) {
+                stop();
+                resolve();
+              }
+            }
+          );
+        });
+      }
+
+      // 初始化後再次檢查認證狀態
+      if (!authStore.isAuthenticated) {
+        currentSubscriptionData.value = null;
+        currentPlan.value = null;
+        return null;
+      }
     }
 
     isLoading.value = true;
@@ -255,24 +273,40 @@ export const usePlansStore = defineStore("plans", () => {
     const authStore = useAuthStore();
 
     if (!authStore.isAuthenticated) {
-      // Reset usage for guests
-      usage.value = { channels: 0, media: 0 };
-      return null;
+      // 如果尚未初始化完成，等待初始化
+      if (!authStore.isInitialized) {
+        await new Promise((resolve) => {
+          const stop = watch(
+            () => authStore.isInitialized,
+            (val) => {
+              if (val) {
+                stop();
+                resolve();
+              }
+            }
+          );
+        });
+      }
+
+      // 初始化後再次檢查認證狀態
+      if (!authStore.isAuthenticated) {
+        // Reset usage for guests
+        usage.value = { channels: 0, media: 0 };
+        return null;
+      }
     }
 
     try {
       const response = await api.subscription.getUsage();
 
-      if (response) {
-        // API 返回結構: { plan: {channel_limit, video_limit}, usage: {channels, media} }
-        if (response.data?.usage) {
-          usage.value = {
-            channels: response.data.usage.channels,
-            media: response.data.usage.media
-          };
-        }
+      
+      // API 返回結構: { plan: {channel_limit, video_limit}, usage: {channels, media} }
+      if (response.data?.usage) {
+        usage.value = {
+          channels: response.data.usage.channels,
+          media: response.data.usage.media
+        };
       }
-
       return response;
     } catch (err) {
       console.error("更新使用情況失敗:", err);
