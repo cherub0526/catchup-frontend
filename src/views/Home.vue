@@ -179,6 +179,13 @@ const featuresSection = ref(null);
 
 const features = computed(() => [
   {
+    icon: "infinity",
+    title: t('home.features.items.universal_ai.title'),
+    description: t('home.features.items.universal_ai.desc'),
+    color: "#6366f1",
+    bg: "#e0e7ff",
+  },
+  {
     icon: "video",
     title: t('home.features.items.multi_platform.title'),
     description: t('home.features.items.multi_platform.desc'),
@@ -200,25 +207,18 @@ const features = computed(() => [
     bg: "#cffafe",
   },
   {
-    icon: "filter",
-    title: t('home.features.items.smart_filter.title'),
-    description: t('home.features.items.smart_filter.desc'),
+    icon: "comment-alt",
+    title: t('home.features.items.custom_prompt.title'),
+    description: t('home.features.items.custom_prompt.desc'),
     color: "#10b981",
     bg: "#d1fae5",
   },
   {
-    icon: "bell",
-    title: t('home.features.items.personal_notification.title'),
-    description: t('home.features.items.personal_notification.desc'),
+    icon: "comments",
+    title: t('home.features.items.ai_chat.title'),
+    description: t('home.features.items.ai_chat.desc'),
     color: "#f59e0b",
     bg: "#fef3c7",
-  },
-  {
-    icon: "shield-alt",
-    title: t('home.features.items.privacy.title'),
-    description: t('home.features.items.privacy.desc'),
-    color: "#8b5cf6",
-    bg: "#ede9fe",
   },
 ]);
 

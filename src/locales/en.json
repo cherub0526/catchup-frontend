@@ -117,9 +117,13 @@
       "title": "Why Choose CatchUp?",
       "subtitle": "Powerful features, simple experience, creating the best reading environment for you.",
       "items": {
+        "universal_ai": {
+          "title": "Universal AI Analysis",
+          "desc": "Break free from limits! Generate summaries and chat with any video, even without original subtitles."
+        },
         "multi_platform": {
-          "title": "Multi-platform Integration",
-          "desc": "Manage subscriptions from YouTube, Spotify, Firstory, and more in one place for efficient information retrieval."
+          "title": "Universal Hub",
+          "desc": "Break platform barriers! Sync all your subscriptions into one powerful stream of high-value content."
         },
         "real_time": {
           "title": "Real-time Updates",
@@ -129,17 +133,13 @@
           "title": "AI Smart Summary",
           "desc": "Use advanced AI to automatically generate content summaries, letting you grasp the key points of long videos in minutes."
         },
-        "smart_filter": {
-          "title": "Smart Filtering",
-          "desc": "Powerful filtering tools to quickly find content you care about based on time, type, and keywords."
+        "custom_prompt": {
+          "title": "Advanced Prompts",
+          "desc": "Unleash AI's potential! Custom prompts for summaries or data extraction—anything is possible."
         },
-        "personal_notification": {
-          "title": "Personalized Notifications",
-          "desc": "Fully customizable notification settings, only disturbing you when topics you truly care about are updated."
-        },
-        "privacy": {
-          "title": "Privacy & Security",
-          "desc": "Enterprise-grade encryption to strictly protect your personal data and subscription habits."
+        "ai_chat": {
+          "title": "Smart Video Chat",
+          "desc": "Chat with your content! Ask any question about the video, and AI will provide instant, precise answers."
         }
       }
     },

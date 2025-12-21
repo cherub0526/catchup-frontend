@@ -49,7 +49,10 @@ import {
   faBolt,
   faMagic,
   faShieldAlt,
-  faChartBar
+  faChartBar,
+  faCommentAlt,
+  faComments,
+  faInfinity
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faGoogle,
@@ -100,6 +103,9 @@ library.add(
   faMagic,
   faShieldAlt,
   faChartBar,
+  faCommentAlt,
+  faComments,
+  faInfinity,
   faGoogle,
   faFacebook,
   faYoutube
