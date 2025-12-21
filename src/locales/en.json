@@ -248,6 +248,15 @@
       "payment_success_update_failed": "Payment successful, but subscription update failed. Please contact support."
     }
   },
+  "limit_warning": {
+    "upgrade_btn": "Upgrade Plan",
+    "reached_subscription_limit": "Subscription Limit Reached",
+    "reached_channel_limit": "Channel Limit Reached",
+    "reached_media_limit": "Media Limit Reached",
+    "usage_channels": "Channels: {usage}/{limit}",
+    "usage_media": "Media: {usage}/{limit}",
+    "upgrade_for_more": ". Upgrade your plan for more capacity."
+  },
   "dashboard": {
     "header": {
       "subscription_plan": "Subscription Plan",

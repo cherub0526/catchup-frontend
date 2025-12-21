@@ -248,6 +248,15 @@
       "payment_success_update_failed": "付款成功，但更新訂閱失敗，請聯繫客服"
     }
   },
+  "limit_warning": {
+    "upgrade_btn": "升級方案",
+    "reached_subscription_limit": "已達到訂閱限制",
+    "reached_channel_limit": "已達到頻道訂閱上限",
+    "reached_media_limit": "已達到影音數量上限",
+    "usage_channels": "頻道訂閱數：{usage}/{limit}",
+    "usage_media": "影音數量：{usage}/{limit}",
+    "upgrade_for_more": "。升級方案以獲得更多容量。"
+  },
   "dashboard": {
     "header": {
       "subscription_plan": "訂閱方案",

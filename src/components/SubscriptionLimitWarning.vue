@@ -8,7 +8,7 @@
         <p>{{ warningMessage }}</p>
       </div>
 
-      <router-link to="/subscription" class="upgrade-btn"> 升級方案 </router-link>
+      <router-link to="/subscription" class="upgrade-btn"> {{ $t('limit_warning.upgrade_btn') }} </router-link>
 
       <!-- <button @click="dismiss" class="dismiss-btn">×</button> -->
     </div>
@@ -19,6 +19,9 @@
 import { ref, computed, watch } from "vue";
 import { usePlansStore } from "@/stores/plans";
 import { storeToRefs } from "pinia";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   type: {
@@ -50,11 +53,11 @@ const shouldShowWarning = computed(() => {
 
 const warningTitle = computed(() => {
   if (isChannelLimitReached.value && isMediaLimitReached.value) {
-    return "已達到訂閱限制";
+    return t("limit_warning.reached_subscription_limit");
   } else if (isChannelLimitReached.value) {
-    return "已達到頻道訂閱上限";
+    return t("limit_warning.reached_channel_limit");
   } else if (isMediaLimitReached.value) {
-    return "已達到影音數量上限";
+    return t("limit_warning.reached_media_limit");
   }
   return "";
 });
@@ -63,14 +66,24 @@ const warningMessage = computed(() => {
   const messages = [];
 
   if (isChannelLimitReached.value) {
-    messages.push(`頻道訂閱數：${usage.value.channels}/${currentLimits.value.channels}`);
+    messages.push(
+      t("limit_warning.usage_channels", {
+        usage: usage.value.channels,
+        limit: currentLimits.value.channels,
+      })
+    );
   }
 
   if (isMediaLimitReached.value) {
-    messages.push(`影音數量：${usage.value.media}/${currentLimits.value.media}`);
+    messages.push(
+      t("limit_warning.usage_media", {
+        usage: usage.value.media,
+        limit: currentLimits.value.media,
+      })
+    );
   }
 
-  return messages.join(" | ") + "。升級方案以獲得更多容量。";
+  return messages.join(" | ") + t("limit_warning.upgrade_for_more");
 });
 
 const dismiss = () => {
