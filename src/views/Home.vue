@@ -50,26 +50,8 @@
         <div class="hero-image-container">
           <div class="hero-blob"></div>
           <div class="hero-image-wrapper">
-            <img src="@/assets/logo2.png" :alt="$t('home.hero.app_preview_alt')" class="hero-img" />
-            <!-- Floating Cards -->
-            <div class="floating-card card-video">
-              <div class="card-icon icon-video">
-                <font-awesome-icon icon="video" />
-              </div>
-              <div class="card-content">
-                <span class="card-label">{{ $t('home.hero.latest_videos') }}</span>
-                <span class="card-value">{{ $t('home.hero.just_updated') }}</span>
-              </div>
-            </div>
-            <div class="floating-card card-analytics">
-              <div class="card-icon icon-chart">
-                <font-awesome-icon icon="chart-bar" />
-              </div>
-              <div class="card-content">
-                <span class="card-label">{{ $t('home.hero.smart_analysis') }}</span>
-                <span class="card-value">{{ $t('home.hero.summaries_completed') }}</span>
-              </div>
-            </div>
+            <img src="@/assets/hero-promo.png" :alt="$t('home.hero.app_preview_alt')" class="hero-img" />
+
           </div>
         </div>
       </div>
@@ -511,7 +493,6 @@ const scrollToFeatures = () => {
   width: 100%;
   height: auto;
   filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.15));
-  animation: float 6s ease-in-out infinite;
 }
 
 .floating-card {
