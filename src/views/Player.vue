@@ -213,7 +213,7 @@
                   <div class="timestamp-link" @click="seekToTime(item.time)">
                     <span>⏱️</span>
                     <span>{{ formatTime(item.time) }}</span>
-                    <span>{{ item.label }}</span>
+                    <span v-html="item.label"></span>
                   </div>
                   <p v-if="item.description" class="timeline-description">{{ item.description }}</p>
                 </div>
